@@ -1,0 +1,23 @@
+{
+    "id": 1,
+    "is_venueadmin": true,
+    "email": "sofiane@tracery.us",
+    "public_id": "f4e7bb07-f125-41ed-8f99-4418b4ac67d3",
+    "date_joined": "2020-04-26T23:50:16.074202",
+    "first_name": "Sofiane",
+    "last_name": "Larbi (Admin)",
+    "is_locked": true,
+    "coordinates": {
+        "id": 1,
+        "lat": 40.712776,
+        "lng": -74.005974
+    },
+    "address": {
+        "id": 1,
+        "address_1": "270 Greenwich St",
+        "address_2": "B4",
+        "post_code": "10007",
+        "city": "New York",
+        "state": "NY"
+    }
+}

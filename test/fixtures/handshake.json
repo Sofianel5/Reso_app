@@ -1,0 +1,13 @@
+{
+    "id": 1,
+    "user": {
+        "id": 1,
+        "first_name": "Sofiane",
+        "last_name": "Larbi (Admin)"
+    },
+    "venue": {
+        "id": 1,
+        "title": "Whole Foods Battery Park City"
+    },
+    "time": "2020-05-11T00:31:16.505581"
+}

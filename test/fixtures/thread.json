@@ -1,0 +1,16 @@
+{
+    "id": 1,
+    "venue": {
+        "id": 1,
+        "title": "Whole Foods Battery Park City"
+    },
+    "user": {
+        "id": 2,
+        "first_name": "Sofiane",
+        "last_name": "Larbi"
+    },
+    "from_confirmed": false,
+    "to_confirmed": false,
+    "time": "2020-04-30T01:45:05.392469",
+    "thread_id": "affd0e61-a645-476e-8c4a-2d36e5ce1861"
+}

@@ -1,0 +1,39 @@
+{
+    "id": 1,
+    "admin": {
+        "id": 1,
+        "first_name": "Sofiane",
+        "last_name": "Larbi (Admin)"
+    },
+    "bookable_time_slots": [{
+        "start": "2020-05-06T02:13:24",
+        "stop": "2020-05-19T02:13:30",
+        "max_attendees": 100,
+        "num_attendees": 0,
+        "id": 7,
+        "current": true,
+        "past": false,
+        "type": "All"
+    }],
+    "type": "Grocery",
+    "description": null,
+    "title": "Whole Foods Battery Park City",
+    "timezone": "America/New_York",
+    "image": "https://tracery-schedules-static.s3.amazonaws.com/media/venues/wholefoods.jpg",
+    "phone": null,
+    "email": null,
+    "website": null,
+    "coordinates": {
+        "id": 2,
+        "lat": 40.7158067,
+        "lng": -74.0118043
+    },
+    "address": {
+        "id": 1,
+        "address_1": "270 Greenwich St",
+        "address_2": "B4",
+        "post_code": "10007",
+        "city": "New York",
+        "state": "NY"
+    }
+}
