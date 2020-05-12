@@ -8,6 +8,7 @@ abstract class LocalDataSource {
   Future<void> cacheAuthToken(String token) {}
   Future<Map<String, dynamic>> getCachedSession() {}
   Future<void> cacheSession(Map<String, dynamic> session) {}
+  Future<void> clearData() {}
 }
 const String AUTH_TOKEN_KEY = "authtoken";
 const String SESSION_KEY = "sessionKey";
@@ -71,5 +72,16 @@ class LocalDataSourceImpl implements LocalDataSource {
   @override
   Future<Map<String, dynamic>> getCachedSession() async {
     return await _getJson(SESSION_KEY);
+  }
+
+  @override 
+  Future<void> clearData() async {
+    try {
+      final pref = await SharedPreferences.getInstance();
+      await pref.clear();
+      return;
+    } catch (e) {
+      throw CacheException();
+    }
   }
 }

@@ -26,8 +26,14 @@ class ConnectionFailure extends Failure {
   final String messageCode = "NoConnection";
   ConnectionFailure();
 }
+
 class AuthenticationFailure extends ServerFailure {
   final errorno = 403;
   final messageCode = "AuthFailure";
   AuthenticationFailure();
+}
+
+class InvalidInputFailure extends Failure {
+  final String messageCode;
+  InvalidInputFailure({this.messageCode});
 }

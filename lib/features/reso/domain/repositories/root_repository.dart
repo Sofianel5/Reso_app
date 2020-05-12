@@ -8,4 +8,5 @@ abstract class RootRepository {
   Future<Either<Failure, User>> signUp({String email, String password, String firstName, String lastName});
   Future<Either<Failure, Map<String, dynamic>>> getSession();
   Future<Either<Failure, User>> getUser();
+  Future<Either<Failure, void>> logout();
 }

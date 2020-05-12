@@ -37,6 +37,7 @@ void main() {
   String lastName = "Larbi";
   int id = 1;
   String authToken = "HI";
+  Map<String, dynamic> headers = {"Authorization": "Token " + authToken};
   UserModel tUserModel = UserModel(
     email: email,
     id: id,
@@ -80,12 +81,12 @@ void main() {
         // arrange
         when(mockLocalDataSource.getAuthToken())
             .thenAnswer((_) async => authToken);
-        when(mockRemoteDataSource.getUser(authToken))
+        when(mockRemoteDataSource.getUser(headers))
             .thenAnswer((_) async => user);
         // act
         final result = await repository.getUser();
         // assert
-        verify(mockRemoteDataSource.getUser(authToken));
+        verify(mockRemoteDataSource.getUser(headers));
         expect(result, Right(user));
       });
 
@@ -94,7 +95,7 @@ void main() {
           () async {
         // arrange
         when(mockLocalDataSource.getAuthToken()).thenThrow(CacheException());
-        when(mockRemoteDataSource.getUser(authToken))
+        when(mockRemoteDataSource.getUser(headers))
             .thenAnswer((_) async => user);
         // act
         final result = await repository.getUser();
@@ -163,7 +164,7 @@ void main() {
             password: anyNamed("password"),
           ),
         ).thenAnswer((_) async => authToken);
-        when(mockRemoteDataSource.getUser(authToken))
+        when(mockRemoteDataSource.getUser(headers))
             .thenAnswer((_) async => tUserModel);
         // act
         final result = await repository.login(email: email, password: password);
@@ -273,18 +274,17 @@ void main() {
           'should return remote data when call to remote data source is successful',
           () async {
         // arrange
-        when(mockLocalDataSource.getAuthToken()).thenAnswer((_) async => authToken);
+        when(mockLocalDataSource.getAuthToken())
+            .thenAnswer((_) async => authToken);
         when(
-          mockRemoteDataSource.getSession(authToken),
+          mockRemoteDataSource.getSession(headers),
         ).thenAnswer((_) async => session);
         // act
         final result = await repository.getSession();
         // assert
         verify(mockLocalDataSource.getAuthToken());
         verify(
-          mockRemoteDataSource.getSession(
-            authToken
-          ),
+          mockRemoteDataSource.getSession(headers),
         );
         expect(result, Right(session));
       });
@@ -297,15 +297,13 @@ void main() {
           mockLocalDataSource.getAuthToken(),
         ).thenAnswer((_) async => authToken);
         when(
-          mockRemoteDataSource.getSession(authToken),
+          mockRemoteDataSource.getSession(headers),
         ).thenAnswer((_) async => session);
         // act
         await repository.getSession();
         // assert
-        verify(
-          mockLocalDataSource.getAuthToken()
-        );
-        verify(mockRemoteDataSource.getSession(authToken));
+        verify(mockLocalDataSource.getAuthToken());
+        verify(mockRemoteDataSource.getSession(headers));
         verify(mockLocalDataSource.cacheSession(session));
       });
       test(
@@ -348,7 +346,7 @@ void main() {
             lastName: lastName,
           ),
         ).thenAnswer((_) async => authToken);
-        when(mockRemoteDataSource.getUser(authToken))
+        when(mockRemoteDataSource.getUser(headers))
             .thenAnswer((_) async => tUserModel);
         // act
         final result = await repository.signUp(
@@ -358,9 +356,7 @@ void main() {
             lastName: lastName);
         // assert
         verify(
-          mockRemoteDataSource.getUser(
-            authToken
-          ),
+          mockRemoteDataSource.getUser(headers),
         );
         expect(result, Right(user));
       });
@@ -384,9 +380,7 @@ void main() {
             firstName: firstName,
             lastName: lastName);
         // assert
-        verify(
-          mockRemoteDataSource.getUser(authToken)
-        );
+        verify(mockRemoteDataSource.getUser(headers));
         verify(mockLocalDataSource.cacheAuthToken(authToken));
       });
       test(
@@ -428,10 +422,11 @@ void main() {
         // arrange
         // act
         final result = await repository.signUp(
-            email: email,
-            password: password,
-            firstName: firstName,
-            lastName: lastName);
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName,
+        );
         // assert
         expect(result, Left(ConnectionFailure()));
       });

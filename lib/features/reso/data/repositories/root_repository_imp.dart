@@ -47,7 +47,10 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, User>> getUser() async {
     return await _getUser(() async {
       final String authToken = await localDataSource.getAuthToken();
-      final User user = await remoteDataSource.getUser(authToken);
+      Map<String, dynamic> header = Map<String, dynamic>.from({
+        "Authorization": "Token " + authToken.toString()
+      });
+      final User user = await remoteDataSource.getUser(header);
       return Right(user);
     });
   }
@@ -56,25 +59,39 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, User>> login({String email, String password}) async {
     return await _getUser(() async {
       final String authToken =
-            await remoteDataSource.login(email: email, password: password);
-        localDataSource.cacheAuthToken(authToken);
-        final User user = await remoteDataSource.getUser(authToken);
-        return Right(user);
+          await remoteDataSource.login(email: email, password: password);
+      localDataSource.cacheAuthToken(authToken);
+      Map<String, dynamic> header = Map<String, dynamic>.from({
+        "Authorization": "Token " + authToken.toString()
+      });
+      final User user = await remoteDataSource.getUser(header);
+      return Right(user);
     });
   }
 
   @override
   Future<Either<Failure, User>> signUp(
-      {String email, String password, String firstName, String lastName}) async {
+      {String email,
+      String password,
+      String firstName,
+      String lastName}) async {
     return await _getUser(() async {
-      final String authToken = await remoteDataSource.signUp(email: email, password: password, firstName: firstName, lastName: lastName);
-        localDataSource.cacheAuthToken(authToken);
-        final User user = await remoteDataSource.getUser(authToken);
-        return Right(user);
+      final String authToken = await remoteDataSource.signUp(
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName);
+      localDataSource.cacheAuthToken(authToken);
+      Map<String, dynamic> header = Map<String, dynamic>.from({
+        "Authorization": "Token " + authToken.toString()
+      });
+      final User user = await remoteDataSource.getUser(header);
+      return Right(user);
     });
   }
 
-  Future<Either<Failure, Map<String, dynamic>>> _getMap(_GetMap remote, _GetMap local) async {
+  Future<Either<Failure, Map<String, dynamic>>> _getMap(
+      _GetMap remote, _GetMap local) async {
     if (await networkInfo.isConnected) {
       try {
         return await remote();
@@ -101,12 +118,28 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, Map<String, dynamic>>> getSession() async {
     return await _getMap(() async {
       final String authToken = await localDataSource.getAuthToken();
-        final Map<String, dynamic> session = await remoteDataSource.getSession(authToken);
-        await localDataSource.cacheSession(session);
-        return Right(session);
+      Map<String, dynamic> header = Map<String, dynamic>.from({
+        "Authorization": "Token " + authToken.toString()
+      });
+      final Map<String, dynamic> session =
+          await remoteDataSource.getSession(header);
+      await localDataSource.cacheSession(session);
+      return Right(session);
     }, () async {
-      final Map<String, dynamic> session = await localDataSource.getCachedSession();
+      final Map<String, dynamic> session =
+          await localDataSource.getCachedSession();
       return Right(session);
     });
   }
+
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      await localDataSource.clearData();
+      return Right(null);
+    } on CacheException {
+      return Left(CacheFailure());
+    }
+  }
+
 }
