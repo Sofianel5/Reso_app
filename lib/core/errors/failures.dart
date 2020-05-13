@@ -1,39 +1,44 @@
+import 'package:Reso/core/localizations/messages.dart';
 import 'package:equatable/equatable.dart';
+import 'package:meta/meta.dart';
 
 abstract class Failure extends Equatable {
-  Failure();
+  final String message;
+  Failure({this.message}) : assert(message != null);
   @override
   List<Object> get props => const <dynamic>[];
 }
 
 class ServerFailure extends Failure {
-  final int errnum;
-  final String messageCode;
+  final String message;
   ServerFailure({
-    this.errnum,
-    this.messageCode,
-  });
-  List<Object> get props => <dynamic>[errnum, messageCode];
+    @required this.message,
+  }) : super(message: message);
+  List<Object> get props => <dynamic>[message];
 }
-class CacheFailure  extends Failure {
-  final String messageCode;
-  CacheFailure({
-    this.messageCode
-  });
-  List<Object> get props => <dynamic>[messageCode];
+
+class CacheFailure extends Failure {
+  final String message;
+  CacheFailure({@required this.message}) : super(message: message);
+  List<Object> get props => <dynamic>[message];
 }
+
 class ConnectionFailure extends Failure {
-  final String messageCode = "NoConnection";
-  ConnectionFailure();
+  final String message;
+  ConnectionFailure({@required this.message}) : super(message: message);
 }
 
 class AuthenticationFailure extends ServerFailure {
-  final errorno = 403;
-  final messageCode = "AuthFailure";
-  AuthenticationFailure();
+  final String message;
+  AuthenticationFailure({@required this.message}) : super(message: message);
 }
 
 class InvalidInputFailure extends Failure {
-  final String messageCode;
-  InvalidInputFailure({this.messageCode});
+  final String message;
+  InvalidInputFailure({@required this.message}) : super(message: message);
+}
+
+class InvalidFormFailure extends Failure {
+  final Map<String, String> messages;
+  InvalidFormFailure({this.messages}) : assert(messages != null && messages.length != 0), super(message: Messages.INVALID_FORM);
 }

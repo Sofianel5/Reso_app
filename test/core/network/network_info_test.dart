@@ -9,7 +9,7 @@ class MockDataConnectionChecker extends Mock implements DataConnectionChecker {}
 void main() {
   MockDataConnectionChecker mockDataConnectionChecker;
   NetworkInfoImpl networkInfoImpl;
-
+  
   setUp(() {
     mockDataConnectionChecker = MockDataConnectionChecker();
     networkInfoImpl = NetworkInfoImpl(mockDataConnectionChecker);

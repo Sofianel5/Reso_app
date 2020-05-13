@@ -1,3 +1,4 @@
+import 'package:Reso/core/util/input_converter.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -13,7 +14,15 @@ class Login extends UseCase<User, LoginParams> {
 
   @override 
   Future<Either<Failure, User>> call(LoginParams params) async {
-    return await repository.login(email: params.email, password: params.password);
+    final inputValidator = InputConverter();
+    final invalidInputs = inputValidator.validateLoginForm(params.email, params.password);
+    if (invalidInputs.length != 0) {
+      InvalidFormFailure val = await Future.delayed(Duration(seconds: 0), () => InvalidFormFailure(messages: invalidInputs));
+      return Left(val);
+    } else {
+      final userOrFailure = await repository.login(email: params.email, password: params.password);
+      return userOrFailure;
+    }
   }
 }
 

@@ -1,7 +1,9 @@
 import 'package:Reso/core/errors/failures.dart';
+import 'package:Reso/core/localizations/messages.dart';
 import 'package:Reso/core/util/input_converter.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:validators/sanitizers.dart';
 
 void main() {
   InputConverter inputConverter;
@@ -39,7 +41,7 @@ void main() {
       // act
       final result = inputConverter.parseName(str);
       // assert
-      expect(result, Left(InvalidInputFailure(messageCode: "invalid_name")));
+      expect(result, Left(InvalidInputFailure(message: Messages.INVALID_NAME_INPUT)));
     });
     test('should fail when too long', () {
       // arrange
@@ -61,7 +63,15 @@ void main() {
       // act
       final result = inputConverter.parseName(str);
       // assert
-      expect(result, Left(InvalidInputFailure(messageCode: "invalid_name")));
+      expect(result, Left(InvalidInputFailure(message: Messages.INVALID_LENGTH_NAME_INPUT)));
+    });
+    test("should reject null", () {
+      // arrange
+      final str = null;
+      // act
+      final result = inputConverter.parseName(str);
+      // assert
+      expect(result, Left(InvalidInputFailure(message: Messages.NULL_NAME_INPUT)));
     });
   });
   group("parseEmail", () {
@@ -73,6 +83,14 @@ void main() {
       // assert
       expect(result, Right("sofiane@gmail.com"));
     });
+    test("should reject null", () {
+      // arrange
+      final str = null;
+      // act
+      final result = inputConverter.parseEmail(str);
+      // assert
+      expect(result, Left(InvalidInputFailure(message: Messages.NULL_EMAIL_INPUT)));
+    });
   });
 
   group("parsePassword", () {
@@ -82,7 +100,7 @@ void main() {
       // act
       final result = inputConverter.parsePassword(str);
       // assert
-      expect(result, Left(InvalidInputFailure()));
+      expect(result, Left(InvalidInputFailure(message: Messages.INVALID_LENGTH_PASSWORD_INPUT)));
     });
     test('should reject giant passwords', () {
       // arrange
@@ -104,7 +122,7 @@ void main() {
       // act
       final result = inputConverter.parsePassword(str);
       // assert
-      expect(result, Left(InvalidInputFailure()));
+      expect(result, Left(InvalidInputFailure(message: Messages.INVALID_LENGTH_PASSWORD_INPUT)));
     });
     test('should allow normal passwords', () {
       // arrange
@@ -113,6 +131,25 @@ void main() {
       final result = inputConverter.parsePassword(str);
       // assert
       expect(result, Right(str));
+    });
+    test("should reject null", () {
+      // arrange
+      final str = null;
+      // act
+      final result = inputConverter.parsePassword(str);
+      // assert
+      expect(result, Left(InvalidInputFailure(message: Messages.NULL_EMAIL_INPUT)));
+    });
+  });
+  group("validateLoginForm", () {
+    test("should return [Failure] if email is empty string", () {
+      // arrange
+      final email = "";
+      final password = "bruh123687";
+      // act 
+      final result = inputConverter.validateLoginForm(email, password);
+      // assert
+      expect(result, {"email": Messages.NULL_EMAIL_INPUT});
     });
   });
 }

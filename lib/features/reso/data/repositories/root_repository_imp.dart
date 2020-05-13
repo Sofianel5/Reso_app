@@ -1,4 +1,5 @@
 import 'package:Reso/core/errors/exceptions.dart';
+import 'package:Reso/core/localizations/messages.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -29,17 +30,15 @@ class RootRepositoryImpl implements RootRepository {
         return await body();
       } on AuthenticationException {
         // Some error like 403
-        return Left(AuthenticationFailure());
+        return Left(AuthenticationFailure(message: Messages.INVALID_PASSWORD));
       } on ServerException {
-        // Some server error 500
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: Messages.SERVER_FAILURE));
       } on CacheException {
-        // No stored auth token
-        return Left(AuthenticationFailure());
+        return Left(AuthenticationFailure(message: Messages.NO_USER));
       }
     } else {
       // No internet
-      return Left(ConnectionFailure());
+      return Left(ConnectionFailure(message: Messages.NO_INTERNET));
     }
   }
 
@@ -97,19 +96,19 @@ class RootRepositoryImpl implements RootRepository {
         return await remote();
       } on AuthenticationException {
         // Some error like 403
-        return Left(AuthenticationFailure());
+        return Left(AuthenticationFailure(message: Messages.INVALID_PASSWORD));
       } on ServerException {
         // Some server error 500
-        return Left(ServerFailure());
+        return Left(ServerFailure(message: Messages.SERVER_FAILURE));
       } on CacheException {
         // No stored auth token
-        return Left(AuthenticationFailure());
+        return Left(AuthenticationFailure(message: Messages.NO_USER));
       }
     } else {
       try {
         return await local();
       } on CacheException {
-        return Left(AuthenticationFailure());
+        return Left(AuthenticationFailure(message: Messages.NO_USER));
       }
     }
   }
@@ -138,7 +137,7 @@ class RootRepositoryImpl implements RootRepository {
       await localDataSource.clearData();
       return Right(null);
     } on CacheException {
-      return Left(CacheFailure());
+      return Left(CacheFailure(message: Messages.CACHE_WRITE_FAILURE));
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:Reso/core/errors/exceptions.dart';
 import 'package:Reso/core/errors/failures.dart';
+import 'package:Reso/core/localizations/messages.dart';
 import 'package:Reso/core/network/network_info.dart';
 import 'package:Reso/features/reso/data/datasources/local_datasource.dart';
 import 'package:Reso/features/reso/data/datasources/remote_datasource.dart';
@@ -74,9 +75,10 @@ void main() {
       // assert
       verify(mockNetworkInfo.isConnected);
     });
+
     runTestsOnline(() {
       test(
-          'getUser should return remote data when call to remote data source is successful and token available',
+          'should return remote data when call to remote data source is successful and token available',
           () async {
         // arrange
         when(mockLocalDataSource.getAuthToken())
@@ -91,7 +93,7 @@ void main() {
       });
 
       test(
-          'getUser should return AuthenticationFailure when call to local auth token unsuccessful',
+          'should return AuthenticationFailure when call to local auth token unsuccessful',
           () async {
         // arrange
         when(mockLocalDataSource.getAuthToken()).thenThrow(CacheException());
@@ -101,10 +103,11 @@ void main() {
         final result = await repository.getUser();
         // assert
         verify(mockLocalDataSource.getAuthToken());
-        expect(result, Left(AuthenticationFailure()));
+        expect(result, Left(AuthenticationFailure(message: Messages.NO_USER)));
       });
+
       test(
-          'getUser should return ServerFailure when call to remote data source unsuccessful 500',
+          'should return ServerFailure when call to remote data source unsuccessful 500',
           () async {
         // arrange
         when(mockLocalDataSource.getAuthToken())
@@ -114,11 +117,11 @@ void main() {
         final result = await repository.getUser();
         // assert
         verify(mockLocalDataSource.getAuthToken());
-        expect(result, Left(ServerFailure()));
+        expect(result, Left(ServerFailure(message: Messages.SERVER_FAILURE)));
       });
 
       test(
-          'getUser should return AuthenticationFailure when call to remote data source unsuccessful 403',
+          'should return AuthenticationFailure when call to remote data source unsuccessful 403',
           () async {
         // arrange
         when(mockLocalDataSource.getAuthToken())
@@ -129,18 +132,18 @@ void main() {
         final result = await repository.getUser();
         // assert
         verify(mockLocalDataSource.getAuthToken());
-        expect(result, Left(AuthenticationFailure()));
+        expect(result, Left(AuthenticationFailure(message: Messages.INVALID_PASSWORD)));
       });
     });
     runTestsOffline(() {
       test(
-          'getUser should return ConnectionFailure when call to remote data source unsuccessful',
+          'should return ConnectionFailure when call to remote data source unsuccessful',
           () async {
         // arrange
         // act
         final result = await repository.getUser();
         // assert
-        expect(result, Left(ConnectionFailure()));
+        expect(result, Left(ConnectionFailure(message: Messages.NO_INTERNET)));
       });
     });
   });
@@ -155,7 +158,7 @@ void main() {
     });
     runTestsOnline(() {
       test(
-          'login should return remote data when call to remote data source is successful',
+          'should return remote data when call to remote data source is successful',
           () async {
         // arrange
         when(
@@ -178,7 +181,7 @@ void main() {
         expect(result, Right(user));
       });
       test(
-          'login should cache data locally when call to remote data source is successful',
+          'should cache data locally when call to remote data source is successful',
           () async {
         // arrange
         when(
@@ -200,7 +203,7 @@ void main() {
       });
 
       test(
-          'login should return server failure when call to remote data source is unsuccessful',
+          'should return server failure when call to remote data source is unsuccessful',
           () async {
         // arrange
         when(
@@ -219,22 +222,22 @@ void main() {
           ),
         );
         verifyZeroInteractions(mockLocalDataSource);
-        expect(result, Left(ServerFailure()));
+        expect(result, Left(ServerFailure(message: Messages.SERVER_FAILURE)));
       });
     });
     runTestsOffline(() {
       test(
-          'login should return connection failure when internet connection is unavailable',
+          'should return connection failure when internet connection is unavailable',
           () async {
         // arrange
         // act
         final result = await repository.login(email: email, password: password);
         // assert
-        expect(result, Left(ConnectionFailure()));
+        expect(result, Left(ConnectionFailure(message: Messages.NO_INTERNET)));
       });
 
       test(
-          'getSession should return local cache data when internet connection is unavailable',
+          'should return local cache data when internet connection is unavailable',
           () async {
         // arrange
         when(mockLocalDataSource.getCachedSession())
@@ -244,18 +247,6 @@ void main() {
 
         // assert
         expect(result, Right(session));
-      });
-
-      test(
-          'getSession should return AuthenticationFailure when internet connection is unavailable and no previous caches',
-          () async {
-        // arrange
-        when(mockLocalDataSource.getCachedSession())
-            .thenThrow(CacheException());
-        // act
-        final result = await repository.getSession();
-        // assert
-        expect(result, Left(AuthenticationFailure()));
       });
     });
   });
@@ -319,7 +310,20 @@ void main() {
         verify(
           mockRemoteDataSource.getSession(any),
         );
-        expect(result, Left(ServerFailure()));
+        expect(result, Left(ServerFailure(message: Messages.SERVER_FAILURE)));
+      });
+    });
+    runTestsOffline(() {
+      test(
+          'should return AuthenticationFailure when internet connection is unavailable and no previous caches',
+          () async {
+        // arrange
+        when(mockLocalDataSource.getCachedSession())
+            .thenThrow(CacheException());
+        // act
+        final result = await repository.getSession();
+        // assert
+        expect(result, Left(AuthenticationFailure(message: Messages.NO_USER)));
       });
     });
   });
@@ -411,7 +415,7 @@ void main() {
           ),
         );
         verifyZeroInteractions(mockLocalDataSource);
-        expect(result, Left(ServerFailure()));
+        expect(result, Left(ServerFailure(message: Messages.SERVER_FAILURE)));
       });
     });
 
@@ -428,7 +432,7 @@ void main() {
           lastName: lastName,
         );
         // assert
-        expect(result, Left(ConnectionFailure()));
+        expect(result, Left(ConnectionFailure(message: Messages.SERVER_FAILURE)));
       });
     });
   });
