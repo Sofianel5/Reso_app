@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/localizations/localizations.dart';
+import 'features/reso/presentation/pages/root.dart';
 import 'features/reso/presentation/pages/splash.dart';
 import 'injection_container.dart' as ic;
-import 'injection_container.dart';
+import 'routes/routes.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await ic.init();
   runApp(Reso());
 }
@@ -21,7 +23,7 @@ class _ResoState extends State<Reso> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<RootBloc>(),
+      create: (context) => ic.sl<RootBloc>(),
       child: MaterialApp(
         title: 'Reso',
         theme: ThemeData(
@@ -60,23 +62,3 @@ class _ResoState extends State<Reso> {
   }
 }
 
-class RootPage extends StatefulWidget {
-  RootPage({Key key}) : super(key: key);
-  @override
-  _RootPageState createState() => _RootPageState();
-}
-
-class _RootPageState extends State<RootPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<RootBloc, RootState>(
-        builder: (context, state) {
-          if (state is InitialState) {
-            return SplashScreen();
-          }
-        },
-      ),
-    );
-  }
-}

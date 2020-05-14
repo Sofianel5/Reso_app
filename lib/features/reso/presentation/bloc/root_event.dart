@@ -40,7 +40,7 @@ class SignupEvent extends RootEvent {
 }
 
 class ErrorEvent extends RootEvent {
-  final Message message;
+  final String message;
   ErrorEvent({this.message});
   @override
   List<Object> get props => [message];

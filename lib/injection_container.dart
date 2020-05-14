@@ -13,6 +13,7 @@ import 'features/reso/domain/usecases/get_session.dart';
 import 'features/reso/domain/usecases/get_user.dart';
 import 'features/reso/domain/usecases/login.dart';
 import 'features/reso/domain/usecases/logout.dart';
+import 'features/reso/domain/usecases/signup.dart';
 import 'features/reso/presentation/bloc/root_bloc.dart';
 
 final sl = GetIt.instance;
@@ -20,10 +21,11 @@ Future<void> init() async {
   //! Features
   sl.registerFactory(() => RootBloc(getExistingUser: sl(), login: sl(), getSessions: sl(), signup: sl(), logout: sl()));
   // Register use cases 
-  sl.registerSingleton(() => GetExistingUser(sl()));
-  sl.registerSingleton(() => Login(sl()));
-  sl.registerSingleton(() => Logout(sl()));
-  sl.registerSingleton(() => GetSessions(sl()));
+  sl.registerLazySingleton<GetExistingUser>(() => GetExistingUser(sl()));
+  sl.registerLazySingleton<Signup>(() => Signup(sl()));
+  sl.registerLazySingleton<Login>(() => Login(sl()));
+  sl.registerLazySingleton<Logout>(() => Logout(sl()));
+  sl.registerLazySingleton<GetSessions>(() => GetSessions(sl()));
   // Register repositories
   sl.registerLazySingleton<RootRepository>(() => RootRepositoryImpl(remoteDataSource: sl(), localDataSource: sl(), networkInfo: sl()));
   // Register data sources 
@@ -31,12 +33,12 @@ Future<void> init() async {
   sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(client: sl()));
 
   //! Core
-  sl.registerLazySingleton(() => InputConverter());
-  sl.registerLazySingleton(() => NetworkInfoImpl(sl()));
+  sl.registerLazySingleton<InputConverter>(() => InputConverter());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 
   //! External dependencies
-  sl.registerLazySingleton(() => DataConnectionChecker());
+  sl.registerLazySingleton<DataConnectionChecker>(() => DataConnectionChecker());
   final sharedPreferences = await SharedPreferences.getInstance();
-  sl.registerLazySingleton(() => sharedPreferences);
-  sl.registerLazySingleton(() => http.Client());
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerLazySingleton<http.Client>(() => http.Client());
 }
