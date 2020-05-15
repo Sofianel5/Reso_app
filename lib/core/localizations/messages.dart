@@ -17,4 +17,6 @@ class Messages {
   static const String INVALID_LENGTH_EMAIL = "INVALID_LENGTH_EMAIL";
   static const String INVALID_FORM = "INVALID_FORM";
   static const String UNKNOWN_ERROR = "UNKNOWN_ERROR";
+  static const String EMPTY_SEARCH_Q = "EMPTY_SEARCH_Q";
+  static const String NO_SCAN = "NO_SCAN";
 }

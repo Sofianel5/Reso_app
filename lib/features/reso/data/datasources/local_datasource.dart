@@ -1,17 +1,28 @@
 import 'dart:convert';
 
 import 'package:Reso/core/errors/exceptions.dart';
+import 'package:Reso/features/reso/data/models/coordinates_model.dart';
+import 'package:Reso/features/reso/data/models/user_model.dart';
+import 'package:Reso/features/reso/data/models/venue_model.dart';
+import 'package:Reso/features/reso/domain/entities/coordinates.dart';
+import 'package:Reso/features/reso/domain/entities/user.dart';
+import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 abstract class LocalDataSource {
   Future<String> getAuthToken() {}
   Future<void> cacheAuthToken(String token) {}
-  Future<Map<String, dynamic>> getCachedSession() {}
-  Future<void> cacheSession(Map<String, dynamic> session) {}
   Future<void> clearData() {}
+  Future<Coordinates> getCoordinates() {}
+  Future<void> cacheVenues(List<VenueModel> venues) {}
+  Future<List<Venue>> getCachedVenues() {}
+  Future<void> cacheUser(UserModel user) {}
+  Future<User> getCachedUser() {}
 }
 const String AUTH_TOKEN_KEY = "authtoken";
-const String SESSION_KEY = "sessionKey";
+const String VENUES_KEY = "venues";
+const String USER_KEY = "user";
 
 class LocalDataSourceImpl implements LocalDataSource {
   final SharedPreferences sharedPreferences;
@@ -52,6 +63,29 @@ class LocalDataSourceImpl implements LocalDataSource {
       throw CacheException();
     }
   }
+
+  @override
+  Future<void> cacheVenues(List<VenueModel> venues) async {
+    List<Map<String, dynamic>> venueJson = [];
+    for (var venue in venues) {
+      venueJson.add(venue.toJson());
+    }
+    String encoded = json.encode(venueJson);
+    return await _setString(VENUES_KEY, encoded);
+  }
+
+
+
+  @override
+  Future<List<Venue>> getCachedVenues() async {
+    String venueJsonEncode =  await _getString(VENUES_KEY);
+    List<Map<String, dynamic>> venueJson = json.decode(venueJsonEncode);
+    List<Venue> venues = [];
+    for (var venueMap in venueJson) {
+      venues.add(VenueModel.fromJson(venueMap));
+    }
+    return venues;
+  }
   
   @override
   Future<String> getAuthToken() {
@@ -63,17 +97,6 @@ class LocalDataSourceImpl implements LocalDataSource {
     return await _setString(AUTH_TOKEN_KEY, token);
   }
 
-
-  @override
-  Future<void> cacheSession(Map<String, dynamic> session) async {
-    return await _setJson(SESSION_KEY, session);
-  }
-
-  @override
-  Future<Map<String, dynamic>> getCachedSession() async {
-    return await _getJson(SESSION_KEY);
-  }
-
   @override 
   Future<void> clearData() async {
     try {
@@ -83,5 +106,32 @@ class LocalDataSourceImpl implements LocalDataSource {
     } catch (e) {
       throw CacheException();
     }
+  }
+
+  Future<Coordinates> getCoordinates() async {
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (position == null) {
+      Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+      if (position == null) {
+        return null;
+      }
+    }
+    Map<String, String> coordinates = {
+      "LAT": position.latitude.toString(),
+      "LNG": position.longitude.toString()
+    };
+    return CoordinatesModel.fromJson(coordinates);
+  }
+
+  @override
+  Future<void> cacheUser(UserModel user) async {
+    Map<String, dynamic> userJson = user.toJson();
+    return await _setJson(USER_KEY, userJson);
+  }
+
+  @override
+  Future<User> getCachedUser() async {
+    Map<String, dynamic> userJson = await _getJson(USER_KEY);
+    return UserModel.fromJson(userJson);
   }
 }

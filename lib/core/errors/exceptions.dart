@@ -8,3 +8,4 @@ class SignUpException extends AuthenticationException{
     this.message
   }); // User submits bad data 
 }
+class NoScanException implements Exception {}

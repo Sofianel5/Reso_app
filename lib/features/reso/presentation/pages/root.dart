@@ -1,9 +1,12 @@
-import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
-import 'package:Reso/features/reso/presentation/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/localizations/messages.dart';
+import '../bloc/root_bloc.dart';
+import 'error.dart';
+import 'home.dart';
 import 'login.dart';
+import 'splash.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({Key key}) : super(key: key);
@@ -22,6 +25,12 @@ class _RootPageState extends State<RootPage> {
             return SplashScreen();
           } else if (state is UnauthenticatedState) {
             return LoginPage();
+          } else if (state is AuthenticatedState) {
+            return HomePage();
+          } else if (state is ErrorState) {
+            return ErrorScreen(message: state.message);
+          } else {
+            return ErrorScreen(message: Messages.UNKNOWN_ERROR);
           }
         },
       ),

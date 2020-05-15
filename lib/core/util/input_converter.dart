@@ -64,4 +64,11 @@ class InputConverter {
     }, (r) => {});
     return messages;
   }
+  Either<Failure, String> validateSearchQuery(String query) {
+    if (isNull(query)) {
+      return Left(InvalidInputFailure(message: Messages.EMPTY_SEARCH_Q));
+    } else {
+      return Right(query);
+    }
+  }
 }

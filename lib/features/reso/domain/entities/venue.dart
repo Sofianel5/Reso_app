@@ -33,6 +33,18 @@ class Venue extends Equatable {
 
   @override
   List<Object> get props => [id];
+  static const types = <String>[
+    "All",
+    "Resturaunt",
+    "Grocery",
+    "Coffee",
+    "Gym",
+    "Gas",
+    "Mail",
+    "Repair",
+    "Beauty",
+    "Education"
+  ];
 }
 
 class VenueDetail extends Venue {

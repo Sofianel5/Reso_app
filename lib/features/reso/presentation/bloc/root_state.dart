@@ -16,14 +16,6 @@ class ErrorState extends RootState {
   List<Object> get props => [message];
 }
 
-class LoginState extends RootState {
-  final Map<String, String> widgetMessages;
-  final String globalMessage;
-  const LoginState({this.widgetMessages, this.globalMessage});
-
-  @override
-  List<Object> get props => [widgetMessages];
-}
 
 class UnauthenticatedState extends RootState {
   @override
@@ -37,22 +29,18 @@ class AuthenticationError extends UnauthenticatedState implements ErrorState {
 
 class AuthenticatedState extends RootState {
   final User user;
-  AuthenticatedState({this.user});
+  AuthenticatedState({@required this.user}) : assert(user != null);
   @override
   List<Object> get props => [user];
 }
 
-class LoadingState extends RootState {
+abstract class LoadingState extends RootState {
   final String message;
   LoadingState({this.message});
   @override
   List<Object> get props => [message];
 }
-class LoadingHomeState extends AuthenticatedState implements LoadingState {
-  final String message = Messages.LOADING;
-}
 
-class HomeState extends AuthenticatedState {}
 
 class NoInternetState extends ErrorState {
   @override

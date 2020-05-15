@@ -42,3 +42,11 @@ class InvalidFormFailure extends Failure {
   final Map<String, String> messages;
   InvalidFormFailure({this.messages}) : assert(messages != null && messages.length != 0), super(message: Messages.INVALID_FORM);
 }
+
+class UnknownFailure extends Failure {
+  final String message = Messages.UNKNOWN_ERROR;
+}
+
+class NoScanFailure extends Failure {
+  final String message = Messages.NO_SCAN;
+}

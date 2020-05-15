@@ -39,6 +39,7 @@ class VenueModel extends Venue implements Model {
           coordinates: coordinates,
           address: address,
         );
+    
 
   factory VenueModel.fromJson(Map<String, dynamic> json) =>
       _$VenueModelFromJson(json);

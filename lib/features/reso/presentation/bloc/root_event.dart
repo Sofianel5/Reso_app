@@ -10,25 +10,6 @@ class GetExistingUserEvent extends RootEvent {
   List<Object> get props => [];
 }
 
-class LoginEvent extends RootEvent {
-  final String email;
-  final String password;
-  LoginEvent({this.email, this.password});
-  LoginParams get params => LoginParams(email: email, password: password);
-  @override
-  List<Object> get props => [email, password];
-}
-
-class ResetPasswordEvent extends RootEvent {
-  @override
-  List<Object> get props => [];
-}
-
-class RequestSignupEvent extends RootEvent {
-  @override
-  List<Object> get props => [];
-}
-
 class SignupEvent extends RootEvent {
   final String email;
   final String password;
