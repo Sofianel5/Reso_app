@@ -9,22 +9,34 @@ import 'features/reso/data/datasources/local_datasource.dart';
 import 'features/reso/data/datasources/remote_datasource.dart';
 import 'features/reso/data/repositories/root_repository_imp.dart';
 import 'features/reso/domain/repositories/root_repository.dart';
+import 'features/reso/domain/usecases/confirm_scan.dart';
 import 'features/reso/domain/usecases/get_cached_user.dart';
+import 'features/reso/domain/usecases/get_registrations.dart';
+import 'features/reso/domain/usecases/get_scan.dart';
+import 'features/reso/domain/usecases/get_timeslots.dart';
 import 'features/reso/domain/usecases/get_user.dart';
 import 'features/reso/domain/usecases/get_venue_detail.dart';
 import 'features/reso/domain/usecases/get_venues.dart';
 import 'features/reso/domain/usecases/login.dart';
 import 'features/reso/domain/usecases/logout.dart';
+import 'features/reso/domain/usecases/register.dart';
 import 'features/reso/domain/usecases/search.dart';
 import 'features/reso/domain/usecases/signup.dart';
+import 'features/reso/domain/usecases/toggle_lock_state.dart';
 import 'features/reso/presentation/bloc/root_bloc.dart';
 
 final sl = GetIt.instance;
 Future<void> init() async {
   //! Features
-  sl.registerFactory(() => RootBloc(search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
+  sl.registerFactory(() => RootBloc(toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
   // Register use cases 
   sl.registerLazySingleton<GetExistingUser>(() => GetExistingUser(sl()));
+  sl.registerLazySingleton<ConfirmScan>(()=>ConfirmScan(sl()));
+  sl.registerLazySingleton<GetRegistrations>(()=>GetRegistrations(sl()));
+  sl.registerLazySingleton<GetScan>(()=>GetScan(sl()));
+  sl.registerLazySingleton<GetTimeSlots>(()=>GetTimeSlots(sl()));
+  sl.registerLazySingleton<Register>(()=>Register(sl()));
+  sl.registerLazySingleton<ToggleLock>(()=>ToggleLock(sl()));
   sl.registerLazySingleton<Search>(() => Search(sl()));
   sl.registerLazySingleton<GetCachedUser>(() => GetCachedUser(sl()));
   sl.registerLazySingleton<Signup>(() => Signup(sl()));

@@ -19,4 +19,6 @@ class Messages {
   static const String UNKNOWN_ERROR = "UNKNOWN_ERROR";
   static const String EMPTY_SEARCH_Q = "EMPTY_SEARCH_Q";
   static const String NO_SCAN = "NO_SCAN";
+  static const String CANNOT_REGISTER = "CANNOT_REGISTER";
+  static const String NEEDS_UPDATE = "NEEDS_UPDATE";
 }

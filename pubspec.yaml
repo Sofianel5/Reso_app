@@ -40,6 +40,7 @@ dependencies:
   get_it: ^4.0.2
   flutter_bloc: ^4.0.0
   cached_network_image: ^2.2.0+1
+  sailor: ^0.5.0
 
 dev_dependencies:
   flutter_test:

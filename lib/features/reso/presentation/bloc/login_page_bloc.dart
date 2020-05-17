@@ -18,7 +18,7 @@ class LoginBlocRouter {
           }
         },
         (user) async* {
-          yield AuthenticatedState(user: user);
+          yield AuthenticatedState(user);
         },
       );
     }

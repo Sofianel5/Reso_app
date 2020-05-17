@@ -109,6 +109,7 @@ class BrowseScreenState extends State<BrowseScreen> {
     final RootBloc bloc = BlocProvider.of<RootBloc>(context);
     final BrowseState state = bloc.state;
     return BlocListener(
+      bloc: bloc,
       listener: (context, state) {
         if (state is LoadedBrowseState) {
           _refreshCompleter?.complete();
@@ -116,6 +117,7 @@ class BrowseScreenState extends State<BrowseScreen> {
         }
       },
       child: BlocBuilder(
+        bloc: bloc,
         builder: (context, state) => SafeArea(
           bottom: false,
           child: RefreshIndicator(
@@ -151,7 +153,7 @@ class BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  RefreshIndicator buildLoadedBody(RootBloc bloc, BrowseState state) {
+  RefreshIndicator buildLoadedBody(RootBloc bloc, LoadedBrowseState state) {
     return RefreshIndicator(
       onRefresh: () async {
         bloc.add(BrowsePageRefreshEvent());
@@ -162,9 +164,9 @@ class BrowseScreenState extends State<BrowseScreen> {
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
           shrinkWrap: true,
-          itemCount: state.venues?.length ?? 0,
+          itemCount: state.loadedVenues?.length ?? 0,
           itemBuilder: (BuildContext context, int index) => VenueCard(
-            venue: state.venues[index],
+            venue: state.loadedVenues[index],
           ),
         ),
       ),

@@ -27,66 +27,79 @@ class _HomePageState extends State<HomePage> {
     AccountScreen(),
   ];
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    RootBloc bloc = BlocProvider.of<RootBloc>(context);
+    AuthenticatedState state = bloc.state;
+    bloc.add(BrowsePageCreationEvent(user: state.user));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener(
+      bloc: BlocProvider.of<RootBloc>(context),
       listener: (context, state) {},
-      child: BlocBuilder(builder: (context, state) {
-        if (state is HomeState) {
-          return Scaffold(
-            backgroundColor: Color(0xFFF3F5F7),
-            body: _mainPages[_selectedPage],
-            bottomNavigationBar: CurvedNavigationBar(
-              backgroundColor: Color.fromRGBO(0, 0, 0, 0),
-              animationCurve: Curves.easeInOutSine,
-              animationDuration: Duration(milliseconds: 400),
-              index: _selectedPage,
-              onTap: (int value) {
-                setState(() {
-                  _selectedPage = value;
-                });
-              },
-              items: <Widget>[
-                Icon(
-                  Icons.home,
-                  size: 30,
-                  color: _selectedPage == 0
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : Colors.black,
+      child: BlocBuilder(
+          bloc: BlocProvider.of<RootBloc>(context),
+          builder: (context, state) {
+            if (state is HomeState) {
+              return Scaffold(
+                backgroundColor: Color(0xFFF3F5F7),
+                body: _mainPages[_selectedPage],
+                bottomNavigationBar: CurvedNavigationBar(
+                  backgroundColor: Color.fromRGBO(0, 0, 0, 0),
+                  animationCurve: Curves.easeInOutSine,
+                  animationDuration: Duration(milliseconds: 400),
+                  index: _selectedPage,
+                  onTap: (int value) {
+                    BlocProvider.of<RootBloc>(context)
+                        .add(PageChangeEvent(index: value));
+                    setState(() {
+                      _selectedPage = value;
+                    });
+                  },
+                  items: <Widget>[
+                    Icon(
+                      Icons.home,
+                      size: 30,
+                      color: _selectedPage == 0
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Colors.black,
+                    ),
+                    Icon(
+                      Icons.search,
+                      size: 30,
+                      color: _selectedPage == 1
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Colors.black,
+                    ),
+                    Icon(
+                      Icons.memory,
+                      color: _selectedPage == 2
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Colors.black,
+                    ),
+                    Icon(
+                      Icons.list,
+                      size: 30,
+                      color: _selectedPage == 3
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Colors.black,
+                    ),
+                    Icon(
+                      Icons.account_circle,
+                      size: 30,
+                      color: _selectedPage == 4
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Colors.black,
+                    ),
+                  ],
                 ),
-                Icon(
-                  Icons.search,
-                  size: 30,
-                  color: _selectedPage == 1
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : Colors.black,
-                ),
-                Icon(
-                  Icons.memory,
-                  color: _selectedPage == 2
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : Colors.black,
-                ),
-                Icon(
-                  Icons.list,
-                  size: 30,
-                  color: _selectedPage == 3
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : Colors.black,
-                ),
-                Icon(
-                  Icons.account_circle,
-                  size: 30,
-                  color: _selectedPage == 4
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : Colors.black,
-                ),
-              ],
-            ),
-          );
-        } else {
-          return ErrorScreen(message: Messages.UNKNOWN_ERROR);
-        }
-      }),
+              );
+            } else {
+              return ErrorScreen(message: Messages.UNKNOWN_ERROR);
+            }
+          }),
     );
   }
 }

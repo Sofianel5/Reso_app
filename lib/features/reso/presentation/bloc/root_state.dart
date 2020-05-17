@@ -29,7 +29,7 @@ class AuthenticationError extends UnauthenticatedState implements ErrorState {
 
 class AuthenticatedState extends RootState {
   final User user;
-  AuthenticatedState({@required this.user}) : assert(user != null);
+  AuthenticatedState(this.user) : assert(user != null);
   @override
   List<Object> get props => [user];
 }

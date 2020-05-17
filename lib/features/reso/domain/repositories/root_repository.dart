@@ -17,5 +17,7 @@ abstract class RootRepository {
   Future<Either<Failure, bool>> toggleLockState();
   Future<Either<Failure, bool>> confirmScan(Thread thread);
   Future<Either<Failure, Thread>> checkForScan();
-  Future<Either<Failure, bool>> register(TimeSlot timeSlot);
+  Future<Either<Failure, bool>> register(TimeSlot timeSlot, Venue venue);
+  Future<Either<Failure, Map<String, List<TimeSlotDetail>>>> getRegistrations();
+  Future<Either<Failure, List<TimeSlot>>> getTimeSlots(Venue venue);
 }

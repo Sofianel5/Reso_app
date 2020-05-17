@@ -1,9 +1,11 @@
+import 'package:Reso/core/constants/constants.dart';
 import 'package:Reso/core/errors/exceptions.dart';
 import 'package:Reso/core/localizations/messages.dart';
 import 'package:Reso/features/reso/data/models/user_model.dart';
 import 'package:Reso/features/reso/data/models/venue_model.dart';
 import 'package:Reso/features/reso/domain/entities/coordinates.dart';
 import 'package:Reso/features/reso/domain/entities/thread.dart';
+import 'package:Reso/features/reso/domain/entities/timeslot.dart';
 import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
@@ -33,6 +35,8 @@ class RootRepositoryImpl implements RootRepository {
     if (await networkInfo.isConnected) {
       try {
         return await body();
+      } on NeedsUpdateException {
+        return Left(NeedsUpdateFailure());
       } on AuthenticationException {
         // Some error like 403
         print("Auth exception");
@@ -54,8 +58,11 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, User>> getUser() async {
     return await _getUser(() async {
       final String authToken = await localDataSource.getAuthToken();
+      final String appVersion = Constants.APP_VERSION.toString();
+      print(appVersion);
       Map<String, dynamic> header = Map<String, dynamic>.from(<String, String>{
         "Authorization": "Token " + authToken.toString(),
+        "APP-VERSION": appVersion
       });
       final UserModel user = await remoteDataSource.getUser(header);
       try {
@@ -124,8 +131,12 @@ class RootRepositoryImpl implements RootRepository {
           firstName: firstName,
           lastName: lastName);
       localDataSource.cacheAuthToken(authToken);
-      Map<String, dynamic> header = Map<String, dynamic>.from(
-          {"Authorization": "Token " + authToken.toString()});
+      final Coordinates coordinates = await localDataSource.getCoordinates();
+      Map<String, dynamic> header = Map<String, dynamic>.from({
+        "Authorization": "Token " + authToken.toString(),
+        "LAT": coordinates == null ? "" : coordinates.lat.toString(),
+        "LNG": coordinates == null ? "" : coordinates.lng.toString()
+      });
       final User user = await remoteDataSource.getUser(header);
       return Right(user);
     });
@@ -163,7 +174,7 @@ class RootRepositoryImpl implements RootRepository {
       try {
         final String authToken = await localDataSource.getAuthToken();
         final Coordinates coordinates = await localDataSource.getCoordinates();
-        Map<String, dynamic> header = Map<String, dynamic>.from({
+        Map<String, String> header = Map<String, String>.from(<String, String>{
           "Authorization": "Token " + authToken.toString(),
           "LAT": coordinates == null ? "" : coordinates.lat.toString(),
           "LNG": coordinates == null ? "" : coordinates.lng.toString()
@@ -280,6 +291,82 @@ class RootRepositoryImpl implements RootRepository {
         return Left(
             AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
       } catch (e) {
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(ConnectionFailure(message: Messages.NO_INTERNET));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> register(TimeSlot timeSlot, Venue venue) async {
+    if (await networkInfo.isConnected) { 
+      try {
+         final String authToken = await localDataSource.getAuthToken();
+        Map<String, dynamic> header = Map<String, dynamic>.from(
+            {"Authorization": "Token " + authToken.toString()});
+        bool res = await remoteDataSource.register(timeSlot.id, venue.id, header);
+        return Right(res);
+      } on CannotRegisterException {
+        return Left(CannotRegisterFailure());
+      } on AuthenticationException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } on CacheException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } catch(e) {
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(ConnectionFailure(message: Messages.NO_INTERNET));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, List<TimeSlotDetail>>>> getRegistrations() async {
+    if (await networkInfo.isConnected) { 
+      try {
+         final String authToken = await localDataSource.getAuthToken();
+        Map<String, String> header = Map<String, String>.from(<String, String>
+            {"Authorization": "Token " + authToken.toString()});
+        Map<String, List<TimeSlot>> res = await remoteDataSource.getRegistrations(header);
+        return Right(res);
+      } on CannotRegisterException {
+        return Left(CannotRegisterFailure());
+      } on AuthenticationException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } on CacheException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } catch(e) {
+        print(e);
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(ConnectionFailure(message: Messages.NO_INTERNET));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TimeSlot>>> getTimeSlots(Venue venue) async {
+    if (await networkInfo.isConnected) { 
+      try {
+         final String authToken = await localDataSource.getAuthToken();
+        Map<String, dynamic> header = Map<String, dynamic>.from(
+            {"Authorization": "Token " + authToken.toString()});
+        List<TimeSlot> res = await remoteDataSource.getTimeSlots(venue.id, header);
+        return Right(res);
+      } on CannotRegisterException {
+        return Left(CannotRegisterFailure());
+      } on AuthenticationException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } on CacheException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } catch(e) {
         return Left(UnknownFailure());
       }
     } else {

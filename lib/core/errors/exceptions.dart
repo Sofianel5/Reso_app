@@ -9,3 +9,5 @@ class SignUpException extends AuthenticationException{
   }); // User submits bad data 
 }
 class NoScanException implements Exception {}
+class CannotRegisterException implements Exception {}
+class NeedsUpdateException implements Exception {}

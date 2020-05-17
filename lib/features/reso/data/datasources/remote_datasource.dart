@@ -6,8 +6,10 @@ import 'package:meta/meta.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/urls.dart';
 import '../../domain/entities/thread.dart';
+import '../../domain/entities/timeslot.dart';
 import '../../domain/entities/venue.dart';
 import '../models/thread_model.dart';
+import '../models/timeslot_model.dart';
 import '../models/user_model.dart';
 import '../models/venue_model.dart';
 
@@ -16,12 +18,15 @@ abstract class RemoteDataSource {
   Future<String> signUp(
       {String email, String password, String firstName, String lastName});
   Future<UserModel> getUser(Map<String, dynamic> headers);
-  Future<List<VenueModel>> getVenues(Map<String, dynamic> headers,
+  Future<List<VenueModel>> getVenues(Map<String, String> headers,
       {int n: 12, int page: 1, String searchQ});
   Future<VenueDetail> getVenue({int pk, Map<String, dynamic> headers});
   Future<bool> toggleLockState(Map<String, dynamic> headers);
   Future<Thread> checkForScan(Map<String, dynamic> headers);
   Future<bool> confirmThread(int threadId, Map<String, dynamic> headers);
+  Future<bool> register(int timeSlotId, int venueId, Map<String, dynamic> headers);
+  Future<Map<String, List<TimeSlotDetail>>> getRegistrations(Map<String, dynamic> headers);
+  Future<List<TimeSlot>> getTimeSlots(int venueId, Map<String, dynamic> headers);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -50,6 +55,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       }
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
+      } else if (response.statusCode == 406) {
+        throw NeedsUpdateException();
       } else if (response.statusCode ~/ 100 == 4) {
         throw AuthenticationException();
       } else if (response.statusCode ~/ 100 == 5) {
@@ -63,6 +70,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<Map<String, dynamic>> _getJson(Map<String, dynamic> data, String url,
       {Map<String, dynamic> headers, bool useGet = true}) async {
     try {
+      print(headers);
       String responseBody =
           (await _getResponse(data, url, headers: headers, getMethod: useGet))
               .body;
@@ -146,6 +154,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
           await _getJson(<String, String>{}, Urls.USER_URL,
               headers: Map<String, String>.from(headers)));
+        print(headers);
       return UserModel.fromJson(jsonData);
     } catch (e) {
       throw e;
@@ -165,7 +174,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<VenueModel>> getVenues(Map<String, dynamic> headers,
+  Future<List<VenueModel>> getVenues(Map<String, String> headers,
       {n: 12, page: 1, String searchQ}) async {
     var response;
     if (searchQ != null) {
@@ -238,4 +247,61 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       throw AuthenticationException();
     }
   }
+
+  @override
+  Future<bool> register(int timeSlotId, int venueId, Map<String, dynamic> headers) async {
+    final response = await http.post(Urls.registerForTimeSlotURL(venueId, timeSlotId) , headers: headers);
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 406) {
+      throw CannotRegisterException();
+    } else if (response.statusCode ~/ 100 == 4) {
+      throw AuthenticationException();
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<Map<String, List<TimeSlotDetail>>> getRegistrations(Map<String, dynamic> headers) async {
+    final response = await http.get(Urls.REGISTRATIONS_URL, headers: headers);
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      List<TimeSlotDetail> history = [];
+      for (var ts in responseJson["history"]) {
+        history.add(TimeSlotDetailModel.fromJson(ts));
+      }
+      List<TimeSlotDetail> current = [];
+      for (var ts in responseJson["current"]) {
+        current.add(TimeSlotDetailModel.fromJson(ts));
+      }
+      Map<String, List<TimeSlotDetail>> results = <String, List<TimeSlotDetail>>{
+        "history": history,
+        "current": current
+      };
+      return results;
+    } else if (response.statusCode ~/ 100 == 4) {
+      throw AuthenticationException();
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<List<TimeSlot>> getTimeSlots(int venueId, Map<String, dynamic> headers) async {
+    final response = await http.get(Urls.getTimeSlotsForId(venueId) , headers: headers);
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      List<TimeSlot> timeslots = [];
+      for (var timeslot in responseJson) {
+        timeslots.add(TimeSlotModel.fromJson(timeslot));
+      }
+      return timeslots;
+    } else if (response.statusCode ~/ 100 == 4) {
+      throw AuthenticationException();
+    } else {
+      throw ServerException();
+    }
+  }
+
 }

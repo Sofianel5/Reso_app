@@ -8,16 +8,16 @@ class BrowsePageBlocRouter {
   BrowsePageBlocRouter({@required this.getVenues,@required this.getVenueDetail});
   Stream<RootState> route(BrowsePageEvent event, User user) async* {
     if (event is BrowsePageCreationEvent) {
-      yield LoadingBrowseState();
+      yield LoadingBrowseState(user);
       final venuesOrFailure = await getVenues(NoParams());
       yield* venuesOrFailure.fold((failure) async* {
-        yield LoadingFailedState(message: failure.message);
+        yield LoadingFailedState(user, message: failure.message);
       }, (venues) async* {
         _venues = venues;
-        yield LoadedBrowseState(loadedVenues: venues, user: user);
+        yield LoadedBrowseState(user, loadedVenues: venues);
       });
     } else if (event is BrowsePageRefreshEvent) {
-      yield LoadingBrowseState(user: user);
+      yield LoadingBrowseState(user);
     }
   }
 }

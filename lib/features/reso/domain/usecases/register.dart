@@ -1,10 +1,11 @@
-import 'package:Reso/features/reso/domain/entities/timeslot.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/params.dart';
 import '../../../../core/usecases/usecase.dart';
+import '../entities/timeslot.dart';
+import '../entities/venue.dart';
 import '../repositories/root_repository.dart';
 
 class Register extends UseCase<bool, RegisterParams> {
@@ -13,13 +14,14 @@ class Register extends UseCase<bool, RegisterParams> {
 
   @override 
   Future<Either<Failure, bool>> call(RegisterParams params) async {
-    return await repository.register(params.slot);
+    return await repository.register(params.slot, params.venue);
   }
 }
 
 class RegisterParams extends Params {
   final TimeSlot slot;
-  RegisterParams({@required this.slot}) : assert(slot != null);
+  final Venue venue;
+  RegisterParams({@required this.slot, @required this.venue}) : assert(slot != null);
   @override
   List<Object> get props => [id];
 }

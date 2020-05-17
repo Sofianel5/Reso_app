@@ -22,7 +22,7 @@ class Localizer {
   }
 
   String get(String key) {
-    return _localizedStrings[key];
+    return _localizedStrings[key] ?? key;
   } 
 
   static const LocalizationsDelegate<Localizer> delegate = _LocalizerDelegate();

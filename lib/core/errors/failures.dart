@@ -44,9 +44,17 @@ class InvalidFormFailure extends Failure {
 }
 
 class UnknownFailure extends Failure {
-  final String message = Messages.UNKNOWN_ERROR;
+  UnknownFailure() : super(message: Messages.UNKNOWN_ERROR);
 }
 
 class NoScanFailure extends Failure {
-  final String message = Messages.NO_SCAN;
+  NoScanFailure() : super(message: Messages.NO_SCAN);
+}
+
+class CannotRegisterFailure extends Failure {
+  CannotRegisterFailure() : super(message: Messages.CANNOT_REGISTER);
+}
+
+class NeedsUpdateFailure extends Failure {
+  NeedsUpdateFailure() : super(message: Messages.NEEDS_UPDATE);
 }

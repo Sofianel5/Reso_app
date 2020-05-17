@@ -11,6 +11,7 @@ import 'routes/routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ic.init();
+  Routes.createRoutes();
   runApp(Reso());
 }
 

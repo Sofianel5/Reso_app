@@ -1,8 +1,8 @@
-import 'package:provider/provider.dart';
-import 'package:tracery_app/api/user_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:tracery_app/models/venue_model.dart';
-import 'package:tracery_app/widgets/venue_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/root_bloc.dart';
+import '../widgets/venue_card.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -10,11 +10,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen> {
-  bool focused = false;
-  var loading = false;
-  TextEditingController q = TextEditingController();
-  FocusNode searchFocus;
-  List<Venue> venues;
+  //! Localize
   final categories = [
     "Resturaunt",
     "Grocery",
@@ -28,6 +24,16 @@ class SearchScreenState extends State<SearchScreen> {
     "Education",
   ];
 
+  TextEditingController q = TextEditingController();
+  FocusNode searchFocus;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    RootBloc bloc = BlocProvider.of<RootBloc>(context);
+    bloc.add(SearchPageCreated());
+  }
+
   @override
   void dispose() {
     searchFocus.dispose();
@@ -40,24 +46,6 @@ class SearchScreenState extends State<SearchScreen> {
     searchFocus = FocusNode();
   }
 
-  void search(String q) async {
-    searchFocus.unfocus();
-    setState(() {
-      focused = false;
-    });
-    if (q == null || q.trim() == "") {
-      return;
-    }
-    setState(() {
-      loading = true;
-    });
-    var _venues = await userRepo.searchVenues(q);
-    setState(() {
-      loading = false;
-      venues = _venues;
-    });
-  }
-
   Widget generateCategoryBtns(int index) {
     final c = categories[index];
     return Padding(
@@ -65,7 +53,7 @@ class SearchScreenState extends State<SearchScreen> {
       child: RaisedButton(
         child: Text(c),
         onPressed: () {
-          search(c);
+          BlocProvider.of<RootBloc>(context).add(SearchSubmitted(c));
         },
       ),
     );
@@ -73,126 +61,161 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (userRepo == null) {
-      userRepo = Provider.of<UserRepository>(context);
-    }
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          focused
-              ? Container()
-              : Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Search",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
+    return BlocListener(
+      bloc: BlocProvider.of<RootBloc>(context),
+      listener: (context, state) {
+        if (!(state is SearchTypingState)) {
+          if (searchFocus.hasFocus) {
+            searchFocus.unfocus();
+          }
+        }
+        if (state is SearchFailedState) {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: BlocBuilder(
+        bloc: BlocProvider.of<RootBloc>(context),
+        builder: (context, state) => SafeArea(
+          bottom: false,
+          child: buildBody(state, context),
+        ),
+      ),
+    );
+  }
+
+  Column buildBody(state, BuildContext context) {
+    final bloc = BlocProvider.of<RootBloc>(context);
+    final focused = !(state is SearchTyping);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        state is SearchTypingState
+            ? Container()
+            : Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  //! Localize
+                  "Search",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextField(
-                    onTap: () => setState(() {
-                      focused = true;
-                    }),
-                    onEditingComplete: () => setState(() {
-                      focused = false;
-                    }),
-                    onSubmitted: (q) => search(q),
-                    maxLines: 1,
-                    controller: q,
-                    focusNode: searchFocus,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: "Search Tracery"),
-                  ),
-                ),
-                !focused
-                    ? Container()
-                    : FlatButton(
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        onPressed: () {
-                          searchFocus.unfocus();
-                          setState(
-                            () {
-                              focused = false;
-                            },
-                          );
-                        },
-                      )
-              ],
-            ),
-          ),
-          venues == null
-              ? focused
+              ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: buildSearchField(bloc),
+              ),
+              !focused
                   ? Container()
-                  : loading
-                      ? Center(
-                          child: Container(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator()))
-                      : Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Categories",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Container(
-                                height: 600,
-                                child: ListView.builder(
-                                    itemCount: categories.length,
-                                    itemBuilder: (context, index) =>
-                                        generateCategoryBtns(index)),
-                              )
-                            ],
-                          ),
-                        )
-              : venues.length == 0
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Center(
-                          child: Text(
-                        "None nearby",
+                  : FlatButton(
+                      child: Text(
+                        //! Localize
+                        "Cancel",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 17),
-                      )),
-                    )
-                  : Container(
-                      height: 600,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        shrinkWrap: true,
-                        itemCount: venues.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            VenueCard(
-                          venue: venues[index],
-                          userRepo: userRepo,
+                          color: Theme.of(context).accentColor,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
+                      onPressed: () => bloc.add(SearchCancelled()),
                     )
+            ],
+          ),
+        ),
+        buildBodySwitchState(state),
+      ],
+    );
+  }
+
+  Widget buildBodySwitchState(SearchState state) {
+    if (state is SearchLoadingState) {
+      return buildLoadingBody();
+    } else if (state is InitialSearchState) {
+      return buildInitialBody();
+    } else if (state is SearchFinishedState) {
+      if (state is NoResultsState) {
+        return buildNoResultsBody();
+      } else {
+        return buildResults(state);
+      }
+    } else {
+      return buildInitialBody();
+    }
+  }
+
+  Container buildResults(SearchFinishedState state) {
+    return Container(
+      height: 600,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8),
+        shrinkWrap: true,
+        itemCount: state.venues.length,
+        itemBuilder: (BuildContext context, int index) => VenueCard(
+          venue: state.venues[index],
+        ),
+      ),
+    );
+  }
+
+  Padding buildNoResultsBody() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Center(
+          child: Text(
+        //! Localize
+        "None nearby",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+      )),
+    );
+  }
+
+  Padding buildInitialBody() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            //! Localize
+            "Categories",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Container(
+            height: 600,
+            child: ListView.builder(
+                itemCount: categories.length,
+                itemBuilder: (context, index) => generateCategoryBtns(index)),
+          )
         ],
       ),
+    );
+  }
+
+  Center buildLoadingBody() {
+    return Center(
+        child: Container(
+            width: 50, height: 50, child: CircularProgressIndicator()));
+  }
+
+  TextField buildSearchField(RootBloc bloc) {
+    return TextField(
+      onTap: () => bloc.add(SearchTyping()),
+      onEditingComplete: () => bloc.add(SearchCancelled()),
+      onSubmitted: (q) => bloc.add(SearchSubmitted(q)),
+      maxLines: 1,
+      controller: q,
+      focusNode: searchFocus,
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+          prefixIcon: Icon(Icons.search),
+          //! Localize
+          hintText: "Search Tracery"),
     );
   }
 }

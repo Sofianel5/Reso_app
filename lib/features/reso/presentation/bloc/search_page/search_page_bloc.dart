@@ -5,16 +5,16 @@ class SearchPageBlocRouter {
   SearchPageBlocRouter(this.search);
   Stream<RootState> route(SearchPageEvent event, User user) async* {
     if (event is SearchPageCreated) {
-      yield InitialSearchState(); 
+      yield InitialSearchState(user); 
     } else if (event is SearchCancelled) {
-      yield InitialSearchState();
+      yield InitialSearchState(user);
     } else if (event is SearchSubmitted) {
-      yield SearchLoadingState();
+      yield SearchLoadingState(user);
       final result = await search(SearchParams(query: event.query));
       yield* result.fold((failure) async* {
-        yield SearchFailedState(message: failure.message);
+        yield SearchFailedState(user, message: failure.message);
       }, (venues) async* {
-        yield SearchFinishedState(venues: venues);
+        yield SearchFinishedState(user, venues: venues);
       });
     }
   }

@@ -109,18 +109,22 @@ class LocalDataSourceImpl implements LocalDataSource {
   }
 
   Future<Coordinates> getCoordinates() async {
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    if (position == null) {
-      Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+    try {
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       if (position == null) {
-        return null;
+        Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+        if (position == null) {
+          return null;
+        }
       }
+      Map<String, String> coordinates = {
+        "LAT": position.latitude.toString(),
+        "LNG": position.longitude.toString()
+      };
+      return CoordinatesModel.fromJson(coordinates);
+    } catch(e) {
+      return null;
     }
-    Map<String, String> coordinates = {
-      "LAT": position.latitude.toString(),
-      "LNG": position.longitude.toString()
-    };
-    return CoordinatesModel.fromJson(coordinates);
   }
 
   @override

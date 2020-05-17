@@ -6,4 +6,7 @@ class QRPageCreated extends QRPageEvent {}
 
 class QRLockToggle extends QRPageEvent {}
 
-class ScanConfirmed extends QRPageEvent {}
+class ScanConfirmed extends QRPageEvent {
+  Thread thread;
+  ScanConfirmed(this.thread);
+}

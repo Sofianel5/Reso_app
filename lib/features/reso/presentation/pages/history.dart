@@ -1,12 +1,10 @@
+import 'package:Reso/core/localizations/localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tracery_app/api/user_repository.dart';
-import 'package:tracery_app/localizations.dart';
-import 'package:tracery_app/models/timeslot_model.dart';
-import 'package:tracery_app/models/vp_handshake_model.dart';
-import 'package:intl/intl.dart';
-import 'package:tracery_app/widgets/reservation_card.dart';
-import 'package:tracery_app/widgets/timeslot_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../domain/entities/timeslot.dart';
+import '../bloc/root_bloc.dart';
+import '../widgets/reservation_card.dart';
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -14,26 +12,14 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class HistoryScreenState extends State<HistoryScreen> {
-  List<TimeSlot> history;
-  List<TimeSlot> current;
-  _fetchRegistrations(UserRepository user) async {
-    Map<String, dynamic> result = await user.getRegistrations();
-    if (result == null) {
-      return;
-    }
-    if (mounted) {
-      setState(() {
-        history = result['history'];
-        current = result['current'];
-      });
-    }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    RootBloc bloc = BlocProvider.of<RootBloc>(context);
+    bloc.add(RegistrationsPageCreatedEvent());
   }
 
   Widget _buildList(BuildContext context, List<TimeSlot> list) {
-    final userRepo = Provider.of<UserRepository>(context);
-    if (current == null || history == null) {
-      _fetchRegistrations(userRepo);
-    }
     return ListView.builder(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
@@ -42,8 +28,7 @@ class HistoryScreenState extends State<HistoryScreen> {
         TimeSlot ts = list[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 20.0),
-          child: ReservationCard(
-              venue: ts.venue, timeslot: ts, userRepo: userRepo),
+          child: ReservationCard(timeslot: ts),
         );
       },
     );
@@ -51,45 +36,127 @@ class HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 70,
+    final RootBloc bloc = BlocProvider.of<RootBloc>(context);
+    return BlocListener(
+      bloc: bloc,
+      listener: (context, state) {
+        if (state is RegistrationsLoadFailure) {
+          //! Localize
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: BlocBuilder(
+        bloc: bloc,
+        builder: (content, state) => Column(
+          children: <Widget>[
+            SizedBox(
+              height: 70,
+            ),
+            Text(
+              "Your Registrations",
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
+            ),
+            buildSwitchButtonRow(state, bloc, context),
+            SizedBox(
+              height: 20,
+            ),
+            buildContents(state),
+          ],
         ),
-        Text(
-          "Your Registrations",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
+      ),
+    );
+  }
+
+  Widget buildContents(RegistrationsState state) {
+    if (state is RegistrationsLoaded) {
+      if (state is NoCurrentRegistrations || state is NoPreviousRegistrations) {
+        return Center(
+          child: Text(
+            Localizer.of(context).get(state is NoCurrentRegistrations
+                ? "NoCurrentRegistrations"
+                : "NoPreviousRegistrations"),
+          ),
+        );
+      } else {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(10, 0, 5, 20),
+          child: _buildList(context, state.timeSlots),
+        );
+      }
+    } else if (state is RegistrationsLoadingState) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10, 0, 5, 20),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    } else if (state is RegistrationsLoadFailure) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10, 0, 5, 20),
+        child: Center(child: Text(Localizer.of(context).get("failed") + ": " + Localizer.of(context).get(state.message))),
+      );
+    } else {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10, 0, 5, 20),
+        child: Center(child: Text(Localizer.of(context).get("failed"))),
+      );
+    }
+  }
+
+  Row buildSwitchButtonRow(state, RootBloc bloc, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        GestureDetector(
+          onTap: () {
+            if (state is RegistrationsHistoryState) {
+              bloc.add(RegistrationsPageRequestCurrent());
+            }
+          },
+          child: Container(
+            child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
               child: Text(
                 "Current",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),
-          ],
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                    width: 3,
+                    color: state is RegistrationsHistoryState
+                        ? Color(0xFFF3F5F7)
+                        : Theme.of(context).accentColor),
+              ),
+            ),
+          ),
         ),
-        Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 5, 20),
-            child: _buildList(context, current)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
+        GestureDetector(
+          onTap: () {
+            if (state is RegistrationsCurrentState) {
+              bloc.add(RegistrationsPageRequestHistory());
+            }
+          },
+          child: Container(
+            child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
               child: Text(
                 "History",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),
-          ],
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 3,
+                  color: state is RegistrationsHistoryState
+                      ? Theme.of(context).accentColor
+                      : Color(0xFFF3F5F7),
+                ),
+              ),
+            ),
+          ),
         ),
-        Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-            child: _buildList(context, history)),
       ],
     );
   }

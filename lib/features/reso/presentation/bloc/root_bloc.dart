@@ -1,5 +1,11 @@
 import 'dart:async';
 
+import 'package:Reso/features/reso/domain/entities/thread.dart';
+import 'package:Reso/features/reso/domain/entities/timeslot.dart';
+import 'package:Reso/features/reso/domain/usecases/confirm_scan.dart';
+import 'package:Reso/features/reso/domain/usecases/get_registrations.dart';
+import 'package:Reso/features/reso/domain/usecases/get_scan.dart';
+import 'package:Reso/features/reso/domain/usecases/toggle_lock_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -24,9 +30,9 @@ part 'account_page/account_page_state.dart';
 part 'browse_page/browse_page_bloc.dart';
 part 'browse_page/browse_page_event.dart';
 part 'browse_page/browse_page_state.dart';
-part 'history_page/history_page_bloc.dart';
-part 'history_page/history_page_event.dart';
-part 'history_page/history_page_state.dart';
+part 'registrations_page/registrations_page_bloc.dart';
+part 'registrations_page/registrations_page_event.dart';
+part 'registrations_page/registrations_page_state.dart';
 part 'home_page_bloc.dart';
 part 'home_page_event.dart';
 part 'home_page_state.dart';
@@ -53,6 +59,10 @@ class RootBloc extends Bloc<RootEvent, RootState> {
   final Search search;
   final GetVenueDetail getVenueDetail;
   final HomePageBlocRouter homePageBloc;
+  final GetScan getScan;
+  final GetRegistrations getRegistrations;
+  final ToggleLock toggle;
+  final ConfirmScan confirmScan;
   User _user;
   RootBloc({
     @required this.getExistingUser,
@@ -62,10 +72,14 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     @required this.getVenues,
     @required this.getVenueDetail,
     @required this.getCachedUser,
-    @required this.search
+    @required this.search,
+    @required this.confirmScan,
+    @required this.getRegistrations,
+    @required this.toggle,
+    @required this.getScan
   })  : this.loginBloc = LoginBlocRouter(login),
         this.homePageBloc = HomePageBlocRouter(
-            getVenueDetail: getVenueDetail, getVenues: getVenues, search: search) {
+            getVenueDetail: getVenueDetail, getVenues: getVenues, search: search, confirmScan: confirmScan, getScan: getScan, toggle: toggle, getRegistrations: getRegistrations) {
     this.add(GetExistingUserEvent());
   }
   @override
@@ -90,17 +104,17 @@ class RootBloc extends Bloc<RootEvent, RootState> {
                 _user = user;
             final venuesOrFailure = await getVenues(NoParams());
             yield* venuesOrFailure.fold((failure) async* {
-              yield LoadingFailedState(message: Messages.NO_INTERNET);
+              yield LoadingFailedState(user, message: Messages.NO_INTERNET);
             }, (venues) async* {
-              yield LoadedBrowseState(user: user, loadedVenues: venues);
+              yield LoadedBrowseState(user, loadedVenues: venues);
             });
           });
         } else {
-          yield ErrorState(message: Messages.UNKNOWN_ERROR);
+          yield ErrorState(message: failure.message);
         }
       }, (user) async* {
         _user = user;
-        yield AuthenticatedState(user: user);
+        yield AuthenticatedState(user);
       });
     } else if (event is LoginEvent) {
       yield* loginBloc.route(event);
