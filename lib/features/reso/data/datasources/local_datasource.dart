@@ -1,14 +1,15 @@
 import 'dart:convert';
 
-import 'package:Reso/core/errors/exceptions.dart';
-import 'package:Reso/features/reso/data/models/coordinates_model.dart';
-import 'package:Reso/features/reso/data/models/user_model.dart';
-import 'package:Reso/features/reso/data/models/venue_model.dart';
-import 'package:Reso/features/reso/domain/entities/coordinates.dart';
-import 'package:Reso/features/reso/domain/entities/user.dart';
-import 'package:Reso/features/reso/domain/entities/venue.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/errors/exceptions.dart';
+import '../../domain/entities/coordinates.dart';
+import '../../domain/entities/user.dart';
+import '../../domain/entities/venue.dart';
+import '../models/coordinates_model.dart';
+import '../models/user_model.dart';
+import '../models/venue_model.dart';
 
 abstract class LocalDataSource {
   Future<String> getAuthToken() {}

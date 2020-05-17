@@ -10,12 +10,12 @@ class GetExistingUserEvent extends RootEvent {
   List<Object> get props => [];
 }
 
-class SignupEvent extends RootEvent {
+class SignupSubmitEvent extends RootEvent {
   final String email;
   final String password;
   final String firstName;
   final String lastName;
-  SignupEvent({this.email, this.password, this.firstName, this.lastName});
+  SignupSubmitEvent({this.email, this.password, this.firstName, this.lastName});
   @override
   List<Object> get props => [email, password, firstName, lastName];
 }

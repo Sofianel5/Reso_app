@@ -4,7 +4,9 @@ class HomePageBlocRouter {
   final GetVenues getVenues;
   final Search search;
   final GetVenueDetail getVenueDetail;
+  final GetTimeSlots getTimeSlots;
   final BrowsePageBlocRouter browsePageBlocRouter;
+  final VenuePageBlocRouter venuePageBlocRouter;
   final ToggleLock toggle;
   final GetScan getScan;
   final SearchPageBlocRouter searchPageBlocRouter;
@@ -13,13 +15,14 @@ class HomePageBlocRouter {
   final RegistrationsPageBlocRouter registrationsPageBlocRouter;
   final AccountPageBlocRouter accountPageBlocRouter;
   final ConfirmScan confirmScan;
-  HomePageBlocRouter({@required this.getVenues, @required this.getVenueDetail, @required this.search, @required this.toggle, @required this.getScan, @required this.getRegistrations, @required this.confirmScan})
+  HomePageBlocRouter({@required this.getTimeSlots, @required this.getVenues, @required this.getVenueDetail, @required this.search, @required this.toggle, @required this.getScan, @required this.getRegistrations, @required this.confirmScan})
       : this.browsePageBlocRouter = BrowsePageBlocRouter(
             getVenueDetail: getVenueDetail, getVenues: getVenues),
         this.searchPageBlocRouter = SearchPageBlocRouter(search),
         this.qrPageBlocRouter = QRPageBlocRouter(toggle: toggle, getScan: getScan, confirmScan: confirmScan),
         this.registrationsPageBlocRouter = RegistrationsPageBlocRouter(getRegistrations),
-        this.accountPageBlocRouter = AccountPageBlocRouter();
+        this.accountPageBlocRouter = AccountPageBlocRouter(),
+        this.venuePageBlocRouter = VenuePageBlocRouter(getTimeSlots: getTimeSlots, getVenueDetail: getVenueDetail);
   
   Stream<RootState> route(HomeEvent event, User user) async* {
     if (event is PageChangeEvent) {
@@ -41,6 +44,8 @@ class HomePageBlocRouter {
       yield* registrationsPageBlocRouter.route(event, user);
     } else if (event is AccountPageEvent) {
       yield* accountPageBlocRouter.route(event, user);
+    } else if (event is VenuePageEvent) {
+      yield* venuePageBlocRouter.route(event, user);
     }
   }
 }

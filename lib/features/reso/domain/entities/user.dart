@@ -1,4 +1,5 @@
 
+import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:equatable/equatable.dart';
 import 'package:Reso/features/reso/domain/entities/address.dart';
 import 'package:Reso/features/reso/domain/entities/coordinates.dart';
@@ -13,6 +14,7 @@ class User extends Equatable{
   bool isLocked;
   Coordinates coordinates;
   Address address;
+  Venue venue;
 
   User({
     this.id,  

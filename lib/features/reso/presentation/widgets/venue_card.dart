@@ -1,17 +1,24 @@
-import '../bloc/root_bloc.dart';
+import 'package:Reso/features/reso/presentation/pages/venue.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/constants/constants.dart';
+import '../../../../routes/routes.dart';
+import '../bloc/root_bloc.dart';
+
 class VenueCard extends StatelessWidget {
-  VenueCard({this.venue});
+  VenueCard({this.venue, this.from});
 
   final venue;
+  final String from;
   @override
   Widget build(BuildContext context) {
     RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    BrowseState state = bloc.state;
     return GestureDetector(
-      onTap: () => bloc.add(SelectVenueEvent(venue: venue)),
+      onTap: () {
+        bloc.add(SelectVenueEvent(venue: venue, from: from));
+      },
       child: Container(
         padding: EdgeInsets.all(20),
         height: 300,
@@ -24,13 +31,14 @@ class VenueCard extends StatelessWidget {
               children: [
                 Hero(
                   tag: venue.id,
-                                  child: Container(
+                  child: Container(
                     height: 200,
                     width: 357,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                          fit: BoxFit.fitWidth, image: NetworkImage(venue.image)),
+                          fit: BoxFit.fitWidth,
+                          image: CachedNetworkImageProvider(venue.image)),
                     ),
                   ),
                 )

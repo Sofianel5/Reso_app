@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../routes/routes.dart';
 import '../bloc/root_bloc.dart';
 import '../widgets/venue_card.dart';
+import 'venue.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -67,11 +69,13 @@ class SearchScreenState extends State<SearchScreen> {
         if (!(state is SearchTypingState)) {
           if (searchFocus.hasFocus) {
             searchFocus.unfocus();
-          }
+          } 
         }
         if (state is SearchFailedState) {
           Scaffold.of(context)
               .showSnackBar(SnackBar(content: Text(state.message)));
+        } else if (state is SearchPoppedIn) {
+          BlocProvider.of<RootBloc>(context).add(SearchPageCreated());
         }
       },
       child: BlocBuilder(
@@ -154,6 +158,7 @@ class SearchScreenState extends State<SearchScreen> {
         itemCount: state.venues.length,
         itemBuilder: (BuildContext context, int index) => VenueCard(
           venue: state.venues[index],
+          from: "search",
         ),
       ),
     );

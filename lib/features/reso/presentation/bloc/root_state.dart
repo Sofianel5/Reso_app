@@ -47,12 +47,7 @@ class NoInternetState extends ErrorState {
   String get message => Messages.NO_INTERNET;
 }
 
-class ResetPasswordState extends RootEvent {
-  @override
-  List<Object> get props => [];
-}
-
-class SignupState extends RootEvent {
+class ResetPasswordState extends RootState {
   @override
   List<Object> get props => [];
 }

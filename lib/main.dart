@@ -1,17 +1,16 @@
-import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'core/localizations/localizations.dart';
-import 'features/reso/presentation/pages/root.dart';
-import 'features/reso/presentation/pages/splash.dart';
+import 'features/reso/presentation/bloc/root_bloc.dart';
 import 'injection_container.dart' as ic;
-import 'routes/routes.dart';
+import 'routes/routes.gr.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ic.init();
-  Routes.createRoutes();
   runApp(Reso());
 }
 
@@ -27,6 +26,7 @@ class _ResoState extends State<Reso> {
       create: (context) => ic.sl<RootBloc>(),
       child: MaterialApp(
         title: 'Reso',
+        builder: ExtendedNavigator<Router>(router: Router()),
         theme: ThemeData(
           primaryColor: Color(0xFF1b4774),
           accentColor: Color(0xFF03016c),
@@ -34,7 +34,7 @@ class _ResoState extends State<Reso> {
           canvasColor: Color(0xFF5104f8),
           bottomAppBarColor: Color(0xFFF3F5F7),
         ),
-        home: RootPage(),
+        //home: RootPage(),
         supportedLocales: [
           Locale("en"),
           Locale("fr"),
@@ -58,6 +58,7 @@ class _ResoState extends State<Reso> {
             }
           } return supportedLocales.first;
         },
+        
       ),
     );
   }

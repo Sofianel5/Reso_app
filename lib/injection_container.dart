@@ -24,11 +24,10 @@ import 'features/reso/domain/usecases/search.dart';
 import 'features/reso/domain/usecases/signup.dart';
 import 'features/reso/domain/usecases/toggle_lock_state.dart';
 import 'features/reso/presentation/bloc/root_bloc.dart';
-
 final sl = GetIt.instance;
 Future<void> init() async {
   //! Features
-  sl.registerFactory(() => RootBloc(toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
+  sl.registerFactory(() => RootBloc(getTimeSlots: sl(), toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
   // Register use cases 
   sl.registerLazySingleton<GetExistingUser>(() => GetExistingUser(sl()));
   sl.registerLazySingleton<ConfirmScan>(()=>ConfirmScan(sl()));

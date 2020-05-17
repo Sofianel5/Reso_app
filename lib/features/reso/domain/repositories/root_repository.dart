@@ -1,8 +1,8 @@
-import 'package:Reso/features/reso/domain/entities/timeslot.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../entities/thread.dart';
+import '../entities/timeslot.dart';
 import '../entities/user.dart';
 import '../entities/venue.dart';
 
@@ -18,6 +18,7 @@ abstract class RootRepository {
   Future<Either<Failure, bool>> confirmScan(Thread thread);
   Future<Either<Failure, Thread>> checkForScan();
   Future<Either<Failure, bool>> register(TimeSlot timeSlot, Venue venue);
+  Future<Either<Failure, bool>> canRegister(TimeSlot timeSlot, Venue venue);
   Future<Either<Failure, Map<String, List<TimeSlotDetail>>>> getRegistrations();
   Future<Either<Failure, List<TimeSlot>>> getTimeSlots(Venue venue);
 }

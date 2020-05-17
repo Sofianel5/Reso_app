@@ -25,6 +25,7 @@ abstract class RemoteDataSource {
   Future<Thread> checkForScan(Map<String, dynamic> headers);
   Future<bool> confirmThread(int threadId, Map<String, dynamic> headers);
   Future<bool> register(int timeSlotId, int venueId, Map<String, dynamic> headers);
+  Future<bool> canRegister(int timeSlotId, int venueId, Map<String, dynamic> headers);
   Future<Map<String, List<TimeSlotDetail>>> getRegistrations(Map<String, dynamic> headers);
   Future<List<TimeSlot>> getTimeSlots(int venueId, Map<String, dynamic> headers);
 }
@@ -114,13 +115,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       String firstName,
       String lastName}) async {
     try {
-      Map<String, String> data = {
+      Map<String, String> data = <String, String>{
         "email": email,
         "password": password,
-        "firstName": firstName,
-        "lastName": lastName,
+        "first_name": firstName,
+        "last_name": lastName,
       };
+      print(data);
       http.Response response = await client.post(Urls.SIGNUP_URL, body: data);
+      print(response.body);
       Map<String, dynamic> responseJsonData =
           Map<String, dynamic>.from(json.decode(response.body));
       if (response.statusCode == 201) {
@@ -144,6 +147,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         }
       }
     } catch (e) {
+      print(e);
       throw e;
     }
   }
@@ -251,6 +255,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<bool> register(int timeSlotId, int venueId, Map<String, dynamic> headers) async {
     final response = await http.post(Urls.registerForTimeSlotURL(venueId, timeSlotId) , headers: headers);
+    if (response.statusCode == 201) {
+      return true;
+    } else if (response.statusCode == 406) {
+      throw CannotRegisterException();
+    } else if (response.statusCode ~/ 100 == 4) {
+      throw AuthenticationException();
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<bool> canRegister(int timeSlotId, int venueId, Map<String, dynamic> headers) async {
+    final response = await http.get(Urls.registerForTimeSlotURL(venueId, timeSlotId) , headers: headers);
     if (response.statusCode == 200) {
       return true;
     } else if (response.statusCode == 406) {

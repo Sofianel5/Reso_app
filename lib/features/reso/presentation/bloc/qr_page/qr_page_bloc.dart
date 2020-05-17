@@ -4,7 +4,12 @@ class QRPageBlocRouter {
   ToggleLock toggle;
   GetScan getScan;
   ConfirmScan confirmScan;
-  QRPageBlocRouter({@required this.toggle, @required this.getScan, @required this.confirmScan});
+  Canceller canceller;
+  QRPageBlocRouter(
+      {@required this.toggle,
+      @required this.getScan,
+      @required this.confirmScan});
+  
   Stream<RootState> route(QRPageEvent event, User user) async* {
     if (event is QRPageCreated) {
       if (user.isLocked) {
@@ -20,23 +25,27 @@ class QRPageBlocRouter {
       }, (locked) async* {
         user.isLocked = locked;
         if (locked) {
+          canceller?.cancel();
           yield QRLockedState(user);
         } else {
           yield QRUnlockedState(user);
-          final scanOrFailure = await getScan(NoParams());
-          yield* scanOrFailure.fold((failure) async* {
-            if (failure is NoScanFailure) {
-              yield QRNoScanState(user);
-            } else {
-              yield QRLoadScanFailedState(user, message: failure.message);
-            }
-          }, (thread) async* {
-            yield QRScannedState(user, thread: thread);
-          }); 
+          canceller = Canceller();
+          getScan(GetScanParams(canceller)).then((scanOrFailure) async* {
+            yield* scanOrFailure.fold((failure) async* {
+              if (failure is NoScanFailure) {
+                yield QRNoScanState(user);
+              } else {
+                yield QRLoadScanFailedState(user, message: failure.message);
+              }
+            }, (thread) async* {
+              yield QRScannedState(user, thread: thread);
+            });
+          });
         }
       });
     } else if (event is ScanConfirmed) {
-      final confirmation = await confirmScan(ConfirmScanParams(thread: event.thread));
+      final confirmation =
+          await confirmScan(ConfirmScanParams(thread: event.thread));
       yield* confirmation.fold((failure) async* {
         QRConfirmEntryFailedState(user, message: failure.message);
       }, (result) async* {

@@ -1,9 +1,10 @@
-import 'package:Reso/features/reso/domain/entities/timeslot.dart';
-import 'package:Reso/features/reso/domain/entities/user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:Reso/features/reso/domain/entities/address.dart';
-import 'package:Reso/features/reso/domain/entities/coordinates.dart';
+
+import 'address.dart';
+import 'coordinates.dart';
+import 'timeslot.dart';
+import 'user.dart';
 
 class Venue extends Equatable {
   int id;

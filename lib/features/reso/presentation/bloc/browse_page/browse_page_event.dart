@@ -9,9 +9,4 @@ class BrowsePageCreationEvent extends BrowsePageEvent {
   BrowsePageCreationEvent({@required this.user});
 }
 
-class SelectVenueEvent extends BrowsePageEvent {
-  final Venue venue;
-  SelectVenueEvent({@required this.venue}) : assert(venue != null);
-}
-
 class BrowsePageRefreshEvent extends BrowsePageEvent {}

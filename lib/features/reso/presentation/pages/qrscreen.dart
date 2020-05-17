@@ -69,7 +69,7 @@ class QRScreenState extends State<QRScreen> {
             color: Theme.of(context).accentColor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[CircularProgressIndicator()],
+              children: <Widget>[CircularProgressIndicator(backgroundColor: Colors.white)],
             ),
           ),
         ],
@@ -234,7 +234,7 @@ class QRScreenState extends State<QRScreen> {
                       Stack(
                         children: [
                           buildQRImage(state),
-                          !(state is QRUnlockedState)
+                          (state is QRUnlockedState)
                               ? Container()
                               : buildBlur(),
                         ],

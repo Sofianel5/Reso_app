@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:Reso/features/reso/domain/entities/venue.dart';
+
+import 'venue.dart';
 
 class TimeSlot extends Equatable {
   final DateTime start;

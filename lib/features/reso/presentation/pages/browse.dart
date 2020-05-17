@@ -5,9 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/localizations/localizations.dart';
+import '../../../../routes/routes.dart';
 import '../../domain/entities/venue.dart';
 import '../bloc/root_bloc.dart';
 import '../widgets/venue_card.dart';
+import 'venue.dart';
 
 class BrowseScreen extends StatefulWidget {
   @override
@@ -24,10 +26,9 @@ class BrowseScreenState extends State<BrowseScreen> {
       bloc.add(BrowsePageCreationEvent(user: state.user));
     }
   }
-
-  List<Venue> venues;
-  List<int> showingVenuesIds;
   Completer<void> _refreshCompleter;
+  List<Venue> showingVenues;
+  List<Venue> venues;
   int _selectedIndex = 0;
   List<IconData> _icons = [
     FontAwesomeIcons.globeEurope,
@@ -48,23 +49,22 @@ class BrowseScreenState extends State<BrowseScreen> {
     _refreshCompleter = Completer<void>();
   }
 
-  Widget _buildIcon(int index) {
+  Widget _buildIcon(int index, RootBloc bloc) {
     return GestureDetector(
       onTap: () {
         if (index != 0) {
-          showingVenuesIds = [];
+          showingVenues = [];
           for (var venue in venues) {
             if (venue.type == _iconCaptions[index]) {
-              showingVenuesIds.add(venue.id);
+              showingVenues.add(venue);
             }
           }
           setState(() {
-            showingVenuesIds = showingVenuesIds;
+            showingVenues = showingVenues;
           });
         } else {
           setState(() {
-            showingVenuesIds =
-                List<int>.generate(venues.length, (i) => venues[i].id);
+            showingVenues = venues;
           });
         }
         setState(() {
@@ -110,14 +110,21 @@ class BrowseScreenState extends State<BrowseScreen> {
     final BrowseState state = bloc.state;
     return BlocListener(
       bloc: bloc,
+      condition: (previous, current) => true,
       listener: (context, state) {
+        print(state);
         if (state is LoadedBrowseState) {
           _refreshCompleter?.complete();
           _refreshCompleter = Completer();
-        }
+          venues = state.loadedVenues;
+          showingVenues = state.loadedVenues;
+        } else if (state is BrowsePoppedIn) {
+          bloc.add(BrowsePageCreationEvent(user: state.user));
+        } 
       },
       child: BlocBuilder(
         bloc: bloc,
+        condition: (previous, current) => true,
         builder: (context, state) => SafeArea(
           bottom: false,
           child: RefreshIndicator(
@@ -125,7 +132,7 @@ class BrowseScreenState extends State<BrowseScreen> {
               bloc.add(BrowsePageRefreshEvent());
               return _refreshCompleter.future;
             },
-            child: buildListView(state, bloc),
+            child: buildListView(bloc.state, bloc),
           ),
         ),
       ),
@@ -138,17 +145,18 @@ class BrowseScreenState extends State<BrowseScreen> {
       children: <Widget>[
         buildTopPadding(state),
         SizedBox(height: 20.0),
-        buildIconsRow(),
+        buildIconsRow(bloc),
         SizedBox(
           height: 20.0,
         ),
-        state is LoadedBrowseState
-            ? state.loadedVenues.length == 0
-                ? buildNoVenuesBody()
-                : buildLoadedBody(bloc, state)
-            : Center(
-                child: buildLoadingBody(state),
-              )
+        if (state is LoadedBrowseState)
+          showingVenues.length == 0
+              ? buildNoVenuesBody()
+              : buildLoadedBody(bloc, state)
+        else if (state is LoadingBrowseState)
+          Center(
+            child: buildLoadingBody(state),
+          )
       ],
     );
   }
@@ -164,9 +172,10 @@ class BrowseScreenState extends State<BrowseScreen> {
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
           shrinkWrap: true,
-          itemCount: state.loadedVenues?.length ?? 0,
+          itemCount: showingVenues?.length ?? 0,
           itemBuilder: (BuildContext context, int index) => VenueCard(
-            venue: state.loadedVenues[index],
+            venue: showingVenues[index],
+            from: "browse"
           ),
         ),
       ),
@@ -184,15 +193,17 @@ class BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  Container buildLoadingBody(BrowseState state) {
+  Container buildLoadingBody(AuthenticatedState state) {
     return Container(
       width: 50,
       height: 50,
-      child: state is LoadingFailedState ? Text(Localizer.of(context).get(state.message)) : CircularProgressIndicator(),
+      child: state is LoadingFailedState
+          ? Text(Localizer.of(context).get(state.message))
+          : CircularProgressIndicator(),
     );
   }
 
-  Container buildIconsRow() {
+  Container buildIconsRow(RootBloc bloc) {
     return Container(
       height: 100,
       child: ListView(
@@ -202,14 +213,14 @@ class BrowseScreenState extends State<BrowseScreen> {
             .asMap()
             .entries
             .map(
-              (MapEntry map) => _buildIcon(map.key),
+              (MapEntry map) => _buildIcon(map.key, bloc),
             )
             .toList(),
       ),
     );
   }
 
-  Padding buildTopPadding(BrowseState state) {
+  Padding buildTopPadding(AuthenticatedState state) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Text(

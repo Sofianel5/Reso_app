@@ -1,6 +1,7 @@
-import 'package:Reso/features/reso/domain/entities/user.dart';
-import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:equatable/equatable.dart';
+
+import 'user.dart';
+import 'venue.dart';
 
 class Thread extends Equatable {
   final String threadId;

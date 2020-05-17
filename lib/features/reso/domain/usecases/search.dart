@@ -16,10 +16,10 @@ class Search extends UseCase<List<Venue>, SearchParams> {
   Future<Either<Failure, List<Venue>>> call(SearchParams params) async {
     final inputValidator = InputConverter();
     final invalidInput = inputValidator.validateSearchQuery(params.query);
-    invalidInput.fold((failure) {
-      return failure;
+    return invalidInput.fold((failure) {
+      return Left(failure);
     }, (query) async {
-      return Right(await repository.getVenues(search: query));
+      return await repository.getVenues(search: query);
     });
   }
 }

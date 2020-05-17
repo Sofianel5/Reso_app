@@ -7,12 +7,12 @@ import '../../../../core/usecases/usecase.dart';
 import '../entities/user.dart';
 import '../repositories/root_repository.dart';
 
-class Logout extends UseCase<User, NoParams> {
+class Logout extends UseCase<void, NoParams> {
   final RootRepository repository;
   Logout(this.repository);
 
   @override 
-  Future<Either<Failure, User>> call(NoParams params) async {
+  Future<Either<Failure, void>> call(NoParams params) async {
     return await repository.logout();
   }
 }

@@ -1,21 +1,21 @@
-import 'package:Reso/core/constants/constants.dart';
-import 'package:Reso/core/errors/exceptions.dart';
-import 'package:Reso/core/localizations/messages.dart';
-import 'package:Reso/features/reso/data/models/user_model.dart';
-import 'package:Reso/features/reso/data/models/venue_model.dart';
-import 'package:Reso/features/reso/domain/entities/coordinates.dart';
-import 'package:Reso/features/reso/domain/entities/thread.dart';
-import 'package:Reso/features/reso/domain/entities/timeslot.dart';
-import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/constants/constants.dart';
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
+import '../../../../core/localizations/messages.dart';
 import '../../../../core/network/network_info.dart';
+import '../../domain/entities/coordinates.dart';
+import '../../domain/entities/thread.dart';
+import '../../domain/entities/timeslot.dart';
 import '../../domain/entities/user.dart';
+import '../../domain/entities/venue.dart';
 import '../../domain/repositories/root_repository.dart';
 import '../datasources/local_datasource.dart';
 import '../datasources/remote_datasource.dart';
+import '../models/user_model.dart';
+import '../models/venue_model.dart';
 
 typedef Future<Either<Failure, User>> _GetUser();
 typedef Future<Either<Failure, Map<String, dynamic>>> _GetMap();
@@ -35,17 +35,18 @@ class RootRepositoryImpl implements RootRepository {
     if (await networkInfo.isConnected) {
       try {
         return await body();
-      } on NeedsUpdateException {
-        return Left(NeedsUpdateFailure());
-      } on AuthenticationException {
-        // Some error like 403
-        print("Auth exception");
-        return Left(AuthenticationFailure(message: Messages.INVALID_PASSWORD));
-      } on ServerException {
-        return Left(ServerFailure(message: Messages.SERVER_FAILURE));
-      } on CacheException {
-        return Left(AuthenticationFailure(message: Messages.NO_USER));
       } catch (e) {
+        if (e is SignUpException) {
+          return Left(AuthenticationFailure(message: e.message));
+        } else if (e is NeedsUpdateException) {
+          return Left(NeedsUpdateFailure());
+        } else if (e is AuthenticationException) {
+          return Left(AuthenticationFailure(message: Messages.INVALID_PASSWORD));
+        } else if (e is ServerException) {
+          return Left(ServerFailure(message: Messages.SERVER_FAILURE));
+        } else if (e is CacheException) {
+          return Left(AuthenticationFailure(message: Messages.NO_USER));
+        }
         return Left(AuthenticationFailure(message: Messages.UNKNOWN_ERROR));
       }
     } else {
@@ -60,7 +61,7 @@ class RootRepositoryImpl implements RootRepository {
       final String authToken = await localDataSource.getAuthToken();
       final String appVersion = Constants.APP_VERSION.toString();
       print(appVersion);
-      Map<String, dynamic> header = Map<String, dynamic>.from(<String, String>{
+      Map<String, String> header = Map<String, String>.from(<String, String>{
         "Authorization": "Token " + authToken.toString(),
         "APP-VERSION": appVersion
       });
@@ -132,10 +133,12 @@ class RootRepositoryImpl implements RootRepository {
           lastName: lastName);
       localDataSource.cacheAuthToken(authToken);
       final Coordinates coordinates = await localDataSource.getCoordinates();
-      Map<String, dynamic> header = Map<String, dynamic>.from({
+      final String appVersion = Constants.APP_VERSION.toString();
+      Map<String, String> header = Map<String, String>.from({
         "Authorization": "Token " + authToken.toString(),
         "LAT": coordinates == null ? "" : coordinates.lat.toString(),
-        "LNG": coordinates == null ? "" : coordinates.lng.toString()
+        "LNG": coordinates == null ? "" : coordinates.lng.toString(),
+        "APP-VERSION": appVersion
       });
       final User user = await remoteDataSource.getUser(header);
       return Right(user);
@@ -156,6 +159,8 @@ class RootRepositoryImpl implements RootRepository {
       } on CacheException {
         // No stored auth token
         return Left(AuthenticationFailure(message: Messages.NO_USER));
+      } catch (e) {
+        return Left(UnknownFailure());
       }
     } else {
       try {
@@ -196,6 +201,8 @@ class RootRepositoryImpl implements RootRepository {
       } on CacheException {
         // No stored auth token
         return Left(AuthenticationFailure(message: Messages.NO_USER));
+      } catch (e) {
+        return Left(UnknownFailure());
       }
     } else {
       try {
@@ -232,8 +239,8 @@ class RootRepositoryImpl implements RootRepository {
     if (await networkInfo.isConnected) {
       try {
         final String authToken = await localDataSource.getAuthToken();
-        Map<String, dynamic> header = Map<String, dynamic>.from(
-            {"Authorization": "Token " + authToken.toString()});
+        Map<String, String> header = Map<String, String>.from(
+            <String, String>{"Authorization": "Token " + authToken.toString()});
         bool lockState = await remoteDataSource.toggleLockState(header);
         return Right(lockState);
       } on AuthenticationException {
@@ -243,6 +250,7 @@ class RootRepositoryImpl implements RootRepository {
         return Left(
             AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
       } catch (e) {
+        print(e);
         return Left(UnknownFailure());
       }
     } else {
@@ -255,8 +263,8 @@ class RootRepositoryImpl implements RootRepository {
     if (await networkInfo.isConnected) {
       try {
         final String authToken = await localDataSource.getAuthToken();
-        Map<String, dynamic> header = Map<String, dynamic>.from(
-            {"Authorization": "Token " + authToken.toString()});
+        Map<String, String> header = Map<String, String>.from(
+            <String, String>{"Authorization": "Token " + authToken.toString()});
         Thread thread = await remoteDataSource.checkForScan(header);
         return Right(thread);
       } on NoScanException {
@@ -281,7 +289,7 @@ class RootRepositoryImpl implements RootRepository {
       try {
         final String authToken = await localDataSource.getAuthToken();
         Map<String, dynamic> header = Map<String, dynamic>.from(
-            {"Authorization": "Token " + authToken.toString()});
+            <String, String>{"Authorization": "Token " + authToken.toString()});
         bool res = await remoteDataSource.confirmThread(thread.id, header);
         return Right(res);
       } on AuthenticationException {
@@ -303,8 +311,8 @@ class RootRepositoryImpl implements RootRepository {
     if (await networkInfo.isConnected) { 
       try {
          final String authToken = await localDataSource.getAuthToken();
-        Map<String, dynamic> header = Map<String, dynamic>.from(
-            {"Authorization": "Token " + authToken.toString()});
+        Map<String, String> header = Map<String, String>.from(
+            <String, String>{"Authorization": "Token " + authToken.toString()});
         bool res = await remoteDataSource.register(timeSlot.id, venue.id, header);
         return Right(res);
       } on CannotRegisterException {
@@ -354,9 +362,35 @@ class RootRepositoryImpl implements RootRepository {
     if (await networkInfo.isConnected) { 
       try {
          final String authToken = await localDataSource.getAuthToken();
-        Map<String, dynamic> header = Map<String, dynamic>.from(
-            {"Authorization": "Token " + authToken.toString()});
+        Map<String, String> header = Map<String, String>.from(
+            <String, String>{"Authorization": "Token " + authToken.toString()});
         List<TimeSlot> res = await remoteDataSource.getTimeSlots(venue.id, header);
+        return Right(res);
+      } on CannotRegisterException {
+        return Left(CannotRegisterFailure());
+      } on AuthenticationException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } on CacheException {
+        return Left(
+            AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
+      } catch(e) {
+        print(e);
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(ConnectionFailure(message: Messages.NO_INTERNET));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> canRegister(TimeSlot timeSlot, Venue venue) async {
+    if (await networkInfo.isConnected) { 
+      try {
+         final String authToken = await localDataSource.getAuthToken();
+        Map<String, String> header = Map<String, String>.from(
+            <String, String>{"Authorization": "Token " + authToken.toString()});
+        bool res = await remoteDataSource.canRegister(timeSlot.id, venue.id, header);
         return Right(res);
       } on CannotRegisterException {
         return Left(CannotRegisterFailure());

@@ -1,3 +1,4 @@
+import 'package:Reso/core/util/input_converter.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -12,7 +13,11 @@ class Signup extends UseCase<User, SignupParams> {
   Signup(this.repository);
   @override
   Future<Either<Failure, User>> call(SignupParams params) async {
-    return await repository.signUp(email: params.email, password: params.password, firstName: params.firstName, lastName: params.lastName);
+    return await InputConverter().parsePassword(params.password).fold((failure) {
+      return Left(failure);
+    }, (password) async {
+      return await repository.signUp(email: params.email, password: params.password, firstName: params.firstName, lastName: params.lastName);
+    });
   }
   
 }

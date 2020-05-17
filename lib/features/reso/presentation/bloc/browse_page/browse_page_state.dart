@@ -17,5 +17,15 @@ class LoadingFailedState extends BrowseState {
 
 class LoadedBrowseState extends BrowseState {
   final List<Venue> loadedVenues;
-  LoadedBrowseState(User user, {@required this.loadedVenues}) : assert(loadedVenues != null, user != null), super(user);
+  List<String> filters;
+  LoadedBrowseState(User user, {@required this.loadedVenues, this.filters}) : assert(loadedVenues != null, user != null), super(user) {
+    if (filters == null) {
+      filters = [Venue.types.first];
+    }
+  }
 }
+
+class BrowsePoppedIn extends LoadingFailedState {
+  BrowsePoppedIn(User user) : super(user);
+}
+

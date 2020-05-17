@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildSignUpBtn(RootBloc bloc) {
     return FlatButton(
-      onPressed: () => {},
+      onPressed: () => bloc.add(RequestSignup()),
       child: Text(
         Localizer.of(context).get("sign-up") ?? "Sign up",
         style: TextStyle(

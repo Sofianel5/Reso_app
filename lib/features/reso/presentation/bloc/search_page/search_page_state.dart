@@ -30,3 +30,7 @@ class SearchFailedState extends InitialSearchState {
 class NoResultsState extends SearchFinishedState {
   NoResultsState(User user) : super(user, venues: []);
 }
+
+class SearchPoppedIn extends InitialSearchState {
+  SearchPoppedIn(User user) : super(user);
+}
