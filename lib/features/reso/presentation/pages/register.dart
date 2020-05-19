@@ -137,7 +137,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Pass for",
+                                    "Pass for " + widget.timeSlot.type,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20),
