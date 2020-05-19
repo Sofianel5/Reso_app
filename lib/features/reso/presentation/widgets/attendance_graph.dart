@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_circular_chart/flutter_circular_chart.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AttendanceGraph extends StatefulWidget {
-  AttendanceGraph({this.size, this.total, this.taken});
+  AttendanceGraph(
+      {@required this.size,
+      @required this.total,
+      @required this.taken,
+      @required this.type});
   Size size;
+  String type;
   int total;
   int taken;
   AttendanceGraphState createState() => AttendanceGraphState();
@@ -50,16 +56,6 @@ class AttendanceGraphState extends State<AttendanceGraph> {
         ],
         rankKey: 'percentage',
       ),
-      CircularStackEntry(
-        <CircularSegmentEntry>[
-          CircularSegmentEntry(
-            100 - value,
-            Colors.greenAccent[700],
-            rankKey: 'percentage',
-          )
-        ],
-        rankKey: 'percentage',
-      ),
     ];
     return data;
   }
@@ -77,7 +73,7 @@ class AttendanceGraphState extends State<AttendanceGraph> {
             labelStyle: TextStyle(
                 color: getColorForValue(percent),
                 fontSize: widget.size.width / 10),
-            size: Size(widget.size.width-5,widget.size.height-5),
+            size: widget.size,
           ),
         ],
       ),
@@ -96,33 +92,28 @@ class AttendanceGraphState extends State<AttendanceGraph> {
           Container(
             height: widget.size.height,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                _buildResults(100 - 100*(widget.taken / widget.total)),
+                _buildResults(100 - 100 * (widget.taken / widget.total)),
               ],
             ),
           ),
           Container(
+            width: widget.size.width,
             height: widget.size.height,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  (widget.total - widget.taken).toString(),
-                  style: TextStyle(fontSize: widget.size.width / 10, height: 1),
-                ),
-                Container(
-                  width: 20,
-                  child: Divider(
-                    color: Colors.black54,
-                  ),
-                ),
-                Text(
-                  widget.total.toString(),
-                  style: TextStyle(fontSize: widget.size.width / 10),
-                ),
+                if (widget.type == "All")
+                  Icon(FontAwesomeIcons.globeEurope, size: widget.size.width-45)
+                else if (widget.type == "Elderly")
+                  Icon(FontAwesomeIcons.crutch, size: widget.size.width-45)
+                else if (widget.type == "Frontline")
+                  Icon(FontAwesomeIcons.fireExtinguisher, size: widget.size.width-45)
+                else
+                  Icon(FontAwesomeIcons.globeEurope, size: widget.size.width-45)
               ],
             ),
           )

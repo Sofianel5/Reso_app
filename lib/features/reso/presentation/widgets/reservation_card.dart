@@ -28,7 +28,9 @@ class ReservationCard extends StatelessWidget {
               AttendanceGraph(
                   size: Size(85.0, 85.0),
                   total: timeslot.maxAttendees,
-                  taken: timeslot.numAttendees)
+                  taken: timeslot.numAttendees,
+                  type: timeslot.type,
+                  )
             ],
           ),
           Column(
