@@ -13,6 +13,8 @@ import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:Reso/features/reso/presentation/pages/signup_email.dart';
 import 'package:Reso/features/reso/presentation/pages/signup_name.dart';
 import 'package:Reso/features/reso/presentation/pages/signup_password.dart';
+import 'package:Reso/features/reso/presentation/pages/register.dart';
+import 'package:Reso/features/reso/domain/entities/timeslot.dart';
 
 abstract class Routes {
   static const rootPage = '/';
@@ -20,12 +22,14 @@ abstract class Routes {
   static const signUpEmail = '/sign-up-email';
   static const signUpName = '/sign-up-name';
   static const signUpPasswordScreen = '/sign-up-password-screen';
+  static const register = '/register';
   static const all = {
     rootPage,
     venue,
     signUpEmail,
     signUpName,
     signUpPasswordScreen,
+    register,
   };
 }
 
@@ -75,6 +79,17 @@ class Router extends RouterBase {
           builder: (context) => SignUpPasswordScreen(),
           settings: settings,
         );
+      case Routes.register:
+        if (hasInvalidArgs<RegisterScreenArguments>(args)) {
+          return misTypedArgsRoute<RegisterScreenArguments>(args);
+        }
+        final typedArgs =
+            args as RegisterScreenArguments ?? RegisterScreenArguments();
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => RegisterScreen(
+              venue: typedArgs.venue, timeSlot: typedArgs.timeSlot),
+          settings: settings,
+        );
       default:
         return unknownRoutePage(settings.name);
     }
@@ -96,4 +111,11 @@ class VenueScreenArguments {
   final Venue venue;
   final String from;
   VenueScreenArguments({@required this.venue, this.from});
+}
+
+//RegisterScreen arguments holder class
+class RegisterScreenArguments {
+  final Venue venue;
+  final TimeSlot timeSlot;
+  RegisterScreenArguments({this.venue, this.timeSlot});
 }
