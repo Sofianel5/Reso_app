@@ -10,3 +10,5 @@ class ScanConfirmed extends QRPageEvent {
   Thread thread;
   ScanConfirmed(this.thread);
 }
+
+class QRCheckScan extends QRPageEvent {}

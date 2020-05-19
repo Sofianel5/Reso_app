@@ -42,7 +42,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
           return Localizer.of(context).get("invalid-info") ?? "Invalid info";
         } return null;
       },
-      style: TextStyle(color: Colors.black38),
+      style: TextStyle(color: Colors.black87),
       cursorColor: Theme.of(context).accentColor,
       controller: _firstName,
       onEditingComplete: () {
@@ -68,7 +68,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
           return Localizer.of(context).get("invalid-info") ?? "Invalid info";
         } return null;
       },
-      style: TextStyle(color: Colors.black38),
+      style: TextStyle(color: Colors.black87),
       cursorColor: Theme.of(context).accentColor,
       controller: _lastName,
       focusNode: lastNameNode,

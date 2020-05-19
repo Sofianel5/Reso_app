@@ -1,51 +1,17 @@
 part of 'root_bloc.dart';
 
-class HomePageBlocRouter {
-  final GetVenues getVenues;
-  final Search search;
-  final GetVenueDetail getVenueDetail;
-  final GetTimeSlots getTimeSlots;
-  final BrowsePageBlocRouter browsePageBlocRouter;
-  final VenuePageBlocRouter venuePageBlocRouter;
-  final ToggleLock toggle;
-  final GetScan getScan;
-  final SearchPageBlocRouter searchPageBlocRouter;
-  final GetRegistrations getRegistrations;
-  final QRPageBlocRouter qrPageBlocRouter;
-  final RegistrationsPageBlocRouter registrationsPageBlocRouter;
-  final AccountPageBlocRouter accountPageBlocRouter;
-  final ConfirmScan confirmScan;
-  HomePageBlocRouter({@required this.getTimeSlots, @required this.getVenues, @required this.getVenueDetail, @required this.search, @required this.toggle, @required this.getScan, @required this.getRegistrations, @required this.confirmScan})
-      : this.browsePageBlocRouter = BrowsePageBlocRouter(
-            getVenueDetail: getVenueDetail, getVenues: getVenues),
-        this.searchPageBlocRouter = SearchPageBlocRouter(search),
-        this.qrPageBlocRouter = QRPageBlocRouter(toggle: toggle, getScan: getScan, confirmScan: confirmScan),
-        this.registrationsPageBlocRouter = RegistrationsPageBlocRouter(getRegistrations),
-        this.accountPageBlocRouter = AccountPageBlocRouter(),
-        this.venuePageBlocRouter = VenuePageBlocRouter(getTimeSlots: getTimeSlots, getVenueDetail: getVenueDetail);
-  
-  Stream<RootState> route(HomeEvent event, User user) async* {
+class HomePageBloc extends Bloc<HomeEvent, HomeState> {
+  final User user;
+  HomePageBloc({@required this.user});
+
+  @override
+  HomeState get initialState => HomeState(user);
+
+  @override
+  Stream<HomeState> mapEventToState(HomeEvent event) async* {
+    print(event);
     if (event is PageChangeEvent) {
-      final pages = [
-        LoadingBrowseState(user),
-        InitialSearchState(user),
-        user.isLocked ? QRLockedState(user) : QRUnlockedState(user),
-        RegistrationsLoadingState(user),
-        AccountInitialState(user),
-      ];
-      yield pages[event.index];
-    } else if (event is BrowsePageEvent) {
-      yield* browsePageBlocRouter.route(event, user);
-    } else if (event is SearchPageEvent) {
-      yield* searchPageBlocRouter.route(event, user);
-    } else if (event is QRPageEvent) {
-      yield* qrPageBlocRouter.route(event, user);
-    } else if (event is RegistrationsPageEvent) {
-      yield* registrationsPageBlocRouter.route(event, user);
-    } else if (event is AccountPageEvent) {
-      yield* accountPageBlocRouter.route(event, user);
-    } else if (event is VenuePageEvent) {
-      yield* venuePageBlocRouter.route(event, user);
+      yield HomeState(this.user, pageIndex: event.index);
     }
   }
 }

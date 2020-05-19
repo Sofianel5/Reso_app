@@ -30,13 +30,6 @@ class SearchScreenState extends State<SearchScreen> {
   FocusNode searchFocus;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    bloc.add(SearchPageCreated());
-  }
-
-  @override
   void dispose() {
     searchFocus.dispose();
     super.dispose();
@@ -55,7 +48,7 @@ class SearchScreenState extends State<SearchScreen> {
       child: RaisedButton(
         child: Text(c),
         onPressed: () {
-          BlocProvider.of<RootBloc>(context).add(SearchSubmitted(c));
+          BlocProvider.of<SearchPageBloc>(context).add(SearchSubmitted(c));
         },
       ),
     );
@@ -63,23 +56,22 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
-      bloc: BlocProvider.of<RootBloc>(context),
+      bloc: BlocProvider.of<SearchPageBloc>(context),
       listener: (context, state) {
         if (!(state is SearchTypingState)) {
           if (searchFocus.hasFocus) {
             searchFocus.unfocus();
-          } 
+          }
         }
         if (state is SearchFailedState) {
           Scaffold.of(context)
               .showSnackBar(SnackBar(content: Text(state.message)));
-        } else if (state is SearchPoppedIn) {
-          BlocProvider.of<RootBloc>(context).add(SearchPageCreated());
         }
       },
       child: BlocBuilder(
-        bloc: BlocProvider.of<RootBloc>(context),
+        bloc: BlocProvider.of<SearchPageBloc>(context),
         builder: (context, state) => SafeArea(
           bottom: false,
           child: buildBody(state, context),
@@ -89,7 +81,7 @@ class SearchScreenState extends State<SearchScreen> {
   }
 
   Column buildBody(state, BuildContext context) {
-    final bloc = BlocProvider.of<RootBloc>(context);
+    final bloc = BlocProvider.of<SearchPageBloc>(context);
     final focused = !(state is SearchTyping);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,8 +186,9 @@ class SearchScreenState extends State<SearchScreen> {
           Container(
             height: 600,
             child: ListView.builder(
-                itemCount: categories.length,
-                itemBuilder: (context, index) => generateCategoryBtns(index)),
+              itemCount: categories.length,
+              itemBuilder: (context, index) => generateCategoryBtns(index),
+            ),
           )
         ],
       ),
@@ -204,11 +197,15 @@ class SearchScreenState extends State<SearchScreen> {
 
   Center buildLoadingBody() {
     return Center(
-        child: Container(
-            width: 50, height: 50, child: CircularProgressIndicator()));
+      child: Container(
+        width: 50,
+        height: 50,
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
-  TextField buildSearchField(RootBloc bloc) {
+  TextField buildSearchField(SearchPageBloc bloc) {
     return TextField(
       onTap: () => bloc.add(SearchTyping()),
       onEditingComplete: () => bloc.add(SearchCancelled()),
@@ -218,9 +215,10 @@ class SearchScreenState extends State<SearchScreen> {
       focusNode: searchFocus,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-          prefixIcon: Icon(Icons.search),
-          //! Localize
-          hintText: "Search Tracery"),
+        prefixIcon: Icon(Icons.search),
+        //! Localize
+        hintText: "Search Tracery",
+      ),
     );
   }
 }

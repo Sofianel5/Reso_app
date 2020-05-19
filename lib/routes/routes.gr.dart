@@ -61,7 +61,7 @@ class Router extends RouterBase {
         final typedArgs = args as VenueScreenArguments;
         return MaterialPageRoute<dynamic>(
           builder: (context) =>
-              VenueScreen(venue: typedArgs.venue, from: typedArgs.from),
+              VenueScreen(venue: typedArgs.venue),
           settings: settings,
         );
       case Routes.signUpEmail:
@@ -109,8 +109,7 @@ class RootPageArguments {
 //VenueScreen arguments holder class
 class VenueScreenArguments {
   final Venue venue;
-  final String from;
-  VenueScreenArguments({@required this.venue, this.from});
+  VenueScreenArguments({@required this.venue});
 }
 
 //RegisterScreen arguments holder class

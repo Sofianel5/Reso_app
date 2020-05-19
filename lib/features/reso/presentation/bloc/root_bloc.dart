@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:Reso/features/reso/domain/usecases/can_register.dart';
+import 'package:Reso/features/reso/domain/usecases/register.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -72,13 +74,14 @@ class RootBloc extends Bloc<RootEvent, RootState> {
   final GetVenues getVenues;
   final Search search;
   final GetVenueDetail getVenueDetail;
-  final HomePageBlocRouter homePageBloc;
   final GetScan getScan;
   final GetTimeSlots getTimeSlots;
   final GetRegistrations getRegistrations;
   final ToggleLock toggle;
   final ConfirmScan confirmScan;
-  User _user;
+  final CanRegister canRegister;
+  final Register register;
+  User user;
   RootBloc({
     @required this.getExistingUser,
     @required this.login,
@@ -93,17 +96,11 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     @required this.toggle,
     @required this.getScan,
     @required this.getTimeSlots,
+    @required this.canRegister,
+    @required this.register,
   })  : this.loginBloc = LoginBlocRouter(login),
-        this.signupRouter = SignupBlocRouter(signup),
-        this.homePageBloc = HomePageBlocRouter(
-            getTimeSlots: getTimeSlots,
-            getVenueDetail: getVenueDetail,
-            getVenues: getVenues,
-            search: search,
-            confirmScan: confirmScan,
-            getScan: getScan,
-            toggle: toggle,
-            getRegistrations: getRegistrations) {
+        this.signupRouter = SignupBlocRouter(signup)
+   {
     this.add(GetExistingUserEvent());
   }
   @override
@@ -123,8 +120,8 @@ class RootBloc extends Bloc<RootEvent, RootState> {
           final getCachedUserOrFailure = await getCachedUser(NoParams());
           yield* getCachedUserOrFailure.fold((failure) async* {
             yield ErrorState(message: Messages.NO_INTERNET);
-          }, (user) async* {
-            _user = user;
+          }, (_user) async* {
+            user = _user;
             final venuesOrFailure = await getVenues(NoParams());
             yield* venuesOrFailure.fold((failure) async* {
               yield LoadingFailedState(user, message: Messages.NO_INTERNET);
@@ -135,14 +132,12 @@ class RootBloc extends Bloc<RootEvent, RootState> {
         } else {
           yield ErrorState(message: failure.message);
         }
-      }, (user) async* {
-        _user = user;
+      }, (_user) async* {
+        user = _user;
         yield AuthenticatedState(user);
       });
     } else if (event is LoginEvent) {
       yield* loginBloc.route(event);
-    } else if (event is HomeEvent) {
-      yield* homePageBloc.route(event, _user);
     } else if (event is LogoutEvent) {
       await logout(NoParams());
       yield UnauthenticatedState();
@@ -153,11 +148,18 @@ class RootBloc extends Bloc<RootEvent, RootState> {
       yield* result.fold((failure) async* {
         yield SignupPasswordFailure(message: failure.message);
       }, (success) async* {
-        _user = success;
-        yield AuthenticatedState(_user);
+        user = success;
+        yield AuthenticatedState(user);
+        ExtendedNavigator.rootNavigator.popUntil((route) => route.isFirst);
       });
     } else if (event is SignupEvent) {
       yield* signupRouter.route(event);
+    } else if (event is PopEvent) {
+      ExtendedNavigator.rootNavigator.pop();
+    } else if (event is PushVenue) {
+      ExtendedNavigator.rootNavigator.pushNamed(Routes.venue, arguments: VenueScreenArguments(venue: event.venue));
+    } else if (event is PushRegister) {
+      ExtendedNavigator.rootNavigator.pushNamed(Routes.register, arguments: RegisterScreenArguments(timeSlot: event.timeslot, venue: event.venue));
     }
   }
 }

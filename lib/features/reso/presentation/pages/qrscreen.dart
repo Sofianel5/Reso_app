@@ -12,14 +12,11 @@ class QRScreen extends StatefulWidget {
 }
 
 class QRScreenState extends State<QRScreen> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    bloc.add(QRPageCreated());
-  }
 
-  Widget _buildUnlockButton(RootBloc bloc) {
+  
+
+
+  Widget _buildUnlockButton(QRPageBloc bloc) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -77,7 +74,7 @@ class QRScreenState extends State<QRScreen> {
     );
   }
 
-  Widget _buildLockButton(RootBloc bloc) {
+  Widget _buildLockButton(QRPageBloc bloc) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -128,8 +125,7 @@ class QRScreenState extends State<QRScreen> {
     );
   }
 
-  Widget _buildConfirmButton(
-      RootBloc bloc, QRScannedState state, Color backgroundColor) {
+  Widget _buildConfirmButton(QRPageBloc bloc, QRScannedState state, Color backgroundColor) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -162,7 +158,7 @@ class QRScreenState extends State<QRScreen> {
     );
   }
 
-  Widget _buildLockedInfo(RootBloc bloc) {
+  Widget _buildLockedInfo(QRPageBloc bloc) {
     final state = bloc.state;
     if (state is QRNoScanState) {
       return Center(
@@ -191,27 +187,35 @@ class QRScreenState extends State<QRScreen> {
       return Container();
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<RootBloc>(context);
+    final rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
-      bloc: bloc,
-      listener: (context, state) {
-        if (state is QRFailedState) {
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
+        bloc: BlocProvider.of<QRPageBloc>(context),
+        listener: (context, state) async {
+          print("listening");
+    if (state is QRFailedState) {
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text(state.message)));
+    } else if (state is QRUnlockedState) {
+      while (BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {
+        await Future.delayed(const Duration(seconds: 1), () => "1");
+        if (BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {
+          //BlocProvider.of<QRPageBloc>(context).add(QRCheckScan());
         }
-      },
-      child: BlocBuilder(
-        bloc: BlocProvider.of<RootBloc>(context),
-        builder: (context, state) => buildBody(context, state, bloc),
-      ),
-    );
+      }
+    }
+        },
+        child: BlocBuilder(
+    bloc: BlocProvider.of<QRPageBloc>(context),
+    builder: (context, state) => buildBody(context, state, BlocProvider.of<QRPageBloc>(context)),
+        ),
+      );
   }
 
   SingleChildScrollView buildBody(
-      BuildContext context, QRState state, RootBloc bloc) {
+      BuildContext context, QRState state, QRPageBloc bloc) {
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       child: Container(
@@ -251,7 +255,7 @@ class QRScreenState extends State<QRScreen> {
     );
   }
 
-  Container buildContents(QRState state, RootBloc bloc) {
+  Container buildContents(QRState state, QRPageBloc bloc) {
     return Container(
       height: 500,
       width: double.infinity,
@@ -277,7 +281,7 @@ class QRScreenState extends State<QRScreen> {
     );
   }
 
-  List<Widget> buildContentList(QRState state, RootBloc bloc) {
+  List<Widget> buildContentList(QRState state, QRPageBloc bloc) {
     List<Widget> children = [];
     if (state is QRLoadingState) {
       children.add(_buildLoadingButton());

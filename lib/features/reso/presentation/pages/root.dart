@@ -26,7 +26,10 @@ class _RootPageState extends State<RootPage> {
           } else if (state is UnauthenticatedState) {
             return LoginPage();
           } else if (state is AuthenticatedState) {
-            return HomePage();
+            return BlocProvider(
+              create: (context) => HomePageBloc(user: state.user),
+              child: HomePage(),
+            );
           } else if (state is ErrorState) {
             return ErrorScreen(message: state.message);
           } else {

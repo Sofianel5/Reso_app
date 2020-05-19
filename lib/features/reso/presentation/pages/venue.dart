@@ -10,21 +10,42 @@ import '../bloc/root_bloc.dart';
 import '../widgets/time_slot_card.dart';
 
 class VenueScreen extends StatefulWidget {
-  VenueScreen({@required this.venue, this.from});
-  String from;
+  VenueScreen({@required this.venue});
   Venue venue;
   @override
   _VenueScreenState createState() => _VenueScreenState();
 }
 
 class _VenueScreenState extends State<VenueScreen> {
-  bool alreadyPopped = false;
+
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    bloc.add(VenuePageCreated(venue: widget.venue));
+  Widget build(BuildContext context) {
+    final rootBloc = BlocProvider.of<RootBloc>(context);
+    return BlocProvider(
+      create: (context) => VenuePageBloc(
+          getTimeSlots: rootBloc.getTimeSlots,
+          venue: widget.venue,
+          user: rootBloc.user,
+          getVenueDetail: rootBloc.getVenueDetail),
+      child: VenueBloc(venue: widget.venue),
+    );
   }
+
+}
+
+class VenueBloc extends StatefulWidget {
+  const VenueBloc({
+    Key key, this.venue
+  }) :  super(key: key);
+
+  final Venue venue;
+
+  @override
+  _VenueBlocState createState() => _VenueBlocState();
+}
+
+class _VenueBlocState extends State<VenueBloc> {
+  bool alreadyPopped = false;
 
   Completer<void> _refreshCompleter;
 
@@ -32,58 +53,6 @@ class _VenueScreenState extends State<VenueScreen> {
   void initState() {
     super.initState();
     _refreshCompleter = Completer<void>();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<RootBloc>(context);
-    return BlocListener(
-      condition: (previous, current) {
-        return current is VenuePageState;
-      },
-      bloc: BlocProvider.of<RootBloc>(context),
-      listener: (context, state) {
-        if (state is VenueTimeSlotsLoaded ||
-            state is VenueTimeSlotsLoadFailed) {
-          _refreshCompleter?.complete();
-          _refreshCompleter = Completer();
-        } else if (state is VenuePoppedInState) {
-          bloc.add(VenuePageCreated(venue: widget.venue));
-        }
-      },
-      child: BlocBuilder(
-        condition: (previous, current) {
-          return current is VenuePageState;
-        },
-        bloc: BlocProvider.of<RootBloc>(context),
-        builder: (context, state) => Scaffold(
-          backgroundColor: Theme.of(context).bottomAppBarColor,
-          body: Column(
-            children: <Widget>[
-              buildVenueBanner(bloc, context),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 30, 0, 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Time slots",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.25,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              if (state is VenuePageState) buildContents(state),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget buildContents(VenuePageState state) {
@@ -152,7 +121,7 @@ class _VenueScreenState extends State<VenueScreen> {
     );
   }
 
-  Stack buildVenueBanner(RootBloc bloc, BuildContext context) {
+  Stack buildVenueBanner(VenuePageBloc bloc, BuildContext context) {
     return Stack(
       children: <Widget>[
         Container(
@@ -185,9 +154,8 @@ class _VenueScreenState extends State<VenueScreen> {
             children: <Widget>[
               GestureDetector(
                 onTap: () {
-                  if (!alreadyPopped &&
-                      !(bloc.state is VenueTimeSlotsLoadingState)) {
-                    bloc.add(VenuePopEvent(widget.venue, widget.from));
+                  if (!alreadyPopped) {
+                    BlocProvider.of<RootBloc>(context).add(PopEvent());
                   }
                   alreadyPopped = true;
                 },
@@ -196,9 +164,8 @@ class _VenueScreenState extends State<VenueScreen> {
                   iconSize: 30,
                   color: Colors.black,
                   onPressed: () {
-                    if (!alreadyPopped &&
-                        !(bloc.state is VenueTimeSlotsLoadingState)) {
-                      bloc.add(VenuePopEvent(widget.venue, widget.from));
+                    if (!alreadyPopped) {
+                      BlocProvider.of<RootBloc>(context).add(PopEvent());
                     }
                     alreadyPopped = true;
                   },
@@ -263,6 +230,56 @@ class _VenueScreenState extends State<VenueScreen> {
           ),
         )
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener(
+      condition: (previous, current) {
+        return current is VenuePageState;
+      },
+      bloc: BlocProvider.of<VenuePageBloc>(context),
+      listener: (context, state) {
+        if (state is VenueTimeSlotsLoaded ||
+            state is VenueTimeSlotsLoadFailed) {
+          _refreshCompleter?.complete();
+          _refreshCompleter = Completer();
+        }
+      },
+      child: BlocBuilder(
+        condition: (previous, current) {
+          return current is VenuePageState;
+        },
+        bloc: BlocProvider.of<VenuePageBloc>(context),
+        builder: (context, state) => Scaffold(
+          backgroundColor: Theme.of(context).bottomAppBarColor,
+          body: Column(
+            children: <Widget>[
+              buildVenueBanner(
+                  BlocProvider.of<VenuePageBloc>(context), context),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 30, 0, 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Time slots",
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.25,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              buildContents(state),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

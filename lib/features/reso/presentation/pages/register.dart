@@ -7,7 +7,7 @@ import '../../domain/entities/timeslot.dart';
 import '../../domain/entities/venue.dart';
 
 class RegisterScreen extends StatefulWidget {
-  RegisterScreen({this.venue, this.timeSlot});
+  RegisterScreen({@required this.venue,@required this.timeSlot});
   Venue venue;
   TimeSlot timeSlot;
 
@@ -16,19 +16,37 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  bool alreadyPopped = false;
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    bloc.add(RegisterPageOpened(timeSlot: widget.timeSlot, venue: widget.venue));
+  Widget build(BuildContext context) {
+    final rootBloc = BlocProvider.of<RootBloc>(context);
+    return BlocProvider(
+      create: (context) => RegisterPageBloc(
+          canRegister: rootBloc.canRegister,
+          venue: widget.venue,
+          timeslot: widget.timeSlot,
+          register: rootBloc.register),
+      child: RegisterBloc(venue: widget.venue, timeSlot: widget.timeSlot,),
+    );
   }
+}
+
+class RegisterBloc extends StatefulWidget {
+  const RegisterBloc({
+    Key key, this.venue, this.timeSlot,}) : super(key: key);
+  final Venue venue;
+  final TimeSlot timeSlot;
+  @override
+  _RegisterBlocState createState() => _RegisterBlocState();
+}
+
+class _RegisterBlocState extends State<RegisterBloc> {
+  bool alreadyPopped = false;
 
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<RootBloc>(context);
+    final rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
-      bloc: bloc,
+      bloc: BlocProvider.of<RegisterPageBloc>(context),
       listener: (context, state) {
         if (state is RegisterFailedState ||
             state is RegisteredSuccessfullyState) {
@@ -38,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               return AlertDialog(
                 title: Text(state is RegisteredSuccessfullyState
                     ? "Success"
-                    : "Failed"),
+                    : "Failed", style: TextStyle(color: state is RegisteredSuccessfullyState ? Colors.greenAccent[700] : Color(0xFFdd2c00)),),
                 content: Container(
                   height: 100,
                   child: Column(
@@ -66,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       },
       child: BlocBuilder(
-        bloc: bloc,
+        bloc: BlocProvider.of<RegisterPageBloc>(context),
         builder: (context, state) => Scaffold(
           backgroundColor: Color(0xFFF3F5F7),
           body: SafeArea(
@@ -81,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       GestureDetector(
                         onTap: () {
                           if (!alreadyPopped) {
-                            bloc.add(RegisterPopEvent(venue: widget.venue));
+                            rootBloc.add(PopEvent());
                             alreadyPopped = true;
                           }
                         },
@@ -90,11 +108,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           iconSize: 30,
                           color: Colors.black,
                           onPressed: () {
-                          if (!alreadyPopped) {
-                            bloc.add(RegisterPopEvent(venue: widget.venue));
-                            alreadyPopped = true;
-                          }
-                        },
+                            if (!alreadyPopped) {
+                              rootBloc.add(PopEvent());
+                              alreadyPopped = true;
+                            }
+                          },
                         ),
                       ),
                       Text(widget.venue.title),
@@ -132,12 +150,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     DateFormat("jm")
                                         .format(widget.timeSlot.start),
                                 style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.w500),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
                               ),
                               Text(
                                 "to",
                                 style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.w500),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
                               ),
                               Text(
                                 DateFormat("EEEEE, M/d/y ")
@@ -145,7 +165,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     DateFormat("jm")
                                         .format(widget.timeSlot.stop),
                                 style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.w500),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
@@ -155,9 +176,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: RaisedButton(
                             onPressed: () {
                               if (state is CanRegisterState) {
-                                bloc.add(AttemptRegister(
-                                    timeSlot: widget.timeSlot,
-                                    venue: widget.venue));
+                                BlocProvider.of<RegisterPageBloc>(context)
+                                    .add(AttemptRegister(
+                                        timeSlot: widget.timeSlot,
+                                        venue: widget.venue));
                               }
                             },
                             elevation: 5,
@@ -190,3 +212,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+ 

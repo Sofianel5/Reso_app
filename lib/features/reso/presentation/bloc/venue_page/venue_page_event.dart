@@ -26,8 +26,3 @@ class RequestRegisterPage extends VenuePageEvent {
 class TimeSlotsRefreshRequest extends VenuePageEvent {
   TimeSlotsRefreshRequest(Venue venue) : super(venue);
 }
-
-class VenuePopEvent extends VenuePageEvent {
-  final String from;
-  VenuePopEvent(Venue venue, this.from) : super(venue);
-}

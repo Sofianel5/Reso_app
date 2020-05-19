@@ -12,12 +12,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class HistoryScreenState extends State<HistoryScreen> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    bloc.add(RegistrationsPageCreatedEvent());
-  }
 
   Widget _buildList(BuildContext context, List<TimeSlot> list) {
     return ListView.builder(
@@ -36,36 +30,36 @@ class HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final RootBloc bloc = BlocProvider.of<RootBloc>(context);
+    final RootBloc rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
-      bloc: bloc,
-      listener: (context, state) {
-        if (state is RegistrationsLoadFailure) {
-          //! Localize
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
-        }
-      },
-      child: BlocBuilder(
-        bloc: bloc,
-        builder: (content, state) => Column(
-          children: <Widget>[
-            SizedBox(
-              height: 70,
-            ),
-            Text(
-              "Your Registrations",
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
-            ),
-            buildSwitchButtonRow(state, bloc, context),
-            SizedBox(
-              height: 20,
-            ),
-            buildContents(state),
-          ],
+        bloc: BlocProvider.of<RegistrationsPageBloc>(context),
+        listener: (context, state) {
+    if (state is RegistrationsLoadFailure) {
+      //! Localize
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text(state.message)));
+    }
+        },
+        child: BlocBuilder(
+    bloc: BlocProvider.of<RegistrationsPageBloc>(context),
+    builder: (content, state) => Column(
+      children: <Widget>[
+        SizedBox(
+          height: 70,
         ),
-      ),
-    );
+        Text(
+          "Your Registrations",
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
+        ),
+        buildSwitchButtonRow(state, BlocProvider.of<RegistrationsPageBloc>(context), context),
+        SizedBox(
+          height: 20,
+        ),
+        buildContents(state),
+      ],
+    ),
+        ),
+      );
   }
 
   Widget buildContents(RegistrationsState state) {
@@ -102,7 +96,7 @@ class HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
-  Row buildSwitchButtonRow(state, RootBloc bloc, BuildContext context) {
+  Row buildSwitchButtonRow(state, RegistrationsPageBloc bloc, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -114,10 +108,11 @@ class HistoryScreenState extends State<HistoryScreen> {
           },
           child: Container(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
                 "Current",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                textAlign: TextAlign.center,
               ),
             ),
             decoration: BoxDecoration(
@@ -139,7 +134,7 @@ class HistoryScreenState extends State<HistoryScreen> {
           },
           child: Container(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
                 "History",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),

@@ -16,7 +16,6 @@ class ErrorState extends RootState {
   List<Object> get props => [message];
 }
 
-
 class UnauthenticatedState extends RootState {
   @override
   List<Object> get props => [];
@@ -51,3 +50,4 @@ class ResetPasswordState extends RootState {
   @override
   List<Object> get props => [];
 }
+ 

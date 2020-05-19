@@ -27,7 +27,7 @@ class _SignUpEmailScreenState extends State<SignUpEmailScreen> {
 
   Widget _buildEmailField() {
     return TextFormField(
-      style: TextStyle(color: Colors.black38),
+      style: TextStyle(color: Colors.black87),
       cursorColor: Theme.of(context).accentColor,
       controller: _email,
       validator: (value) {

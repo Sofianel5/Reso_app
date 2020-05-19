@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       children: [
         TextField(
-          style: TextStyle(color: Colors.black38),
+          style: TextStyle(color: Colors.black87),
           cursorColor: Theme.of(context).accentColor,
           controller: _email,
           onEditingComplete: () {
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       children: [
         TextField(
-          style: TextStyle(color: Colors.black38),
+          style: TextStyle(color: Colors.black87),
           cursorColor: Theme.of(context).accentColor,
           controller: _password,
           onTap: () => setState(() {}),

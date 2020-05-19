@@ -76,7 +76,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
         }
         return null;
       },
-      style: TextStyle(color: Colors.black38),
+      style: TextStyle(color: Colors.black87),
       cursorColor: Theme.of(context).accentColor,
       controller: _password,
       obscureText: true,

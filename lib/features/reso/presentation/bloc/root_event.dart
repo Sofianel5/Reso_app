@@ -3,6 +3,8 @@ part of 'root_bloc.dart';
 
 abstract class RootEvent extends Equatable {
   const RootEvent();
+  @override
+  List<Object> get props => [];
 }
 
 class GetExistingUserEvent extends RootEvent {
@@ -30,4 +32,19 @@ class ErrorEvent extends RootEvent {
 class LogoutEvent extends RootEvent {
   @override
   List<Object> get props => [];
+}
+
+
+class PopEvent extends RootEvent {}
+
+class PushVenue extends RootEvent {
+  final Venue venue;
+  PushVenue(this.venue);
+  
+}
+
+class PushRegister extends RootEvent {
+  final Venue venue;
+  final TimeSlot timeslot;
+  PushRegister({this.venue, this.timeslot});
 }

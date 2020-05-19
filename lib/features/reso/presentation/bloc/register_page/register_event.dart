@@ -6,9 +6,6 @@ class RegisterEvent extends RootEvent {
 }
 
 class RegisterPageOpened extends RegisterEvent {
-  TimeSlot timeSlot;
-  Venue venue;
-  RegisterPageOpened({this.timeSlot, this.venue});
 }
 
 class AttemptRegister extends RegisterEvent {

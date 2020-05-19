@@ -1,4 +1,6 @@
+import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import 'attendance_graph.dart';
@@ -9,8 +11,11 @@ class TimeSlotCard extends StatelessWidget {
   final venue;
   @override
   Widget build(BuildContext context) {
+    RootBloc bloc = BlocProvider.of<RootBloc>(context);
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        bloc.add(PushRegister(venue: venue, timeslot: timeslot));
+      },
       child: Container(
         decoration: BoxDecoration(
           //border: Border.all(color: Colors.black, width: 1),

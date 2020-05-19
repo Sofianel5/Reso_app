@@ -17,15 +17,6 @@ class BrowseScreen extends StatefulWidget {
 }
 
 class BrowseScreenState extends State<BrowseScreen> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    RootState state = bloc.state;
-    if (state is AuthenticatedState) {
-      bloc.add(BrowsePageCreationEvent(user: state.user));
-    }
-  }
   Completer<void> _refreshCompleter;
   List<Venue> showingVenues;
   List<Venue> venues;
@@ -49,7 +40,13 @@ class BrowseScreenState extends State<BrowseScreen> {
     _refreshCompleter = Completer<void>();
   }
 
-  Widget _buildIcon(int index, RootBloc bloc) {
+  @override 
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+  }
+
+  Widget _buildIcon(int index, BrowsePageBloc bloc) {
     return GestureDetector(
       onTap: () {
         if (index != 0) {
@@ -106,40 +103,37 @@ class BrowseScreenState extends State<BrowseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    final BrowseState state = bloc.state;
+    final RootBloc rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
-      bloc: bloc,
-      condition: (previous, current) => true,
-      listener: (context, state) {
-        print(state);
-        if (state is LoadedBrowseState) {
-          _refreshCompleter?.complete();
-          _refreshCompleter = Completer();
-          venues = state.loadedVenues;
-          showingVenues = state.loadedVenues;
-        } else if (state is BrowsePoppedIn) {
-          bloc.add(BrowsePageCreationEvent(user: state.user));
-        } 
-      },
-      child: BlocBuilder(
-        bloc: bloc,
+        bloc: BlocProvider.of<BrowsePageBloc>(context),
         condition: (previous, current) => true,
-        builder: (context, state) => SafeArea(
-          bottom: false,
-          child: RefreshIndicator(
-            onRefresh: () async {
-              bloc.add(BrowsePageRefreshEvent());
-              return _refreshCompleter.future;
-            },
-            child: buildListView(bloc.state, bloc),
-          ),
-        ),
+        listener: (context, state) {
+    print(state);
+    if (state is LoadedBrowseState) {
+      _refreshCompleter?.complete();
+      _refreshCompleter = Completer();
+      venues = state.loadedVenues;
+      showingVenues = state.loadedVenues;
+    }
+        },
+        child: BlocBuilder(
+    bloc: BlocProvider.of<BrowsePageBloc>(context),
+    condition: (previous, current) => true,
+    builder: (context, state) => SafeArea(
+      bottom: false,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          BlocProvider.of<BrowsePageBloc>(context).add(BrowsePageRefreshEvent());
+          return _refreshCompleter.future;
+        },
+        child: buildListView(BlocProvider.of<BrowsePageBloc>(context).state, BlocProvider.of<BrowsePageBloc>(context)),
       ),
-    );
+    ),
+        ),
+      );
   }
 
-  ListView buildListView(state, RootBloc bloc) {
+  ListView buildListView(state, BrowsePageBloc bloc) {
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 0.0),
       children: <Widget>[
@@ -161,7 +155,7 @@ class BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  RefreshIndicator buildLoadedBody(RootBloc bloc, LoadedBrowseState state) {
+  RefreshIndicator buildLoadedBody(BrowsePageBloc bloc, LoadedBrowseState state) {
     return RefreshIndicator(
       onRefresh: () async {
         bloc.add(BrowsePageRefreshEvent());
@@ -203,7 +197,7 @@ class BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  Container buildIconsRow(RootBloc bloc) {
+  Container buildIconsRow(BrowsePageBloc bloc) {
     return Container(
       height: 100,
       child: ListView(

@@ -82,8 +82,10 @@ class RootRepositoryImpl implements RootRepository {
           await remoteDataSource.login(email: email, password: password);
       print("trying to cache token");
       localDataSource.cacheAuthToken(authToken);
+      final String appVersion = Constants.APP_VERSION.toString();
       Map<String, String> header = Map<String, String>.from(<String, String>{
         "Authorization": "Token " + authToken.toString(),
+        "APP-VERSION": appVersion
       });
       print("getting user");
       final User user = await remoteDataSource.getUser(header);

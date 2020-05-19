@@ -61,9 +61,13 @@ class AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final RootBloc bloc = BlocProvider.of<RootBloc>(context);
-    final AccountState state = bloc.state;
-    return SingleChildScrollView(
+    final RootBloc rootBloc = BlocProvider.of<RootBloc>(context);
+    return BlocListener(
+      bloc: BlocProvider.of<AccountPageBloc>(context),
+        listener: (context, state) {},
+      child: BlocBuilder(
+    bloc: BlocProvider.of<AccountPageBloc>(context),
+        builder: (context, state) => SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       child: Container(
         decoration: BoxDecoration(
@@ -128,7 +132,7 @@ class AccountScreenState extends State<AccountScreen> {
                         SizedBox(
                           height: 30,
                         ),
-                        _buildLogoutWidget(bloc),
+                        _buildLogoutWidget(rootBloc),
                       ],
                     ),
                   ),
@@ -166,6 +170,8 @@ class AccountScreenState extends State<AccountScreen> {
           ],
         ),
       ),
-    );
+    ),
+        ),
+      );
   }
 }

@@ -9,6 +9,7 @@ import 'features/reso/data/datasources/local_datasource.dart';
 import 'features/reso/data/datasources/remote_datasource.dart';
 import 'features/reso/data/repositories/root_repository_imp.dart';
 import 'features/reso/domain/repositories/root_repository.dart';
+import 'features/reso/domain/usecases/can_register.dart';
 import 'features/reso/domain/usecases/confirm_scan.dart';
 import 'features/reso/domain/usecases/get_cached_user.dart';
 import 'features/reso/domain/usecases/get_registrations.dart';
@@ -27,12 +28,13 @@ import 'features/reso/presentation/bloc/root_bloc.dart';
 final sl = GetIt.instance;
 Future<void> init() async {
   //! Features
-  sl.registerFactory(() => RootBloc(getTimeSlots: sl(), toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
+  sl.registerFactory(() => RootBloc(register: sl(), canRegister: sl(), getTimeSlots: sl(), toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
   // Register use cases 
   sl.registerLazySingleton<GetExistingUser>(() => GetExistingUser(sl()));
   sl.registerLazySingleton<ConfirmScan>(()=>ConfirmScan(sl()));
   sl.registerLazySingleton<GetRegistrations>(()=>GetRegistrations(sl()));
   sl.registerLazySingleton<GetScan>(()=>GetScan(sl()));
+  sl.registerLazySingleton<CanRegister>(()=>CanRegister(sl()));
   sl.registerLazySingleton<GetTimeSlots>(()=>GetTimeSlots(sl()));
   sl.registerLazySingleton<Register>(()=>Register(sl()));
   sl.registerLazySingleton<ToggleLock>(()=>ToggleLock(sl()));
