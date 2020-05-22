@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,7 +18,6 @@ class VenueScreen extends StatefulWidget {
 }
 
 class _VenueScreenState extends State<VenueScreen> {
-
   @override
   Widget build(BuildContext context) {
     final rootBloc = BlocProvider.of<RootBloc>(context);
@@ -30,13 +30,10 @@ class _VenueScreenState extends State<VenueScreen> {
       child: VenueBloc(venue: widget.venue),
     );
   }
-
 }
 
 class VenueBloc extends StatefulWidget {
-  const VenueBloc({
-    Key key, this.venue
-  }) :  super(key: key);
+  const VenueBloc({Key key, this.venue}) : super(key: key);
 
   final Venue venue;
 
@@ -72,18 +69,15 @@ class _VenueBlocState extends State<VenueBloc> {
     }
   }
 
-  Container buildLoadedContainer(state) {
-    return Container(
-      height: 500,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        shrinkWrap: true,
-        itemCount: state.timeSlots.length,
-        itemBuilder: (BuildContext context, int index) => Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: TimeSlotCard(
-              timeslot: state.timeSlots[index], venue: state.venue),
-        ),
+  Widget buildLoadedContainer(state) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      shrinkWrap: true,
+      itemCount: state.timeSlots.length,
+      itemBuilder: (BuildContext context, int index) => Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child:
+            TimeSlotCard(timeslot: state.timeSlots[index], venue: state.venue),
       ),
     );
   }
@@ -141,7 +135,7 @@ class _VenueBlocState extends State<VenueBloc> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image(
-                image: NetworkImage(widget.venue.image),
+                image: CachedNetworkImageProvider(widget.venue.image),
                 fit: BoxFit.cover,
               ),
             ),
@@ -159,16 +153,19 @@ class _VenueBlocState extends State<VenueBloc> {
                   }
                   alreadyPopped = true;
                 },
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  iconSize: 30,
-                  color: Colors.black,
-                  onPressed: () {
-                    if (!alreadyPopped) {
-                      BlocProvider.of<RootBloc>(context).add(PopEvent());
-                    }
-                    alreadyPopped = true;
-                  },
+                child: Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: Colors.white),
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    iconSize: 30,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    onPressed: () {
+                      if (!alreadyPopped) {
+                        BlocProvider.of<RootBloc>(context).add(PopEvent());
+                      }
+                      alreadyPopped = true;
+                    },
+                  ),
                 ),
               ),
               Row(
@@ -187,9 +184,10 @@ class _VenueBlocState extends State<VenueBloc> {
                 onTap: () => print("hi"),
                 child: Text(
                   widget.venue.title,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: MediaQuery.of(context).size.width/20,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
                   ),
@@ -209,7 +207,7 @@ class _VenueBlocState extends State<VenueBloc> {
                     widget.venue.address.city,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: MediaQuery.of(context).size.width/22,
                     ),
                   ),
                 ],
@@ -254,29 +252,42 @@ class _VenueBlocState extends State<VenueBloc> {
         bloc: BlocProvider.of<VenuePageBloc>(context),
         builder: (context, state) => Scaffold(
           backgroundColor: Theme.of(context).bottomAppBarColor,
-          body: Column(
-            children: <Widget>[
-              buildVenueBanner(
-                  BlocProvider.of<VenuePageBloc>(context), context),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 30, 0, 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Time slots",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.25,
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                buildVenueBanner(
+                    BlocProvider.of<VenuePageBloc>(context), context),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 30, 0, 15),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Time slots",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.25,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                if (state is VenueTimeSlotsLoaded &&
+                    !(state is VenueNoTimeSlots))
+                  for (var timeslot in state.timeSlots)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10,0,10,25.0),
+                      child: TimeSlotCard(
+                        timeslot: timeslot,
+                        venue: state.venue,
                       ),
                     )
-                  ],
-                ),
-              ),
-              buildContents(state),
-            ],
+                else
+                  buildContents(state),
+              ],
+            ),
           ),
         ),
       ),

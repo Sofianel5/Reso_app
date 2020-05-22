@@ -44,8 +44,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<http.Response> _getResponse(Map<String, dynamic> data, String url,
       {Map<String, dynamic> headers, bool getMethod = false}) async {
     try {
-      print("going to post");
+      print("going to post: ");
       http.Response response;
+      print(data);
+      print("headers: ");
+      print(headers);
       if (getMethod) {
         String urlParams = urlEncodeMap(data);
         response = await client.get(url + "?" + urlParams,
@@ -54,6 +57,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         response = await client.post(url,
             body: data, headers: headers ?? <String, String>{});
       }
+      print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else if (response.statusCode == 406) {
@@ -71,11 +75,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<Map<String, dynamic>> _getJson(Map<String, dynamic> data, String url,
       {Map<String, dynamic> headers, bool useGet = true}) async {
     try {
+      print("headers in gjson: ");
       print(headers);
       String responseBody =
           (await _getResponse(data, url, headers: headers, getMethod: useGet))
               .body;
-      print("get body");
       Map<String, dynamic> responseJson =
           Map<String, dynamic>.from(jsonDecode(responseBody));
       return responseJson;
@@ -94,6 +98,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       };
       var jsonData;
       var response = await client.post(Urls.LOGIN_URL, body: data);
+      print(response.body);
       if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
         return jsonData["auth_token"];

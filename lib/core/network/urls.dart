@@ -1,5 +1,5 @@
 class Urls {
-  static const bool Debug = true;
+  static const bool Debug = false;
   static String getBaseURL() => Debug ? "http://127.0.0.1:8000/" : "https://api.tracery.us/";
   static String LOGIN_URL = getBaseURL() + "api/auth/token/login/";
   static String USER_URL = getBaseURL() + "api/me/";

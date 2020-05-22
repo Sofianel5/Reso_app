@@ -44,7 +44,7 @@ class TimeSlotCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  DateFormat("EEEEE").format(timeslot.start),
+                  DateFormat("MM/dd/yyyy").format(timeslot.start),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,

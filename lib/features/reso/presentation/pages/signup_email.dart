@@ -42,7 +42,6 @@ class _SignUpEmailScreenState extends State<SignUpEmailScreen> {
           focusColor: Colors.black,
           hintText: Localizer.of(context).get("email"),
           prefixIcon: Icon(Icons.email)),
-      textInputAction: TextInputAction.continueAction,
     );
   }
 
@@ -98,6 +97,7 @@ class _SignUpEmailScreenState extends State<SignUpEmailScreen> {
           child: BlocBuilder(
         bloc: BlocProvider.of<RootBloc>(context),
             builder: (context, state) => Scaffold(
+              backgroundColor: Color(0xFFF3F5F7),
           key: _key,
           body: Stack(
             children: <Widget>[

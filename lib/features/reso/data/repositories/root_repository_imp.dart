@@ -60,10 +60,12 @@ class RootRepositoryImpl implements RootRepository {
     return await _getUser(() async {
       final String authToken = await localDataSource.getAuthToken();
       final String appVersion = Constants.APP_VERSION.toString();
-      print(appVersion);
+      final Coordinates coordinates = await localDataSource.getCoordinates();
       Map<String, String> header = Map<String, String>.from(<String, String>{
         "Authorization": "Token " + authToken.toString(),
-        "APP-VERSION": appVersion
+        "APP-VERSION": appVersion,
+        "LAT": coordinates == null ? "" : coordinates.lat.toString(),
+        "LNG": coordinates == null ? "" : coordinates.lng.toString(),
       });
       final UserModel user = await remoteDataSource.getUser(header);
       try {

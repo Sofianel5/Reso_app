@@ -138,6 +138,7 @@ class RootBloc extends Bloc<RootEvent, RootState> {
       });
     } else if (event is LoginEvent) {
       yield* loginBloc.route(event);
+      user = loginBloc.user;
     } else if (event is LogoutEvent) {
       await logout(NoParams());
       yield UnauthenticatedState();

@@ -41,15 +41,22 @@ class SearchScreenState extends State<SearchScreen> {
     searchFocus = FocusNode();
   }
 
-  Widget generateCategoryBtns(int index) {
-    final c = categories[index];
+  Widget generateCategoryBtns(String category) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: RaisedButton(
-        child: Text(c),
-        onPressed: () {
-          BlocProvider.of<SearchPageBloc>(context).add(SearchSubmitted(c));
-        },
+      child: Flex(
+        direction: Axis.horizontal,
+        children: [
+          Expanded(
+            child: RaisedButton(
+              child: Text(category),
+              onPressed: () {
+                BlocProvider.of<SearchPageBloc>(context)
+                    .add(SearchSubmitted(category));
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -80,48 +87,57 @@ class SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Column buildBody(state, BuildContext context) {
+  Widget buildBody(state, BuildContext context) {
     final bloc = BlocProvider.of<SearchPageBloc>(context);
     final focused = !(state is SearchTyping);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        state is SearchTypingState
-            ? Container()
-            : Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  //! Localize
-                  "Search",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          state is SearchTypingState
+              ? Container()
+              : Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    //! Localize
+                    "Search",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: buildSearchField(bloc),
-              ),
-              !focused
-                  ? Container()
-                  : FlatButton(
-                      child: Text(
-                        //! Localize
-                        "Cancel",
-                        style: TextStyle(
-                          color: Theme.of(context).accentColor,
-                          fontWeight: FontWeight.w500,
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: buildSearchField(bloc),
+                ),
+                !focused
+                    ? Container()
+                    : FlatButton(
+                        child: Text(
+                          //! Localize
+                          "Cancel",
+                          style: TextStyle(
+                            color: Theme.of(context).accentColor,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      onPressed: () => bloc.add(SearchCancelled()),
-                    )
-            ],
+                        onPressed: () => bloc.add(SearchCancelled()),
+                      )
+              ],
+            ),
           ),
-        ),
-        buildBodySwitchState(state),
-      ],
+          if (state is SearchFinishedState && !(state is NoResultsState))
+            for (var venue in state.venues)
+              VenueCard(
+                venue: venue,
+                from: "search",
+              )
+          else
+            buildBodySwitchState(state),
+        ],
+      ),
     );
   }
 
@@ -133,27 +149,10 @@ class SearchScreenState extends State<SearchScreen> {
     } else if (state is SearchFinishedState) {
       if (state is NoResultsState) {
         return buildNoResultsBody();
-      } else {
-        return buildResults(state);
-      }
+      } 
     } else {
       return buildInitialBody();
     }
-  }
-
-  Container buildResults(SearchFinishedState state) {
-    return Container(
-      height: 600,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        shrinkWrap: true,
-        itemCount: state.venues.length,
-        itemBuilder: (BuildContext context, int index) => VenueCard(
-          venue: state.venues[index],
-          from: "search",
-        ),
-      ),
-    );
   }
 
   Padding buildNoResultsBody() {
@@ -183,13 +182,7 @@ class SearchScreenState extends State<SearchScreen> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          Container(
-            height: 600,
-            child: ListView.builder(
-              itemCount: categories.length,
-              itemBuilder: (context, index) => generateCategoryBtns(index),
-            ),
-          )
+          for (var category in categories) generateCategoryBtns(category)
         ],
       ),
     );

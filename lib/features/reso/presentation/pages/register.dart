@@ -7,7 +7,7 @@ import '../../domain/entities/timeslot.dart';
 import '../../domain/entities/venue.dart';
 
 class RegisterScreen extends StatefulWidget {
-  RegisterScreen({@required this.venue,@required this.timeSlot});
+  RegisterScreen({@required this.venue, @required this.timeSlot});
   Venue venue;
   TimeSlot timeSlot;
 
@@ -25,14 +25,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           venue: widget.venue,
           timeslot: widget.timeSlot,
           register: rootBloc.register),
-      child: RegisterBloc(venue: widget.venue, timeSlot: widget.timeSlot,),
+      child: RegisterBloc(
+        venue: widget.venue,
+        timeSlot: widget.timeSlot,
+      ),
     );
   }
 }
 
 class RegisterBloc extends StatefulWidget {
   const RegisterBloc({
-    Key key, this.venue, this.timeSlot,}) : super(key: key);
+    Key key,
+    this.venue,
+    this.timeSlot,
+  }) : super(key: key);
   final Venue venue;
   final TimeSlot timeSlot;
   @override
@@ -54,9 +60,13 @@ class _RegisterBlocState extends State<RegisterBloc> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text(state is RegisteredSuccessfullyState
-                    ? "Success"
-                    : "Failed", style: TextStyle(color: state is RegisteredSuccessfullyState ? Colors.greenAccent[700] : Color(0xFFdd2c00)),),
+                title: Text(
+                  state is RegisteredSuccessfullyState ? "Success" : "Failed",
+                  style: TextStyle(
+                      color: state is RegisteredSuccessfullyState
+                          ? Colors.greenAccent[700]
+                          : Color(0xFFdd2c00)),
+                ),
                 content: Container(
                   height: 100,
                   child: Column(
@@ -124,12 +134,11 @@ class _RegisterBlocState extends State<RegisterBloc> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20),
                   child: Container(
-                    height: 650,
+                    height: MediaQuery.of(context).size.height-150,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          height: 400,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -144,29 +153,29 @@ class _RegisterBlocState extends State<RegisterBloc> {
                                   )
                                 ],
                               ),
+                              SizedBox(height: 30),
                               Text(
                                 DateFormat("EEEEE, M/d/y ")
                                         .format(widget.timeSlot.start) +
                                     DateFormat("jm")
                                         .format(widget.timeSlot.start),
                                 style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w500),
+                                    fontSize: 17, fontWeight: FontWeight.w500),
                               ),
+                              SizedBox(height: 30),
                               Text(
                                 "to",
                                 style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w500),
+                                    fontSize: 17, fontWeight: FontWeight.w500),
                               ),
+                              SizedBox(height: 30),
                               Text(
                                 DateFormat("EEEEE, M/d/y ")
                                         .format(widget.timeSlot.stop) +
                                     DateFormat("jm")
                                         .format(widget.timeSlot.stop),
                                 style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w500),
+                                    fontSize: 17, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
@@ -176,8 +185,8 @@ class _RegisterBlocState extends State<RegisterBloc> {
                           child: RaisedButton(
                             onPressed: () {
                               if (state is CanRegisterState) {
-                                BlocProvider.of<RegisterPageBloc>(context)
-                                    .add(AttemptRegister(
+                                BlocProvider.of<RegisterPageBloc>(context).add(
+                                    AttemptRegister(
                                         timeSlot: widget.timeSlot,
                                         venue: widget.venue));
                               }
@@ -212,4 +221,3 @@ class _RegisterBlocState extends State<RegisterBloc> {
     );
   }
 }
- 

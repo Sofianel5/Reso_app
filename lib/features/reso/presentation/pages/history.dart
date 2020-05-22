@@ -14,17 +14,20 @@ class HistoryScreen extends StatefulWidget {
 class HistoryScreenState extends State<HistoryScreen> {
 
   Widget _buildList(BuildContext context, List<TimeSlot> list) {
-    return ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: list == null ? 0 : list.length,
-      itemBuilder: (BuildContext context, int index) {
-        TimeSlot ts = list[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: ReservationCard(timeslot: ts),
-        );
-      },
+    return Container(
+      height: MediaQuery.of(context).size.height-270,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
+        itemCount: list == null ? 0 : list.length,
+        itemBuilder: (BuildContext context, int index) {
+          TimeSlot ts = list[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: ReservationCard(timeslot: ts),
+          );
+        },
+      ),
     );
   }
 

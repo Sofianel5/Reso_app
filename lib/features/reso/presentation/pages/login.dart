@@ -81,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
             hintText: Localizer.of(context).get("email"),
             prefixIcon: Icon(Icons.email),
           ),
-          textInputAction: TextInputAction.continueAction,
         ),
         errorWidget
       ],
@@ -123,7 +122,11 @@ class _LoginPageState extends State<LoginPage> {
           controller: _password,
           onTap: () => setState(() {}),
           onSubmitted: (value) {
-            setState(() {});
+            setState(() {
+              bloc.add(
+              LoginAttemptEvent(email: _email.text, password: _password.text));
+              passwordNode.nextFocus();
+            });
           },
           focusNode: passwordNode,
           obscureText: true,
@@ -207,6 +210,7 @@ class _LoginPageState extends State<LoginPage> {
       child: BlocBuilder<RootBloc, RootState>(
         bloc: bloc,
         builder: (context, state) => Scaffold(
+          backgroundColor: Colors.white,
           key: _key,
           body: Stack(
             children: <Widget>[

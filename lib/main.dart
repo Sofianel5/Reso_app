@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'core/localizations/localizations.dart';
 import 'features/reso/presentation/bloc/root_bloc.dart';
@@ -9,6 +10,7 @@ import 'injection_container.dart' as ic;
 import 'routes/routes.gr.dart';
 
 void main() async {
+  Crashlytics.instance.enableInDevMode = true;
   WidgetsFlutterBinding.ensureInitialized();
   await ic.init();
   runApp(Reso());

@@ -2,6 +2,7 @@ part of 'root_bloc.dart';
 
 class LoginBlocRouter {
   Login login;
+  User user;
   LoginBlocRouter(this.login);
   Stream<RootState> route(LoginEvent event) async* {
     yield LoginLoadingState();
@@ -17,7 +18,8 @@ class LoginBlocRouter {
             yield LoginFailedState(globalMessage: failure.message);
           }
         },
-        (user) async* {
+        (_user) async* {
+          user = _user;
           yield AuthenticatedState(user);
         },
       );

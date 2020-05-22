@@ -38,19 +38,19 @@ class ReservationCard extends StatelessWidget {
             children: [
               Text(
                 timeslot.venue.title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width/25),
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
               ),
               Text(
-                DateFormat("EEEEE").format(timeslot.start),
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                DateFormat("MM/dd/yyyy").format(timeslot.start),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width/25),
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
               ),
               Text(
                 DateFormat("jm").format(timeslot.start) + " to " + DateFormat("jm").format(timeslot.stop),
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width/25),
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
               ),

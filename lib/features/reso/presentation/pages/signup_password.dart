@@ -101,6 +101,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
       child: BlocBuilder(
         bloc: BlocProvider.of<RootBloc>(context),
         builder: (context, state) => Scaffold(
+          backgroundColor: Color(0xFFF3F5F7),
           key: _key,
           body: Stack(
             children: <Widget>[

@@ -20,6 +20,7 @@ class BrowsePageBloc extends Bloc<BrowsePageEvent, BrowseState> {
   BrowsePageBloc({@required this.user, @required this.getVenues, @required this.getVenueDetail}) {
     this.add(BrowsePageCreationEvent(user: user));
   }
+  
   Stream<RootState> route(BrowsePageEvent event, User user) async* {
     if (event is BrowsePageCreationEvent) {
       yield LoadingBrowseState(user);

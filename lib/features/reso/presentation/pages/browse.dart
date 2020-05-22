@@ -40,15 +40,17 @@ class BrowseScreenState extends State<BrowseScreen> {
     _refreshCompleter = Completer<void>();
   }
 
-  @override 
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
   }
 
   Widget _buildIcon(int index, BrowsePageBloc bloc) {
     return GestureDetector(
       onTap: () {
+        if (!(bloc.state is LoadedBrowseState)) {
+          return;
+        }
         if (index != 0) {
           showingVenues = [];
           for (var venue in venues) {
@@ -105,32 +107,34 @@ class BrowseScreenState extends State<BrowseScreen> {
   Widget build(BuildContext context) {
     final RootBloc rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
+      bloc: BlocProvider.of<BrowsePageBloc>(context),
+      condition: (previous, current) => true,
+      listener: (context, state) {
+        print(state);
+        if (state is LoadedBrowseState) {
+          _refreshCompleter?.complete();
+          _refreshCompleter = Completer();
+          venues = state.loadedVenues;
+          showingVenues = state.loadedVenues;
+        }
+      },
+      child: BlocBuilder(
         bloc: BlocProvider.of<BrowsePageBloc>(context),
         condition: (previous, current) => true,
-        listener: (context, state) {
-    print(state);
-    if (state is LoadedBrowseState) {
-      _refreshCompleter?.complete();
-      _refreshCompleter = Completer();
-      venues = state.loadedVenues;
-      showingVenues = state.loadedVenues;
-    }
-        },
-        child: BlocBuilder(
-    bloc: BlocProvider.of<BrowsePageBloc>(context),
-    condition: (previous, current) => true,
-    builder: (context, state) => SafeArea(
-      bottom: false,
-      child: RefreshIndicator(
-        onRefresh: () async {
-          BlocProvider.of<BrowsePageBloc>(context).add(BrowsePageRefreshEvent());
-          return _refreshCompleter.future;
-        },
-        child: buildListView(BlocProvider.of<BrowsePageBloc>(context).state, BlocProvider.of<BrowsePageBloc>(context)),
-      ),
-    ),
+        builder: (context, state) => SafeArea(
+          bottom: false,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              BlocProvider.of<BrowsePageBloc>(context)
+                  .add(BrowsePageRefreshEvent());
+              return _refreshCompleter.future;
+            },
+            child: buildListView(BlocProvider.of<BrowsePageBloc>(context).state,
+                BlocProvider.of<BrowsePageBloc>(context)),
+          ),
         ),
-      );
+      ),
+    );
   }
 
   ListView buildListView(state, BrowsePageBloc bloc) {
@@ -144,32 +148,34 @@ class BrowseScreenState extends State<BrowseScreen> {
           height: 20.0,
         ),
         if (state is LoadedBrowseState)
-          showingVenues.length == 0
-              ? buildNoVenuesBody()
-              : buildLoadedBody(bloc, state)
+          if (showingVenues.length == 0)
+            buildNoVenuesBody()
+          else 
+            for (var venue in showingVenues)
+              VenueCard(venue: venue)
         else if (state is LoadingBrowseState)
           Center(
             child: buildLoadingBody(state),
-          )
+          ),
       ],
     );
   }
 
-  RefreshIndicator buildLoadedBody(BrowsePageBloc bloc, LoadedBrowseState state) {
+  RefreshIndicator buildLoadedBody(
+      BrowsePageBloc bloc, LoadedBrowseState state) {
     return RefreshIndicator(
       onRefresh: () async {
         bloc.add(BrowsePageRefreshEvent());
         return _refreshCompleter.future;
       },
       child: Container(
-        height: 600,
+        height: 10,
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
           shrinkWrap: true,
-          itemCount: showingVenues?.length ?? 0,
+          itemCount: 5,
           itemBuilder: (BuildContext context, int index) => VenueCard(
-            venue: showingVenues[index],
-            from: "browse"
+            venue: showingVenues[0],
           ),
         ),
       ),
@@ -180,10 +186,11 @@ class BrowseScreenState extends State<BrowseScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Center(
-          child: Text(
-        "None nearby",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-      )),
+        child: Text(
+          "None nearby",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+        ),
+      ),
     );
   }
 
