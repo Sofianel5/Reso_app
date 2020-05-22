@@ -21,7 +21,7 @@ class Urls {
 
   //static String MEDIA_BASE_URL = getBaseURL().substring(0, getBaseURL().length - 1);
   static String SIGNUP_URL = getBaseURL() + "api/auth/users/";
-  static String PASSWORD_RESET_URL = getBaseURL() + "passwordreset/";
+  static String PASSWORD_RESET_URL = getBaseURL() + "users/password/reset/";
   static String USER_CONFIRM_ENTRY = getBaseURL() + "api/person-confirm-entry/";
   static String GET_PV_HANDSHAKES = getBaseURL() + "api/person-get-handshakes-with-venue/";
   static String SCAN_VENUE = getBaseURL() + "api/person-scan-venue/";

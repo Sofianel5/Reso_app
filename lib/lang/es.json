@@ -1,0 +1,37 @@
+{
+  "email": "Dirección de correo electrónico",
+  "password": "Contraseña",
+  "submit": "Enviar",
+  "sign-up": "Regístrate",
+  "forgot-password": "Se te olvidó tu contraseña",
+  "welcome": "Bienvenida a reso",
+  "sign-in": "Registrarse",
+  "NO INTERNET": "Sin internet",
+  "SERVER_FAILURE": "Falla del servidor",
+  "CACHE_GET_FAILURE": "Caché obtener faliure",
+  "INVALID_PASSWORD": "Contraseña invalida",
+  "LOADING": "Cargando",
+  "NO_USER": "Ningún usuario",
+  "AUTHENTICATION_FAILURE": "Falla de autenticación",
+  "CACHE_WRITE_FAILURE": "Caché escribir faliure",
+  "NULL_PASSWORD_INPUT": "Entrada de contraseña nula",
+  "INVALID_LENGTH_PASSWORD_INPUT": "Entrada de contraseña de longitud no válida",
+  "NULL_NAME_INPUT": "Entrada de nombre nulo",
+  "NULL_EMAIL_INPUT": "Entrada de correo electrónico nula",
+  "INVALID_EMAIL_INPUT": "Entrada de correo electrónico no válida",
+  "INVALID_NAME_INPUT": "Ingreso de nombre inválido",
+  "INVALID_LENGTH_NAME_INPUT": "Entrada de nombre de longitud no válida",
+  "INVALID_LENGTH_EMAIL": "Correo electrónico de longitud no válida",
+  "INVALID_FORM": "Forma invalida",
+  "UNKNOWN_ERROR": "Error desconocido",
+  "EMPTY_SEARCH_Q": "Consulta de búsqueda vacía",
+  "NO_SCAN": "Sin escaneo",
+  "CANNOT_REGISTER": "No se puede registrar",
+  "NEEDS_UPDATE": "necesita actualización",
+
+
+
+
+
+
+}

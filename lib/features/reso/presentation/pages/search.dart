@@ -210,7 +210,7 @@ class SearchScreenState extends State<SearchScreen> {
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
         //! Localize
-        hintText: "Search Tracery",
+        hintText: "Search",
       ),
     );
   }

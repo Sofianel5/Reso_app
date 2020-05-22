@@ -1,7 +1,9 @@
 import 'package:Reso/core/localizations/localizations.dart';
+import 'package:Reso/core/network/urls.dart';
 import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -142,6 +144,25 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  _launchURL() async {
+    var url = Urls.PASSWORD_RESET_URL;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget _buildForgotPasswordBtn() {
+    return Container(
+      child: FlatButton(
+        onPressed: () =>
+            _launchURL(), 
+        child: Text(Localizer.of(context).get("forgot-password") ?? "Forgot password?"),
+      ),
+    );
+  }
+
   Widget _buildSubmitButton(RootBloc bloc) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 55),
@@ -180,16 +201,6 @@ class _LoginPageState extends State<LoginPage> {
         Localizer.of(context).get("sign-up") ?? "Sign up",
         style: TextStyle(
             fontWeight: FontWeight.w500, color: Colors.black, fontSize: 17),
-      ),
-    );
-  }
-
-  Widget _buildForgotPasswordBtn(RootBloc bloc) {
-    return Container(
-      child: FlatButton(
-        onPressed: () => {},
-        child: Text(
-            Localizer.of(context).get("forgot-password") ?? "Forgot password?"),
       ),
     );
   }
@@ -286,7 +297,7 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: 20,
                         ),
-                        _buildForgotPasswordBtn(bloc),
+                        _buildForgotPasswordBtn(),
                         SizedBox(
                           height: 30,
                         ),

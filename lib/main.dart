@@ -54,6 +54,9 @@ class _ResoState extends State<Reso> {
           GlobalCupertinoLocalizations.delegate
         ],
         localeResolutionCallback: (locale, supportedLocales) {
+          if (locale == null) {
+            return Locale("en");
+          }
           for (var supportedLocale in supportedLocales) {
             if (supportedLocale.languageCode == locale.languageCode) {
               return supportedLocale;
