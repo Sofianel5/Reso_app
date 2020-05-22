@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/errors/exceptions.dart';
@@ -21,6 +22,7 @@ abstract class LocalDataSource {
   Future<void> cacheUser(UserModel user) {}
   Future<User> getCachedUser() {}
 }
+
 const String AUTH_TOKEN_KEY = "authtoken";
 const String VENUES_KEY = "venues";
 const String USER_KEY = "user";
@@ -75,11 +77,9 @@ class LocalDataSourceImpl implements LocalDataSource {
     return await _setString(VENUES_KEY, encoded);
   }
 
-
-
   @override
   Future<List<Venue>> getCachedVenues() async {
-    String venueJsonEncode =  await _getString(VENUES_KEY);
+    String venueJsonEncode = await _getString(VENUES_KEY);
     List<Map<String, dynamic>> venueJson = json.decode(venueJsonEncode);
     List<Venue> venues = [];
     for (var venueMap in venueJson) {
@@ -87,7 +87,7 @@ class LocalDataSourceImpl implements LocalDataSource {
     }
     return venues;
   }
-  
+
   @override
   Future<String> getAuthToken() {
     return _getString(AUTH_TOKEN_KEY);
@@ -98,7 +98,7 @@ class LocalDataSourceImpl implements LocalDataSource {
     return await _setString(AUTH_TOKEN_KEY, token);
   }
 
-  @override 
+  @override
   Future<void> clearData() async {
     try {
       final pref = await SharedPreferences.getInstance();
@@ -111,20 +111,36 @@ class LocalDataSourceImpl implements LocalDataSource {
 
   Future<Coordinates> getCoordinates() async {
     try {
-      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      if (position == null) {
-        Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
-        if (position == null) {
+      Location location = new Location();
+
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
           return null;
         }
       }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return null;
+        }
+      }
+
+     geo.Position position = await geo.Geolocator().getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.low);
+      print("location");
       Map<String, double> coordinates = {
         "lat": position.latitude,
         "lng": position.longitude
       };
       final coords = CoordinatesModel.fromJson(coordinates);
       return coords;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }

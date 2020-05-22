@@ -43,6 +43,8 @@
 	<string>We need your location in order to show you nearby venues.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location in order to show you nearby venues.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location in order to show you nearby venues.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

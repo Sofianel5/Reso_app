@@ -60,6 +60,7 @@ class RootRepositoryImpl implements RootRepository {
     return await _getUser(() async {
       final String authToken = await localDataSource.getAuthToken();
       final String appVersion = Constants.APP_VERSION.toString();
+      print("Attempting to get locationData");
       final Coordinates coordinates = await localDataSource.getCoordinates();
       print("coordinates in getUser");
       print(coordinates);

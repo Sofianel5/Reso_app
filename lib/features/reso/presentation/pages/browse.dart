@@ -222,11 +222,17 @@ class BrowseScreenState extends State<BrowseScreen> {
   }
 
   Padding buildTopPadding(AuthenticatedState state) {
+    String text;
+    try {
+      text = "Near " + state.user.address.address_1;
+    } catch(e) {
+      text = "Near you";
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Text(
         //! LOCALIZE
-        "Near " + state.user?.address?.address_1 ?? "you",
+        text,
         overflow: TextOverflow.ellipsis,
         maxLines: 1,
         style: TextStyle(

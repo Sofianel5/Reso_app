@@ -67,7 +67,6 @@ class _HomePageState extends State<HomePage> {
                 animationDuration: Duration(milliseconds: 400),
                 index: _selectedPage,
                 onTap: (int value) {
-                  //BlocProvider.of<RootBloc>(context).add(PageChangeEvent(index: value));
                   setState(() {
                     _selectedPage = value;
                   });
