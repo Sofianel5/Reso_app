@@ -61,6 +61,8 @@ class RootRepositoryImpl implements RootRepository {
       final String authToken = await localDataSource.getAuthToken();
       final String appVersion = Constants.APP_VERSION.toString();
       final Coordinates coordinates = await localDataSource.getCoordinates();
+      print("coordinates in getUser");
+      print(coordinates);
       Map<String, String> header = Map<String, String>.from(<String, String>{
         "Authorization": "Token " + authToken.toString(),
         "APP-VERSION": appVersion,

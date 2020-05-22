@@ -118,11 +118,12 @@ class LocalDataSourceImpl implements LocalDataSource {
           return null;
         }
       }
-      Map<String, String> coordinates = {
-        "LAT": position.latitude.toString(),
-        "LNG": position.longitude.toString()
+      Map<String, double> coordinates = {
+        "lat": position.latitude,
+        "lng": position.longitude
       };
-      return CoordinatesModel.fromJson(coordinates);
+      final coords = CoordinatesModel.fromJson(coordinates);
+      return coords;
     } catch(e) {
       return null;
     }
