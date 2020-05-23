@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../routes/routes.dart';
 import '../bloc/root_bloc.dart';
 import '../widgets/venue_card.dart';
-import 'venue.dart';
 
 class SearchScreen extends StatefulWidget {
   @override

@@ -5,11 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/localizations/localizations.dart';
-import '../../../../routes/routes.dart';
 import '../../domain/entities/venue.dart';
 import '../bloc/root_bloc.dart';
 import '../widgets/venue_card.dart';
-import 'venue.dart';
 
 class BrowseScreen extends StatefulWidget {
   @override

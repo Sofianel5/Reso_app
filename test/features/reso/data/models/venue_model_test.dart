@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Reso/features/reso/data/models/address_model.dart';
 import 'package:Reso/features/reso/data/models/coordinates_model.dart';
-import 'package:Reso/features/reso/data/models/thread_model.dart';
 import 'package:Reso/features/reso/data/models/timeslot_model.dart';
 import 'package:Reso/features/reso/data/models/user_model.dart';
 import 'package:Reso/features/reso/data/models/venue_model.dart';
