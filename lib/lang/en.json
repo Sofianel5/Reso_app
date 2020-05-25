@@ -29,7 +29,7 @@
     "CANNOT_REGISTER": "You can not register",
     "NEEDS_UPDATE": "You need updating",
     "to": "to",
-    "booked": "ie '{{ number }}% booked'",
+    "booked": "'{{ number }}% booked'",
     "none available": "None available",
     "back": "Back",
     "invalid-info": "Invalid info",
