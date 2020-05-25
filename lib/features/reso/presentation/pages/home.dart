@@ -1,4 +1,3 @@
-import 'package:Reso/core/localizations/messages.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/root_bloc.dart';
 import 'account.dart';
 import 'browse.dart';
-import 'error.dart';
 import 'history.dart';
 import 'qrscreen.dart';
 import 'search.dart';

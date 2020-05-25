@@ -22,10 +22,10 @@
     "INVALID_NAME_INPUT": "Entering invalid name",
     "INVALID_LENGTH_NAME_INPUT": "Length name entry invalid",
     "INVALID_LENGTH_EMAIL": "Email invalid length",
-    "INVALID_FORM": "invalidly",
-    "UNKNOWN_ERROR": "unknown Error",
+    "INVALID_FORM": "Invalid Form",
+    "UNKNOWN_ERROR": "Unknown Error",
     "EMPTY_SEARCH_Q": "Empty search query",
-    "NO_SCAN": "without scan",
+    "NO_SCAN": "Without scan",
     "CANNOT_REGISTER": "You can not register",
-    "NEEDS_UPDATE": "you need updating"
+    "NEEDS_UPDATE": "You need updating"
 }

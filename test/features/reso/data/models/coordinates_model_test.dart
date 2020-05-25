@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:Reso/features/reso/data/models/address_model.dart';
+
 import 'package:Reso/features/reso/data/models/coordinates_model.dart';
-import 'package:Reso/features/reso/data/models/user_model.dart';
+
 import 'package:Reso/features/reso/domain/entities/coordinates.dart';
-import 'package:Reso/features/reso/domain/entities/user.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
