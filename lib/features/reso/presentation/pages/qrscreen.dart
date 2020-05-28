@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:Reso/core/localizations/localizations.dart';
 import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -12,10 +13,6 @@ class QRScreen extends StatefulWidget {
 }
 
 class QRScreenState extends State<QRScreen> {
-
-  
-
-
   Widget _buildUnlockButton(QRPageBloc bloc) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
@@ -66,7 +63,9 @@ class QRScreenState extends State<QRScreen> {
             color: Theme.of(context).accentColor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[CircularProgressIndicator(backgroundColor: Colors.white)],
+              children: <Widget>[
+                CircularProgressIndicator(backgroundColor: Colors.white)
+              ],
             ),
           ),
         ],
@@ -125,7 +124,8 @@ class QRScreenState extends State<QRScreen> {
     );
   }
 
-  Widget _buildConfirmButton(QRPageBloc bloc, QRScannedState state, Color backgroundColor) {
+  Widget _buildConfirmButton(
+      QRPageBloc bloc, QRScannedState state, Color backgroundColor) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -170,9 +170,21 @@ class QRScreenState extends State<QRScreen> {
       return Column(
         children: <Widget>[
           //! Localize
-          Text(
-            "Successful scan",
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+          Container(
+            height: 300,
+            child: Column(
+              children: <Widget>[
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: FlareActor(
+                    "assets/success.flr",
+                    animation: "Untitled",
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                  ),
+                ),
+              ],
+            ),
           ),
           _buildConfirmButton(bloc, state, Colors.greenAccent[700])
         ],
@@ -180,38 +192,40 @@ class QRScreenState extends State<QRScreen> {
     } else if (state is QREntryConfirmedState) {
       return Center(
         //! Localize
-        child:
-            Text(Localizer.of(context).get("confirmed") ?? "Confirmation successful"),
+        child: Text(Localizer.of(context).get("confirmed") ??
+            "Confirmation successful"),
       );
     } else {
       return Container();
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
-        bloc: BlocProvider.of<QRPageBloc>(context),
-        listener: (context, state) async {
-          print("listening");
-    if (state is QRFailedState) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(state.message)));
-    } else if (state is QRUnlockedState) {
-      while (BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {
-        await Future.delayed(const Duration(seconds: 1), () => "1");
-        if (BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {
-          //BlocProvider.of<QRPageBloc>(context).add(QRCheckScan());
+      bloc: BlocProvider.of<QRPageBloc>(context),
+      listener: (context, state) async {
+        print("listening");
+        if (state is QRFailedState) {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text(state.message)));
+        } else if (state is QRUnlockedState) {
+          while (
+              BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {
+            await Future.delayed(const Duration(seconds: 1), () => "1");
+            if (BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {
+              //BlocProvider.of<QRPageBloc>(context).add(QRCheckScan());
+            }
+          }
         }
-      }
-    }
-        },
-        child: BlocBuilder(
-    bloc: BlocProvider.of<QRPageBloc>(context),
-    builder: (context, state) => buildBody(context, state, BlocProvider.of<QRPageBloc>(context)),
-        ),
-      );
+      },
+      child: BlocBuilder(
+        bloc: BlocProvider.of<QRPageBloc>(context),
+        builder: (context, state) =>
+            buildBody(context, state, BlocProvider.of<QRPageBloc>(context)),
+      ),
+    );
   }
 
   SingleChildScrollView buildBody(
