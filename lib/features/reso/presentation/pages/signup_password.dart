@@ -31,6 +31,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 55),
       child: GestureDetector(
         onTap: () {
+          FocusScope.of(context).unfocus();
           bloc.add(PasswordPageSubmitted(_password.text));
         },
         child: AnimatedContainer(

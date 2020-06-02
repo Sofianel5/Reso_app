@@ -40,7 +40,6 @@ class PopEvent extends RootEvent {}
 class PushVenue extends RootEvent {
   final Venue venue;
   PushVenue(this.venue);
-  
 }
 
 class PushRegister extends RootEvent {

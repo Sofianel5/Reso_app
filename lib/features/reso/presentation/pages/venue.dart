@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/venue.dart';
 import '../bloc/root_bloc.dart';
@@ -115,11 +115,55 @@ class _VenueBlocState extends State<VenueBloc> {
     );
   }
 
+  Widget _buildDropdown() {
+    return (widget.venue.phone == null &&
+            widget.venue.website == null &&
+            widget.venue.email == null)
+        ? Container()
+        : Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                icon: Icon(
+                  Icons.arrow_downward,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                iconSize: 30,
+                value: null,
+                elevation: 16,
+                items: [
+                  if (widget.venue.phone != null) "Phone",
+                  if (widget.venue.email != null) "Email",
+                  if (widget.venue.website != null) "Website"
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value == "Phone") {
+                    launch("tel://" + widget.venue.phone);
+                  } else if (value == "Email") {
+                    launch("mailto:" + widget.venue.email);
+                  } else if (value == "Website") {
+                    if (value.startsWith("http")) {
+                      launch(widget.venue.website);
+                    } else {
+                      launch("http://" + widget.venue.website);
+                    }
+                  }
+                },
+              ),
+            ),
+          );
+  }
+
   Stack buildVenueBanner(VenuePageBloc bloc, BuildContext context) {
     return Stack(
       children: <Widget>[
         Container(
-          height: MediaQuery.of(context).size.width - 100,
+          height: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
@@ -154,7 +198,9 @@ class _VenueBlocState extends State<VenueBloc> {
                   alreadyPopped = true;
                 },
                 child: Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: Colors.white),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      color: Colors.white),
                   child: IconButton(
                     icon: Icon(Icons.arrow_back),
                     iconSize: 30,
@@ -168,9 +214,7 @@ class _VenueBlocState extends State<VenueBloc> {
                   ),
                 ),
               ),
-              Row(
-                children: <Widget>[],
-              )
+              Container()
             ],
           ),
         ),
@@ -187,7 +231,7 @@ class _VenueBlocState extends State<VenueBloc> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width/20,
+                    fontSize: MediaQuery.of(context).size.width / 20,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
                   ),
@@ -207,7 +251,7 @@ class _VenueBlocState extends State<VenueBloc> {
                     widget.venue.address.city,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width/22,
+                      fontSize: MediaQuery.of(context).size.width / 22,
                     ),
                   ),
                 ],
@@ -215,18 +259,7 @@ class _VenueBlocState extends State<VenueBloc> {
             ],
           ),
         ),
-        Positioned(
-          right: 20,
-          bottom: 20,
-          child: GestureDetector(
-            onTap: () => print("HI :)"),
-            child: Icon(
-              Icons.location_on,
-              color: Colors.white70,
-              size: 25,
-            ),
-          ),
-        )
+        Positioned(right: 20, bottom: 20, child: _buildDropdown())
       ],
     );
   }
@@ -278,7 +311,7 @@ class _VenueBlocState extends State<VenueBloc> {
                     !(state is VenueNoTimeSlots))
                   for (var timeslot in state.timeSlots)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(10,0,10,25.0),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 25.0),
                       child: TimeSlotCard(
                         timeslot: timeslot,
                         venue: state.venue,

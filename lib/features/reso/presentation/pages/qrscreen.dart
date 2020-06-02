@@ -171,7 +171,7 @@ class QRScreenState extends State<QRScreen> {
         children: <Widget>[
           //! Localize
           Container(
-            height: 300,
+            height: 200,
             child: Column(
               children: <Widget>[
                 AspectRatio(

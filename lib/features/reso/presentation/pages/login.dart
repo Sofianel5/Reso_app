@@ -124,10 +124,10 @@ class _LoginPageState extends State<LoginPage> {
           controller: _password,
           onTap: () => setState(() {}),
           onSubmitted: (value) {
+            FocusScope.of(context).unfocus();
             setState(() {
               bloc.add(
               LoginAttemptEvent(email: _email.text, password: _password.text));
-              passwordNode.nextFocus();
             });
           },
           focusNode: passwordNode,
@@ -168,6 +168,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(horizontal: 55),
       child: GestureDetector(
         onTap: () {
+          FocusScope.of(context).unfocus();
           bloc.add(
               LoginAttemptEvent(email: _email.text, password: _password.text));
         },
@@ -223,90 +224,93 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context, state) => Scaffold(
           backgroundColor: Colors.white,
           key: _key,
-          body: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                color: Theme.of(context).bottomAppBarColor,
-              ),
-              Form(
-                key: _formKey,
-                child: Container(
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+                      child: Stack(
+              children: <Widget>[
+                Container(
                   height: double.infinity,
-                  child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 60,
-                      vertical: 100,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        emailNode.hasFocus || passwordNode.hasFocus
-                            ? Container()
-                            : Image(
-                                height: 75,
-                                width: 75,
-                                image: AssetImage("assets/tracery1.png"),
-                              ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 40),
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                Localizer.of(context).get("welcome") ??
-                                    "Welcome to Reso",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
+                  width: double.infinity,
+                  color: Theme.of(context).bottomAppBarColor,
+                ),
+                Form(
+                  key: _formKey,
+                  child: Container(
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 60,
+                        vertical: 100,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          emailNode.hasFocus || passwordNode.hasFocus
+                              ? Container()
+                              : Image(
+                                  height: 75,
+                                  width: 75,
+                                  image: AssetImage("assets/tracery1.png"),
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                Localizer.of(context).get("sign-in") ??
-                                    "Sign in",
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w500,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 40),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  Localizer.of(context).get("welcome") ??
+                                      "Welcome to Reso",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  Localizer.of(context).get("sign-in") ??
+                                      "Sign in",
+                                  style: TextStyle(
+                                    color: Colors.black45,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        _buildEmailField(bloc),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        _buildPasswordField(bloc),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        _buildSubmitButton(bloc),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        _buildSignUpBtn(bloc),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        _buildForgotPasswordBtn(),
-                        SizedBox(
-                          height: 30,
-                        ),
-                      ],
+                          _buildEmailField(bloc),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          _buildPasswordField(bloc),
+                          SizedBox(
+                            height: 50,
+                          ),
+                          _buildSubmitButton(bloc),
+                          SizedBox(
+                            height: 50,
+                          ),
+                          _buildSignUpBtn(bloc),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          _buildForgotPasswordBtn(),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

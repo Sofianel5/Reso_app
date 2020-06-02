@@ -99,8 +99,7 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     @required this.canRegister,
     @required this.register,
   })  : this.loginBloc = LoginBlocRouter(login),
-        this.signupRouter = SignupBlocRouter(signup)
-   {
+        this.signupRouter = SignupBlocRouter(signup) {
     this.add(GetExistingUserEvent());
   }
   @override
@@ -144,23 +143,33 @@ class RootBloc extends Bloc<RootEvent, RootState> {
       yield UnauthenticatedState();
     } else if (event is PasswordPageSubmitted) {
       yield SignupLoading();
-      final result = await signup(SignupParams(email: signupRouter.email, firstName: signupRouter.firstName, lastName: signupRouter.lastName, password: event.password));
+      final result = await signup(SignupParams(
+          email: signupRouter.email,
+          firstName: signupRouter.firstName,
+          lastName: signupRouter.lastName,
+          password: event.password));
       print(result);
-      yield* result.fold((failure) async* {
-        yield SignupPasswordFailure(message: failure.message);
-      }, (success) async* {
-        user = success;
-        yield AuthenticatedState(user);
-        ExtendedNavigator.rootNavigator.popUntil((route) => route.isFirst);
-      });
+      yield* result.fold(
+        (failure) async* {
+          yield SignupPasswordFailure(message: failure.message);
+        },
+        (success) async* {
+          user = success;
+          yield AuthenticatedState(user);
+          ExtendedNavigator.rootNavigator.popUntil((route) => route.isFirst);
+        },
+      );
     } else if (event is SignupEvent) {
       yield* signupRouter.route(event);
     } else if (event is PopEvent) {
       ExtendedNavigator.rootNavigator.pop();
     } else if (event is PushVenue) {
-      ExtendedNavigator.rootNavigator.pushNamed(Routes.venue, arguments: VenueScreenArguments(venue: event.venue));
+      ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
+          arguments: VenueScreenArguments(venue: event.venue));
     } else if (event is PushRegister) {
-      ExtendedNavigator.rootNavigator.pushNamed(Routes.register, arguments: RegisterScreenArguments(timeSlot: event.timeslot, venue: event.venue));
+      ExtendedNavigator.rootNavigator.pushNamed(Routes.register,
+          arguments: RegisterScreenArguments(
+              timeSlot: event.timeslot, venue: event.venue));
     }
   }
 }

@@ -121,7 +121,10 @@ class SearchScreenState extends State<SearchScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        onPressed: () => bloc.add(SearchCancelled()),
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          bloc.add(SearchCancelled());
+                        },
                       )
               ],
             ),
@@ -147,7 +150,7 @@ class SearchScreenState extends State<SearchScreen> {
     } else if (state is SearchFinishedState) {
       if (state is NoResultsState) {
         return buildNoResultsBody();
-      } 
+      }
     } else {
       return buildInitialBody();
     }
