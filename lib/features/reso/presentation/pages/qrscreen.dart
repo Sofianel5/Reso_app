@@ -148,9 +148,10 @@ class QRScreenState extends State<QRScreen> {
             Text(
               Localizer.of(context).get("confirm-entry"),
               style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20,
-                  color: Colors.black),
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                color: Colors.black,
+              ),
             ),
           ],
         ),
@@ -171,19 +172,15 @@ class QRScreenState extends State<QRScreen> {
         children: <Widget>[
           //! Localize
           Container(
-            height: 200,
-            child: Column(
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: 1,
-                  child: FlareActor(
-                    "assets/success.flr",
-                    animation: "Untitled",
-                    fit: BoxFit.contain,
-                    alignment: Alignment.center,
-                  ),
-                ),
-              ],
+            height: 100,
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: FlareActor(
+                "assets/success.flr",
+                animation: "Untitled",
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
+              ),
             ),
           ),
           _buildConfirmButton(bloc, state, Colors.greenAccent[700])
