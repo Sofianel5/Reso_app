@@ -273,6 +273,7 @@ class _VenueBlocState extends State<VenueBloc> {
       },
       bloc: BlocProvider.of<VenuePageBloc>(context),
       listener: (context, state) {
+        print(state);
         if (state is VenueTimeSlotsLoaded ||
             state is VenueTimeSlotsLoadFailed) {
           _refreshCompleter?.complete();
