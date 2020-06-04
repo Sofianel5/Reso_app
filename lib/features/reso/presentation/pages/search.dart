@@ -1,3 +1,4 @@
+import 'package:Reso/core/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -97,8 +98,9 @@ class SearchScreenState extends State<SearchScreen> {
               : Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text(
-                    //! Localize
-                    "Search",
+                    Localizer.of(context).get(
+                      "Search",
+                    ),
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -114,8 +116,9 @@ class SearchScreenState extends State<SearchScreen> {
                     ? Container()
                     : FlatButton(
                         child: Text(
-                          //! Localize
-                          "Cancel",
+                          Localizer.of(context).get(
+                            "Cancel",
+                          ),
                           style: TextStyle(
                             color: Theme.of(context).accentColor,
                             fontWeight: FontWeight.w500,
@@ -161,8 +164,9 @@ class SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.only(top: 10.0),
       child: Center(
           child: Text(
-        //! Localize
-        "None nearby",
+        Localizer.of(context).get(
+          "None nearby",
+        ),
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
       )),
     );
@@ -175,8 +179,9 @@ class SearchScreenState extends State<SearchScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            //! Localize
-            "Categories",
+            Localizer.of(context).get(
+              "Categories",
+            ),
             textAlign: TextAlign.start,
             style: TextStyle(
               fontSize: 20,
@@ -211,7 +216,7 @@ class SearchScreenState extends State<SearchScreen> {
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
         //! Localize
-        hintText: "Search",
+        hintText: Localizer.of(context).get("Search"),
       ),
     );
   }

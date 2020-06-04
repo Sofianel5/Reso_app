@@ -1,3 +1,4 @@
+import 'package:Reso/core/localizations/localizations.dart';
 import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,13 +51,13 @@ class TimeSlotCard extends StatelessWidget {
                   textAlign: TextAlign.start,
                 ),
                 Text(
-                  DateFormat("jm").format(timeslot.start) + " to " + DateFormat("jm").format(timeslot.stop),
+                  DateFormat("jm").format(timeslot.start) + " " + Localizer.of(context).get("to")  + " " + DateFormat("jm").format(timeslot.stop),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,
                 ),
                 Text(
-                  NumberFormat("###").format(100*(timeslot.numAttendees / timeslot.maxAttendees)) + "% booked.",
+                  Localizer.of(context).get("booked").replaceAll("{{ number }}", NumberFormat("###").format(100*(timeslot.numAttendees / timeslot.maxAttendees))),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,
