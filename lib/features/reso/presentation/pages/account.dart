@@ -15,19 +15,21 @@ class AccountScreenState extends State<AccountScreen> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: Text(Localizer.of(context).get("logout-warning1")),
-          content: Text(Localizer.of(context).get("logout-warning2")),
+          //! LOCALIZE
+          title: new Text("Are you sure you want to sign out?"),
+          content: new Text("You must be logged back in"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
-              child: new Text(Localizer.of(context).get("Cancel")),
+              child: new Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             new FlatButton(
               child: new Text(
-                Localizer.of(context).get('logout'),
+                //! LOCALIZE
+                "Logout",
                 style: TextStyle(color: Colors.red),
               ),
               onPressed: () {
@@ -49,7 +51,7 @@ class AccountScreenState extends State<AccountScreen> {
           onTap: () => _showLogoutDialog(bloc),
           child: Text(
             //! LOCALIZE
-            Localizer.of(context).get('logout'),
+            "Log out",
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
         )

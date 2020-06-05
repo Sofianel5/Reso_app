@@ -51,7 +51,7 @@ class HistoryScreenState extends State<HistoryScreen> {
           height: 70,
         ),
         Text(
-          Localizer.of(context).get("Your Registrations"),
+          "Your Registrations",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
         ),
         buildSwitchButtonRow(state, BlocProvider.of<RegistrationsPageBloc>(context), context),
@@ -113,7 +113,7 @@ class HistoryScreenState extends State<HistoryScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
-                Localizer.of(context).get("Current"),
+                "Current",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                 textAlign: TextAlign.center,
               ),
@@ -139,7 +139,7 @@ class HistoryScreenState extends State<HistoryScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
-                Localizer.of(context).get("History"),
+                "History",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),

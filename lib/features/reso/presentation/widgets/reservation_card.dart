@@ -1,4 +1,3 @@
-import 'package:Reso/core/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -50,7 +49,7 @@ class ReservationCard extends StatelessWidget {
                 textAlign: TextAlign.start,
               ),
               Text(
-                DateFormat("jm").format(timeslot.start) + " " + Localizer.of(context).get("to")  + " "+ DateFormat("jm").format(timeslot.stop),
+                DateFormat("jm").format(timeslot.start) + " to " + DateFormat("jm").format(timeslot.stop),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width/25),
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,

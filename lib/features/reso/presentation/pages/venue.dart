@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:Reso/core/localizations/localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -133,13 +132,13 @@ class _VenueBlocState extends State<VenueBloc> {
                 value: null,
                 elevation: 16,
                 items: [
-                  if (widget.venue.phone != null) "phone",
-                  if (widget.venue.email != null) "email",
-                  if (widget.venue.website != null) "website"
+                  if (widget.venue.phone != null) "Phone",
+                  if (widget.venue.email != null) "Email",
+                  if (widget.venue.website != null) "Website"
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(Localizer.of(context).get(value)),
+                    child: Text(value),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -273,7 +272,6 @@ class _VenueBlocState extends State<VenueBloc> {
       },
       bloc: BlocProvider.of<VenuePageBloc>(context),
       listener: (context, state) {
-        print(state);
         if (state is VenueTimeSlotsLoaded ||
             state is VenueTimeSlotsLoadFailed) {
           _refreshCompleter?.complete();
@@ -299,9 +297,7 @@ class _VenueBlocState extends State<VenueBloc> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        Localizer.of(context).get(
-                          "timeslots",
-                        ),
+                        "Time slots",
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,

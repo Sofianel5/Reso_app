@@ -44,11 +44,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<http.Response> _getResponse(Map<String, dynamic> data, String url,
       {Map<String, dynamic> headers, bool getMethod = false}) async {
     try {
-      //print("going to post: ");
+      print("going to post: ");
       http.Response response;
-      //print(data);
-      //print("headers: ");
-      //print(headers);
+      print(data);
+      print("headers: ");
+      print(headers);
       if (getMethod) {
         String urlParams = urlEncodeMap(data);
         response = await client.get(url + "?" + urlParams,
@@ -57,7 +57,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         response = await client.post(url,
             body: data, headers: headers ?? <String, String>{});
       }
-      //print(response.body);
+      print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else if (response.statusCode == 406) {
@@ -75,8 +75,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<Map<String, dynamic>> _getJson(Map<String, dynamic> data, String url,
       {Map<String, dynamic> headers, bool useGet = true}) async {
     try {
-      //print("headers in gjson: ");
-      //print(headers);
+      print("headers in gjson: ");
+      print(headers);
       String responseBody =
           (await _getResponse(data, url, headers: headers, getMethod: useGet))
               .body;
@@ -84,7 +84,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
           Map<String, dynamic>.from(jsonDecode(responseBody));
       return responseJson;
     } catch (e) {
-      //print(e);
+      print(e);
       throw e;
     }
   }
@@ -98,7 +98,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       };
       var jsonData;
       var response = await client.post(Urls.LOGIN_URL, body: data);
-      //print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
         return jsonData["auth_token"];
@@ -108,7 +108,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         throw ServerException();
       }
     } catch (e) {
-      //print(e);
+      print(e);
       throw e;
     }
   }
@@ -126,9 +126,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         "first_name": firstName,
         "last_name": lastName,
       };
-      //print(data);
+      print(data);
       http.Response response = await client.post(Urls.SIGNUP_URL, body: data);
-      //print(response.body);
+      print(response.body);
       Map<String, dynamic> responseJsonData =
           Map<String, dynamic>.from(json.decode(response.body));
       if (response.statusCode == 201) {
@@ -195,13 +195,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
           headers: headers);
     }
     var responseJson;
-    //print(response.body);
+    print(response.body);
     if (response.statusCode == 200) {
       responseJson = json.decode(response.body);
-      //print(responseJson);
+      print(responseJson);
       List<VenueModel> venues = [];
       for (var venue in responseJson) {
-        //print(VenueModel.fromJson(venue));
+        print(VenueModel.fromJson(venue));
         venues.add(VenueModel.fromJson(venue));
       }
       return venues;
@@ -218,7 +218,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       Urls.TOGGLE_LOCK_STATE,
       headers: headers,
     );
-    //print(response.body);
+    print(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> responseJson = json.decode(response.body);
       return responseJson["is_locked"];
@@ -313,7 +313,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<List<TimeSlot>> getTimeSlots(int venueId, Map<String, dynamic> headers) async {
     final response = await http.get(Urls.getTimeSlotsForId(venueId) , headers: headers);
-    print(response.body);
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       List<TimeSlot> timeslots = [];

@@ -18,11 +18,7 @@ class SearchPageBloc extends Bloc<SearchPageEvent, SearchState> {
       yield* result.fold((failure) async* {
         yield SearchFailedState(user, message: failure.message);
       }, (venues) async* {
-        if (venues.length == 0) {
-          yield NoResultsState(user);
-        } else {
-          yield SearchFinishedState(user, venues: venues);
-        }
+        yield SearchFinishedState(user, venues: venues);
       });
     }
   }

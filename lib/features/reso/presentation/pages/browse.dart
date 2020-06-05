@@ -185,7 +185,7 @@ class BrowseScreenState extends State<BrowseScreen> {
       padding: const EdgeInsets.only(top: 10.0),
       child: Center(
         child: Text(
-          Localizer.of(context).get("None nearby"),
+          "None nearby",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
         ),
       ),
@@ -222,9 +222,9 @@ class BrowseScreenState extends State<BrowseScreen> {
   Padding buildTopPadding(AuthenticatedState state) {
     String text;
     try {
-      text = Localizer.of(context).get("Near ") + state.user.address.address_1;
+      text = "Near " + state.user.address.address_1;
     } catch(e) {
-      text = Localizer.of(context).get("near-you");
+      text = "Near you";
     }
     return Padding(
       padding: const EdgeInsets.only(top: 10),

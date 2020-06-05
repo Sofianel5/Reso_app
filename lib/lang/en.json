@@ -29,7 +29,7 @@
     "CANNOT_REGISTER": "You can not register",
     "NEEDS_UPDATE": "You need updating",
     "to": "to",
-    "booked": "{{ number }}% booked",
+    "booked": "'{{ number }}% booked'",
     "none available": "None available",
     "back": "Back",
     "invalid-info": "Invalid info",
@@ -73,13 +73,5 @@
     "logout-warning1": "Are you sure you want to sign out?",
     "logout-warning2": "You must log back in",
     "logout": "Logout",
-    "your-account": "Your account",
-    "near-you": "Near you",
-    "reload": "Reload",
-    "All": "All",
-    "Eldery": "Eldery",
-    "Frontline": "Frontline workers",
-    "timeslots": "Time slots",
-    "phone": "Phone",
-    "website": "website"
+    "your-account": "Your account"
 }

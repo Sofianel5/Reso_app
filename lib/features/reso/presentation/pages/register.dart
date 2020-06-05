@@ -1,11 +1,10 @@
+import '../bloc/root_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/localizations/localizations.dart';
 import '../../domain/entities/timeslot.dart';
 import '../../domain/entities/venue.dart';
-import '../bloc/root_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({@required this.venue, @required this.timeSlot});
@@ -62,9 +61,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text(
-                  Localizer.of(context).get(
-                    state is RegisteredSuccessfullyState ? "Success" : "Failed",
-                  ),
+                  state is RegisteredSuccessfullyState ? "Success" : "Failed",
                   style: TextStyle(
                       color: state is RegisteredSuccessfullyState
                           ? Colors.greenAccent[700]
@@ -74,22 +71,16 @@ class _RegisterBlocState extends State<RegisterBloc> {
                   height: 100,
                   child: Column(
                     children: <Widget>[
-                      Text(
-                        Localizer.of(context).get(
-                          state is RegisteredSuccessfullyState
-                              ? "successfully-registered"
-                              : "try-again",
-                        ),
-                      ),
+                      Text(state is RegisteredSuccessfullyState
+                          ? "You have successfully registered for this timeslot"
+                          : "Try again later."),
                     ],
                   ),
                 ),
                 actions: <Widget>[
                   new FlatButton(
                     child: new Text(
-                      Localizer.of(context).get(
-                        "Dismiss",
-                      ),
+                      "Dismiss",
                       style: TextStyle(color: Theme.of(context).accentColor),
                     ),
                     onPressed: () {
@@ -143,7 +134,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20),
                   child: Container(
-                    height: MediaQuery.of(context).size.height - 150,
+                    height: MediaQuery.of(context).size.height-150,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -155,9 +146,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    Localizer.of(context).get("pass-for") +
-                                        Localizer.of(context)
-                                            .get(widget.timeSlot.type),
+                                    "Pass for " + widget.timeSlot.type,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20),
@@ -175,7 +164,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                               ),
                               SizedBox(height: 30),
                               Text(
-                                Localizer.of(context).get("to"),
+                                "to",
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w500),
                               ),
@@ -212,9 +201,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                             child: (state is InfoLoadingState)
                                 ? CircularProgressIndicator()
                                 : Text(
-                                    Localizer.of(context).get(
-                                      "Register",
-                                    ),
+                                    "Register",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
