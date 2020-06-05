@@ -12,6 +12,7 @@ import 'routes/routes.gr.dart';
 void main() async {
   Crashlytics.instance.enableInDevMode = true;
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
   await ic.init();
   runApp(Reso());
 }

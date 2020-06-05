@@ -27,7 +27,7 @@
     "EMPTY_SEARCH_Q": "Empty search query",
     "NO_SCAN": "Without scan",
     "CANNOT_REGISTER": "You can not register",
-    "NEEDS_UPDATE": "You need updating",
+    "NEEDS_UPDATE": "This app is no longer supported",
     "to": "to",
     "booked": "{{ number }}% booked",
     "none available": "None available",
