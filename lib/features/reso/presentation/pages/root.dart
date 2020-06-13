@@ -5,8 +5,8 @@ import '../../../../core/localizations/messages.dart';
 import '../bloc/root_bloc.dart';
 import 'error.dart';
 import 'home.dart';
-import 'login.dart';
 import 'splash.dart';
+import 'unauthenticated_home.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({Key key}) : super(key: key);
@@ -24,7 +24,10 @@ class _RootPageState extends State<RootPage> {
           if (state is InitialState) {
             return SplashScreen();
           } else if (state is UnauthenticatedState) {
-            return LoginPage();
+            return BlocProvider(
+              create: (context) => UnauthenticatedHomePageBloc(),
+              child: UnauthenticatedHomePage(),
+            );
           } else if (state is AuthenticatedState) {
             return BlocProvider(
               create: (context) => HomePageBloc(user: state.user),

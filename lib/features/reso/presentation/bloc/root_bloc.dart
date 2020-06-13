@@ -62,6 +62,15 @@ part 'venue_page/venue_page_state.dart';
 part 'register_page/register_bloc.dart';
 part 'register_page/register_event.dart';
 part 'register_page/register_state.dart';
+part 'unauthenticated_home/unauthenticated_home_bloc.dart';
+part 'unauthenticated_home/unauthenticated_home_state.dart';
+part 'unauthenticated_home/unauthenticated_home_event.dart';
+part 'unauthenticated_browse_page/unauthenticated_browse_bloc.dart';
+part 'unauthenticated_browse_page/unauthenticated_browse_event.dart';
+part 'unauthenticated_browse_page/unauthenticated_browse_state.dart';
+part 'unauthenticated_venue_page/unauthenticated_venue_bloc.dart';
+part 'unauthenticated_venue_page/unauthenticated_venue_state.dart';
+part 'unauthenticated_venue_page/unauthenticated_venue_event.dart';
 
 class RootBloc extends Bloc<RootEvent, RootState> {
   final GetExistingUser getExistingUser;
@@ -164,8 +173,13 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     } else if (event is PopEvent) {
       ExtendedNavigator.rootNavigator.pop();
     } else if (event is PushVenue) {
-      ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
+      if (event.authenticated) {
+        ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
           arguments: VenueScreenArguments(venue: event.venue));
+      } else {
+        ExtendedNavigator.rootNavigator.pushNamed(Routes.unauthenticatedVenue,
+          arguments: UnauthenticatedVenueScreenArguments(venue: event.venue));
+      }
     } else if (event is PushRegister) {
       ExtendedNavigator.rootNavigator.pushNamed(Routes.register,
           arguments: RegisterScreenArguments(

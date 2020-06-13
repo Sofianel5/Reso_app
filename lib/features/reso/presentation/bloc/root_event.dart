@@ -39,7 +39,8 @@ class PopEvent extends RootEvent {}
 
 class PushVenue extends RootEvent {
   final Venue venue;
-  PushVenue(this.venue);
+  bool authenticated = true;
+  PushVenue(this.venue, {this.authenticated});
 }
 
 class PushRegister extends RootEvent {

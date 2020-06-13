@@ -102,11 +102,7 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, VenueDetail>> getVenue({@required int pk}) async {
     if (await networkInfo.isConnected) {
       try {
-        String authToken = await localDataSource.getAuthToken();
-        Map<String, String> headers = Map<String, String>.from(<String, String>{
-          "Authorization": "Token " + authToken.toString(),
-        });
-        return Right(await remoteDataSource.getVenue(pk: pk, headers: headers));
+        return Right(await remoteDataSource.getVenue(pk: pk));
       } on AuthenticationException {
         // Some error like 403
         print("Auth exception");
@@ -184,10 +180,8 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, List<Venue>>> getVenues({String search}) async {
     if (await networkInfo.isConnected) {
       try {
-        final String authToken = await localDataSource.getAuthToken();
         final Coordinates coordinates = await localDataSource.getCoordinates();
         Map<String, String> header = Map<String, String>.from(<String, String>{
-          "Authorization": "Token " + authToken.toString(),
           "LAT": coordinates == null ? "" : coordinates.lat.toString(),
           "LNG": coordinates == null ? "" : coordinates.lng.toString()
         });
@@ -368,10 +362,7 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, List<TimeSlot>>> getTimeSlots(Venue venue) async {
     if (await networkInfo.isConnected) { 
       try {
-         final String authToken = await localDataSource.getAuthToken();
-        Map<String, String> header = Map<String, String>.from(
-            <String, String>{"Authorization": "Token " + authToken.toString()});
-        List<TimeSlot> res = await remoteDataSource.getTimeSlots(venue.id, header);
+        List<TimeSlot> res = await remoteDataSource.getTimeSlots(venue.id, <String, dynamic>{});
         return Right(res);
       } on CannotRegisterException {
         return Left(CannotRegisterFailure());

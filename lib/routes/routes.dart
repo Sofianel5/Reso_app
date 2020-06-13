@@ -1,4 +1,5 @@
 
+import 'package:Reso/features/reso/presentation/pages/unauthenticated_venue.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 
 import '../features/reso/presentation/pages/register.dart';
@@ -18,4 +19,5 @@ class $Router {
   SignUpNameScreen signUpName;
   SignUpPasswordScreen signUpPasswordScreen;
   RegisterScreen register;
+  UnauthenticatedVenueScreen unauthenticatedVenue;
 }
