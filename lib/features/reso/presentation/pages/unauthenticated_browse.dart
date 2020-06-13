@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Reso/features/reso/presentation/widgets/unauthenticated_venue_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -150,7 +151,7 @@ class UnauthenticatedBrowseScreenState extends State<UnauthenticatedBrowseScreen
             buildNoVenuesBody()
           else 
             for (var venue in showingVenues)
-              VenueCard(venue: venue)
+              UnauthenticatedVenueCard(venue: venue)
         else if (state is UnauthenticatedLoadingBrowseState)
           Center(
             child: buildLoadingBody(state),
@@ -172,7 +173,7 @@ class UnauthenticatedBrowseScreenState extends State<UnauthenticatedBrowseScreen
           padding: const EdgeInsets.all(8),
           shrinkWrap: true,
           itemCount: 5,
-          itemBuilder: (BuildContext context, int index) => VenueCard(
+          itemBuilder: (BuildContext context, int index) => UnauthenticatedVenueCard(
             venue: showingVenues[0],
           ),
         ),

@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/root_bloc.dart';
 
-class VenueCard extends StatelessWidget {
-  VenueCard({this.venue, this.from});
+class UnauthenticatedVenueCard extends StatelessWidget {
+  UnauthenticatedVenueCard({this.venue, this.from});
 
   final venue;
   final String from;
@@ -16,7 +16,7 @@ class VenueCard extends StatelessWidget {
     RootBloc bloc = BlocProvider.of<RootBloc>(context);
     return GestureDetector(
       onTap: () {
-        bloc.add(PushVenue(venue));
+        bloc.add(PushVenue(venue, authenticated: false));
       },
       child: Flex(
         direction: Axis.horizontal,

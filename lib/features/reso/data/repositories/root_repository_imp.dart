@@ -114,6 +114,7 @@ class RootRepositoryImpl implements RootRepository {
         return Left(
             AuthenticationFailure(message: Messages.AUTHENTICATION_FAILURE));
       } catch (e) {
+        print(e);
         return Left(AuthenticationFailure(message: Messages.UNKNOWN_ERROR));
       }
     } else {
@@ -362,7 +363,7 @@ class RootRepositoryImpl implements RootRepository {
   Future<Either<Failure, List<TimeSlot>>> getTimeSlots(Venue venue) async {
     if (await networkInfo.isConnected) { 
       try {
-        List<TimeSlot> res = await remoteDataSource.getTimeSlots(venue.id, <String, dynamic>{});
+        List<TimeSlot> res = await remoteDataSource.getTimeSlots(venue.id);
         return Right(res);
       } on CannotRegisterException {
         return Left(CannotRegisterFailure());

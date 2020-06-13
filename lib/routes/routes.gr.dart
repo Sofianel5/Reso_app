@@ -15,6 +15,7 @@ import 'package:Reso/features/reso/presentation/pages/signup_name.dart';
 import 'package:Reso/features/reso/presentation/pages/signup_password.dart';
 import 'package:Reso/features/reso/presentation/pages/register.dart';
 import 'package:Reso/features/reso/domain/entities/timeslot.dart';
+import 'package:Reso/features/reso/presentation/pages/unauthenticated_venue.dart';
 
 abstract class Routes {
   static const rootPage = '/';
@@ -23,6 +24,7 @@ abstract class Routes {
   static const signUpName = '/sign-up-name';
   static const signUpPasswordScreen = '/sign-up-password-screen';
   static const register = '/register';
+  static const unauthenticatedVenue = '/unauthenticated-venue';
   static const all = {
     rootPage,
     venue,
@@ -30,6 +32,7 @@ abstract class Routes {
     signUpName,
     signUpPasswordScreen,
     register,
+    unauthenticatedVenue,
   };
 }
 
@@ -60,8 +63,7 @@ class Router extends RouterBase {
         }
         final typedArgs = args as VenueScreenArguments;
         return MaterialPageRoute<dynamic>(
-          builder: (context) =>
-              VenueScreen(venue: typedArgs.venue),
+          builder: (context) => VenueScreen(venue: typedArgs.venue),
           settings: settings,
         );
       case Routes.signUpEmail:
@@ -80,14 +82,24 @@ class Router extends RouterBase {
           settings: settings,
         );
       case Routes.register:
-        if (hasInvalidArgs<RegisterScreenArguments>(args)) {
+        if (hasInvalidArgs<RegisterScreenArguments>(args, isRequired: true)) {
           return misTypedArgsRoute<RegisterScreenArguments>(args);
         }
-        final typedArgs =
-            args as RegisterScreenArguments ?? RegisterScreenArguments();
+        final typedArgs = args as RegisterScreenArguments;
         return MaterialPageRoute<dynamic>(
           builder: (context) => RegisterScreen(
               venue: typedArgs.venue, timeSlot: typedArgs.timeSlot),
+          settings: settings,
+        );
+      case Routes.unauthenticatedVenue:
+        if (hasInvalidArgs<UnauthenticatedVenueScreenArguments>(args,
+            isRequired: true)) {
+          return misTypedArgsRoute<UnauthenticatedVenueScreenArguments>(args);
+        }
+        final typedArgs = args as UnauthenticatedVenueScreenArguments;
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              UnauthenticatedVenueScreen(venue: typedArgs.venue),
           settings: settings,
         );
       default:
@@ -116,5 +128,11 @@ class VenueScreenArguments {
 class RegisterScreenArguments {
   final Venue venue;
   final TimeSlot timeSlot;
-  RegisterScreenArguments({this.venue, this.timeSlot});
+  RegisterScreenArguments({@required this.venue, @required this.timeSlot});
+}
+
+//UnauthenticatedVenueScreen arguments holder class
+class UnauthenticatedVenueScreenArguments {
+  final Venue venue;
+  UnauthenticatedVenueScreenArguments({@required this.venue});
 }

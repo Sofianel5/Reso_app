@@ -27,7 +27,7 @@ abstract class RemoteDataSource {
   Future<bool> register(int timeSlotId, int venueId, Map<String, dynamic> headers);
   Future<bool> canRegister(int timeSlotId, int venueId, Map<String, dynamic> headers);
   Future<Map<String, List<TimeSlotDetail>>> getRegistrations(Map<String, dynamic> headers);
-  Future<List<TimeSlot>> getTimeSlots(int venueId, Map<String, dynamic> headers);
+  Future<List<TimeSlot>> getTimeSlots(int venueId);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -175,7 +175,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     try {
       final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
           await _getJson(<String, String>{}, Urls.getVenueForId(pk),
-              headers: Map<String, String>.from(headers)));
+              headers: Map<String, String>.from(headers == null ? {} : headers)));
       return VenueDetailModel.fromJson(jsonData);
     } catch (e) {
       throw e;
@@ -311,8 +311,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<TimeSlot>> getTimeSlots(int venueId, Map<String, dynamic> headers) async {
-    final response = await http.get(Urls.getTimeSlotsForId(venueId) , headers: headers);
+  Future<List<TimeSlot>> getTimeSlots(int venueId) async {
+    final response = await http.get(Urls.getTimeSlotsForId(venueId));
     print(response.body);
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);

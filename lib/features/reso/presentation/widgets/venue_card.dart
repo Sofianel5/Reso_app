@@ -16,7 +16,7 @@ class VenueCard extends StatelessWidget {
     RootBloc bloc = BlocProvider.of<RootBloc>(context);
     return GestureDetector(
       onTap: () {
-        bloc.add(PushVenue(venue));
+        bloc.add(PushVenue(venue, authenticated: true));
       },
       child: Flex(
         direction: Axis.horizontal,
