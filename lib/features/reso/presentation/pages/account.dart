@@ -1,7 +1,9 @@
 import 'package:Reso/core/localizations/localizations.dart';
+import 'package:Reso/core/network/urls.dart';
 import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccountScreen extends StatefulWidget {
   @override
@@ -38,6 +40,25 @@ class AccountScreenState extends State<AccountScreen> {
           ],
         );
       },
+    );
+  }
+
+  _launchURL() async {
+    var url = Urls.PASSWORD_RESET_URL;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget _buildForgotPasswordBtn() {
+    return Container(
+      child: FlatButton(
+        onPressed: () =>
+            _launchURL(), 
+        child: Text(Localizer.of(context).get("forgot-password") ?? "Forgot password?"),
+      ),
     );
   }
 
@@ -131,6 +152,8 @@ class AccountScreenState extends State<AccountScreen> {
                           height: 30,
                         ),
                         _buildLogoutWidget(rootBloc),
+                        SizedBox(height: 30,),
+                        _buildForgotPasswordBtn(),
                       ],
                     ),
                   ),

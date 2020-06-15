@@ -74,7 +74,7 @@ class SearchScreenState extends State<SearchScreen> {
         }
         if (state is SearchFailedState) {
           Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
+              .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.message))));
         }
       },
       child: BlocBuilder(

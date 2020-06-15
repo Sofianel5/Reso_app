@@ -60,8 +60,14 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   Widget _buildBackBtn() {
     return Container(
       child: FlatButton(
+        splashColor: Colors.black12,
         onPressed: () => Navigator.pop(context),
-        child: Text(Localizer.of(context).get("back")) ?? "Back",
+        child: Text(Localizer.of(context).get("back"), style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),),
+        
       ),
     );
   }
@@ -95,7 +101,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
         print(state);
         if (state is SignupPasswordFailure) {
           _key.currentState
-              .showSnackBar(SnackBar(content: Text(state.message)));
+              .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.message))));
         }
       },
       bloc: BlocProvider.of<RootBloc>(context),

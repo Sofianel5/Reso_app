@@ -80,10 +80,10 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
 
   Widget _buildNameRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Container(width: 100, child: _buildFirstNameField(),),
-        Container(width: 100, child: _buildLastNameField(),),
+        Container(width: MediaQuery.of(context).size.width/3, child: _buildFirstNameField(),),
+        Container(width: MediaQuery.of(context).size.width/3, child: _buildLastNameField(),),
       ],
     );
   }
@@ -119,9 +119,14 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
   Widget _buildBackBtn() {
     return Container(
       child: FlatButton(
+        splashColor: Colors.black12,
         onPressed: () =>
             Navigator.pop(context), //Navigator.push(context, MaterialPageRoute(builder: (_) => PasswordResetScreen(user))),
-        child: Text(Localizer.of(context).get("back") ?? "Back"),
+        child: Text(Localizer.of(context).get("back") ?? "Back", style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),),
       ),
     );
   }
@@ -133,7 +138,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
       listener: (context, state) {
         if (state is SignupNameFailure) {
           _key.currentState
-              .showSnackBar(SnackBar(content: Text(state.message)));
+              .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.message))));
         }
       },
       bloc: BlocProvider.of<RootBloc>(context),
@@ -156,7 +161,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                   child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.symmetric(
-                      horizontal: 60,
+                      horizontal: 30,
                       vertical: 100,
                     ),
                     child: Column(
@@ -192,7 +197,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                         ),                   
                         _buildNextButton(BlocProvider.of<RootBloc>(context)),
                         SizedBox(
-                          height: 100,
+                          height: 70,
                         ),
                         _buildBackBtn(),
                       ],

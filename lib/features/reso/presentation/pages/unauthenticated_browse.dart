@@ -22,6 +22,7 @@ class UnauthenticatedBrowseScreenState extends State<UnauthenticatedBrowseScreen
   int _selectedIndex = 0;
   List<IconData> _icons = [
     FontAwesomeIcons.globeEurope,
+    FontAwesomeIcons.shoppingCart,
     FontAwesomeIcons.utensils,
     FontAwesomeIcons.shoppingBasket,
     FontAwesomeIcons.mugHot,

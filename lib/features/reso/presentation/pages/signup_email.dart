@@ -77,9 +77,14 @@ class _SignUpEmailScreenState extends State<SignUpEmailScreen> {
     Widget _buildBackBtn() {
     return Container(
       child: FlatButton(
+        splashColor: Colors.black12,
         onPressed: () =>
             Navigator.pop(context), 
-        child: Text(Localizer.of(context).get("back")),
+        child: Text(Localizer.of(context).get("back"), style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),),
       ),
     );
   }
@@ -91,7 +96,7 @@ class _SignUpEmailScreenState extends State<SignUpEmailScreen> {
       listener: (context, state) {
         if (state is SignupEmailFailure) {
           _key.currentState
-              .showSnackBar(SnackBar(content: Text(state.message)));
+              .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.message))));
         }
       },
           child: BlocBuilder(

@@ -40,7 +40,7 @@ class HistoryScreenState extends State<HistoryScreen> {
     if (state is RegistrationsLoadFailure) {
       //! Localize
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(state.message)));
+          .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.message))));
     }
         },
         child: BlocBuilder(

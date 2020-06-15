@@ -206,7 +206,7 @@ class QRScreenState extends State<QRScreen> {
         print("listening");
         if (state is QRFailedState) {
           Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
+              .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.message))));
         } else if (state is QRUnlockedState) {
           while (
               BlocProvider.of<QRPageBloc>(context).state is QRUnlockedState) {

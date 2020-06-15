@@ -201,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Text(
         Localizer.of(context).get("sign-up") ?? "Sign up",
         style: TextStyle(
-            fontWeight: FontWeight.w500, color: Colors.black, fontSize: 17),
+            fontWeight: FontWeight.w500, color: Theme.of(context).accentColor, fontSize: 20),
       ),
     );
   }
@@ -215,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
       listener: (context, state) {
         if (state is LoginFailedState) {
           Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.globalMessage)));
+              .showSnackBar(SnackBar(content: Text(Localizer.of(context).get(state.globalMessage))));
         }
         // DO navigation if other events
       },
