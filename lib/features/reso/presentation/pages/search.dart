@@ -13,7 +13,8 @@ class SearchScreen extends StatefulWidget {
 class SearchScreenState extends State<SearchScreen> {
   //! Localize
   final categories = [
-    "Resturaunt",
+    "Retail",
+    "Restaurant",
     "Grocery",
     "Coffee",
     "Gym",
@@ -215,7 +216,6 @@ class SearchScreenState extends State<SearchScreen> {
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
-        //! Localize
         hintText: Localizer.of(context).get("Search"),
       ),
     );

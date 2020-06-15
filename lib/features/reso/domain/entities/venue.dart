@@ -36,7 +36,8 @@ class Venue extends Equatable {
   List<Object> get props => [id];
   static const types = <String>[
     "All",
-    "Resturaunt",
+    "Retail",
+    "Restaurant",
     "Grocery",
     "Coffee",
     "Gym",

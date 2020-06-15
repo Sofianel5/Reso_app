@@ -21,6 +21,7 @@ class BrowseScreenState extends State<BrowseScreen> {
   int _selectedIndex = 0;
   List<IconData> _icons = [
     FontAwesomeIcons.globeEurope,
+    FontAwesomeIcons.shoppingCart,
     FontAwesomeIcons.utensils,
     FontAwesomeIcons.shoppingBasket,
     FontAwesomeIcons.mugHot,
