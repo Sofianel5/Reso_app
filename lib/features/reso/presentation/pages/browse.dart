@@ -22,6 +22,7 @@ class BrowseScreenState extends State<BrowseScreen> {
   List<IconData> _icons = [
     FontAwesomeIcons.globeEurope,
     FontAwesomeIcons.shoppingCart,
+    FontAwesomeIcons.sign,
     FontAwesomeIcons.utensils,
     FontAwesomeIcons.shoppingBasket,
     FontAwesomeIcons.mugHot,

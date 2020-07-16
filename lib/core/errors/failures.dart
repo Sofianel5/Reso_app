@@ -58,3 +58,7 @@ class CannotRegisterFailure extends Failure {
 class NeedsUpdateFailure extends Failure {
   NeedsUpdateFailure() : super(message: Messages.NEEDS_UPDATE);
 }
+
+class IncompleteRegistrationFailure extends Failure {
+  IncompleteRegistrationFailure() : super(message: Messages.MUST_AGREE);
+}

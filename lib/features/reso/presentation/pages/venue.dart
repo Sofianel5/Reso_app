@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 import '../../domain/entities/venue.dart';
 import '../bloc/root_bloc.dart';
@@ -88,7 +89,7 @@ class _VenueBlocState extends State<VenueBloc> {
       padding: const EdgeInsets.only(top: 10.0),
       child: Center(
         child: Text(
-          "None available",
+          Localizer.of(context).get("none available"),
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
         ),
       ),
@@ -143,12 +144,12 @@ class _VenueBlocState extends State<VenueBloc> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  if (value == "Phone") {
+                  if (value == "phone") {
                     launch("tel://" + widget.venue.phone);
-                  } else if (value == "Email") {
+                  } else if (value == "email") {
                     launch("mailto:" + widget.venue.email);
-                  } else if (value == "Website") {
-                    if (value.startsWith("http")) {
+                  } else if (value == "website") {
+                    if (widget.venue.website.startsWith("http")) {
                       launch(widget.venue.website);
                     } else {
                       launch("http://" + widget.venue.website);
@@ -238,24 +239,39 @@ class _VenueBlocState extends State<VenueBloc> {
                   ),
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    FontAwesomeIcons.locationArrow,
-                    size: 15,
-                    color: Colors.white70,
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text(
-                    widget.venue.address.city,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width / 22,
+              GestureDetector(
+                onTap: () {
+                  try {
+                    MapsLauncher.launchQuery(widget.venue.address.address_1 + ", " + widget.venue.address.city + ", " + widget.venue.address.state + " " + widget.venue.address.postCode);
+                  } catch (e) {
+                    try {
+                      print("unable to launch query");
+                      MapsLauncher.launchCoordinates(widget.venue.coordinates.lat, widget.venue.coordinates.lng);
+                    } catch (e2) {
+                      print(e);
+                      print(e2);
+                    }
+                  } 
+                },
+                              child: Row(
+                  children: <Widget>[
+                    Icon(
+                      FontAwesomeIcons.locationArrow,
+                      size: 15,
+                      color: Colors.white70,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: 5.0,
+                    ),
+                    Text(
+                      widget.venue.address.city,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: MediaQuery.of(context).size.width / 22,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

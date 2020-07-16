@@ -14,6 +14,16 @@ class Register extends UseCase<bool, RegisterParams> {
 
   @override 
   Future<Either<Failure, bool>> call(RegisterParams params) async {
+    if (params.venue.maskRequired) {
+      if (!params.data["mask"]) {
+        return Left(IncompleteRegistrationFailure());
+      }
+    } 
+    if (params.venue.requiresForm) {
+      if (!params.data["form"]) {
+        return Left(IncompleteRegistrationFailure());
+      }
+    }
     return await repository.register(params.slot, params.venue);
   }
 }
@@ -21,7 +31,8 @@ class Register extends UseCase<bool, RegisterParams> {
 class RegisterParams extends Params {
   final TimeSlot slot;
   final Venue venue;
-  RegisterParams({@required this.slot, @required this.venue}) : assert(slot != null);
+  final Map<String, bool> data;
+  RegisterParams({@required this.slot, @required this.venue, @required this.data}) : assert(slot != null);
   @override
   List<Object> get props => [id];
 }

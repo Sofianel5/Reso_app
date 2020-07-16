@@ -10,8 +10,9 @@ class RegisterPageOpened extends RegisterEvent {
 
 class AttemptRegister extends RegisterEvent {
   TimeSlot timeSlot;
+  Map<String, bool> data;
   Venue venue;
-  AttemptRegister({this.timeSlot, this.venue});
+  AttemptRegister({this.timeSlot, this.venue, this.data});
 }
 
 class RegisterPopEvent extends RegisterEvent {

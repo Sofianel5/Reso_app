@@ -15,13 +15,13 @@ class UnauthenticatedHomePage extends StatefulWidget {
 class _UnauthenticatedHomePageState extends State<UnauthenticatedHomePage> {
   int _selectedPage = 0;
   final List<Widget> _mainPages = [
+    LoginPage(),
     BlocProvider(
         create: (BuildContext context) => UnauthenticatedBrowsePageBloc(
               getVenueDetail: BlocProvider.of<RootBloc>(context).getVenueDetail,
               getVenues: BlocProvider.of<RootBloc>(context).getVenues,
             ),
         child: UnauthenticatedBrowseScreen()),
-    LoginPage()
   ];
 
   @override
@@ -48,14 +48,14 @@ class _UnauthenticatedHomePageState extends State<UnauthenticatedHomePage> {
                 },
                 items: <Widget>[
                   Icon(
-                    Icons.home,
+                    Icons.account_circle,
                     size: 30,
                     color: _selectedPage == 0
                         ? Theme.of(context).scaffoldBackgroundColor
                         : Colors.black,
                   ),
                   Icon(
-                    Icons.account_circle,
+                    Icons.list,
                     size: 30,
                     color: _selectedPage == 1
                         ? Theme.of(context).scaffoldBackgroundColor

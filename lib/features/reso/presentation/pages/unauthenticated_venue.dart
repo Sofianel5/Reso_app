@@ -88,7 +88,7 @@ class _UnauthenticatedVenueBlocState extends State<UnauthenticatedVenueBloc> {
       padding: const EdgeInsets.only(top: 10.0),
       child: Center(
         child: Text(
-          "None available",
+          Localizer.of(context).get("none available"),
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
         ),
       ),

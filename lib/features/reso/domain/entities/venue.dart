@@ -16,6 +16,9 @@ class Venue extends Equatable {
   String phone;
   String email;
   String website;
+  bool requiresForm;
+  String formUrl;
+  bool maskRequired;
   Coordinates coordinates;
   Address address;
   Venue({
@@ -30,6 +33,9 @@ class Venue extends Equatable {
     this.website,
     this.coordinates,
     this.address,
+    this.requiresForm,
+    this.formUrl,
+    this.maskRequired
   });
 
   @override
@@ -37,6 +43,7 @@ class Venue extends Equatable {
   static const types = <String>[
     "All",
     "Retail",
+    "Real Estate",
     "Restaurant",
     "Grocery",
     "Coffee",
@@ -63,6 +70,9 @@ class VenueDetail extends Venue {
     String email,
     String website,
     Coordinates coordinates,
+    bool requiresForm,
+    bool maskRequired,
+    String formUrl,
     Address address,
     this.admin,
     this.bookableTimeSlots,
@@ -77,6 +87,9 @@ class VenueDetail extends Venue {
           email: email,
           website: website,
           coordinates: coordinates,
+          requiresForm: requiresForm,
+          formUrl: formUrl,
           address: address,
+          maskRequired:maskRequired,
         );
 }

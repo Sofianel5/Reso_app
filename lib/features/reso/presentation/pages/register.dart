@@ -48,6 +48,7 @@ class RegisterBloc extends StatefulWidget {
 
 class _RegisterBlocState extends State<RegisterBloc> {
   bool alreadyPopped = false;
+  Map<String, bool> data = <String, bool>{"mask": false, "form": false};
 
   @override
   Widget build(BuildContext context) {
@@ -191,15 +192,33 @@ class _RegisterBlocState extends State<RegisterBloc> {
                             ],
                           ),
                         ),
+                        CheckboxListTile(
+                          title: Text(
+                            Localizer.of(context).get("agree-mask"),
+                            style: TextStyle(fontSize: 17)
+                          ),
+                          value: data["mask"],
+                          onChanged: (b) => data["mask"] = b,
+                        ),
+                        CheckboxListTile(
+                          title: Text(
+                            Localizer.of(context).get("agree-form"),
+                            style: TextStyle(fontSize: 17)
+                          ),
+                          value: data["form"],
+                          onChanged: (b) => data["form"] = b,
+                        ),
                         Container(
                           width: double.infinity,
                           child: RaisedButton(
                             onPressed: () {
                               if (state is CanRegisterState) {
                                 BlocProvider.of<RegisterPageBloc>(context).add(
-                                    AttemptRegister(
-                                        timeSlot: widget.timeSlot,
-                                        venue: widget.venue));
+                                  AttemptRegister(
+                                      timeSlot: widget.timeSlot,
+                                      venue: widget.venue,
+                                      data: data),
+                                );
                               }
                             },
                             elevation: 5,

@@ -22,7 +22,10 @@ class VenueModel extends Venue implements Model {
     String timezone,
     String image,
     String phone,
+    bool requiresForm,
+    String formUrl,
     String email,
+    bool maskRequired,
     String website,
     this.coordinates,
     this.address,
@@ -35,9 +38,12 @@ class VenueModel extends Venue implements Model {
           image: image,
           phone: phone,
           email: email,
+          maskRequired: maskRequired,
           website: website,
           coordinates: coordinates,
           address: address,
+          requiresForm: requiresForm,
+          formUrl: formUrl
         );
     
 
@@ -60,6 +66,8 @@ class VenueDetailModel extends VenueDetail {
     String timezone,
     String image,
     String phone,
+    bool maskRequired,
+    bool requiresForm,
     String email,
     String website,
     this.coordinates,
@@ -74,11 +82,13 @@ class VenueDetailModel extends VenueDetail {
           timezone: timezone,
           image: image,
           phone: phone,
+          maskRequired: maskRequired,
           email: email,
           website: website,
           coordinates: coordinates,
           address: address,
           admin: admin,
+          requiresForm: requiresForm,
           bookableTimeSlots: bookableTimeSlots,
         );
 

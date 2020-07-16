@@ -21,4 +21,5 @@ class Messages {
   static const String NO_SCAN = "NO_SCAN";
   static const String CANNOT_REGISTER = "CANNOT_REGISTER";
   static const String NEEDS_UPDATE = "NEEDS_UPDATE";
+  static const String MUST_AGREE = "MUST_AGREE";
 }

@@ -4,7 +4,7 @@
     "submit": "Submit",
     "sign-up": "Sign up",
     "forgot-password": "Forgot your password?",
-    "welcome": "Welcome to Reso",
+    "welcome": "Welcome to The Reso App",
     "sign-in": "Sign in",
     "NO INTERNET": "Without Internet",
     "SERVER_FAILURE": "Server failure",
@@ -37,6 +37,7 @@
     "last-name": "Last Name",
     "next": "Next",
     "Restaurant": "Restaurant",
+    "Real Estate": "Real Estate",
     "Grocery": "Grocery",
     "Coffee": "Coffee",
     "Gym": "Gym",
@@ -81,5 +82,8 @@
     "Frontline": "Frontline workers",
     "timeslots": "Time slots",
     "phone": "Phone",
-    "website": "website"
+    "website": "Website",
+    "MUST_AGREE": "You must agree to all of this venue's terms to register.",
+    "agree-mask": "I agree to wear a mask.",
+    "agree-form": "I agree to complete a form which will be emailed to me."
 }
