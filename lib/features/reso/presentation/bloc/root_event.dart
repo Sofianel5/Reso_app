@@ -1,4 +1,3 @@
-
 part of 'root_bloc.dart';
 
 abstract class RootEvent extends Equatable {
@@ -34,13 +33,24 @@ class LogoutEvent extends RootEvent {
   List<Object> get props => [];
 }
 
+class ChangeLaunchDataEvent extends RootEvent {
+  final Map<String, dynamic> data;
+  ChangeLaunchDataEvent(this.data);
+}
+
+class FullPopEvent extends RootEvent {}
 
 class PopEvent extends RootEvent {}
 
 class PushVenue extends RootEvent {
   final Venue venue;
-  bool authenticated = true;
-  PushVenue(this.venue, {this.authenticated});
+  bool authenticated;
+  PushVenue(this.venue, {this.authenticated=true});
+}
+
+class PushListings extends RootEvent {
+  final int id;
+  PushListings(this.id);
 }
 
 class PushRegister extends RootEvent {

@@ -1,4 +1,6 @@
+import '../../domain/entities/venue.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +18,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void didChangeDependencies() {
+    if (BlocProvider.of<RootBloc>(context).launchData != null) {
+      if (BlocProvider.of<RootBloc>(context).launchData.containsKey("venue")) {
+        BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(BlocProvider.of<RootBloc>(context).launchData["venue"]))));
+      } else if (BlocProvider.of<RootBloc>(context).launchData.containsKey("user")) {
+        BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(BlocProvider.of<RootBloc>(context).launchData["user"])));
+      }
+    }
+    super.didChangeDependencies();
+  }
+
   int _selectedPage = 0;
+  static String initialQuery;
   final List<Widget> _mainPages = [
     BlocProvider(
         create: (BuildContext context) => BrowsePageBloc(
@@ -28,7 +43,8 @@ class _HomePageState extends State<HomePage> {
     BlocProvider(
         create: (context) => SearchPageBloc(
             BlocProvider.of<RootBloc>(context).search,
-            BlocProvider.of<RootBloc>(context).user),
+            BlocProvider.of<RootBloc>(context).user,
+            initialSearch: initialQuery),
         child: SearchScreen()),
     BlocProvider(
         create: (context) => QRPageBloc(
@@ -39,7 +55,8 @@ class _HomePageState extends State<HomePage> {
         child: QRScreen()),
     BlocProvider(
         create: (context) => RegistrationsPageBloc(
-            BlocProvider.of<RootBloc>(context).getRegistrations, BlocProvider.of<RootBloc>(context).user),
+            BlocProvider.of<RootBloc>(context).getRegistrations,
+            BlocProvider.of<RootBloc>(context).user),
         child: HistoryScreen()),
     BlocProvider(
         create: (context) =>
@@ -52,7 +69,15 @@ class _HomePageState extends State<HomePage> {
     final rootBloc = BlocProvider.of<RootBloc>(context);
     return BlocListener(
       bloc: BlocProvider.of<HomePageBloc>(context),
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is DeepLinkedSearchState) {
+          initialQuery = state.query;
+          setState(() {
+            // What if you do it multiple times? Must change back to regular state when action completed
+            _selectedPage = state.pageIndex;
+          });
+        }
+      },
       child: BlocBuilder(
           bloc: BlocProvider.of<HomePageBloc>(context),
           builder: (context, state) {

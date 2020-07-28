@@ -3,7 +3,12 @@ part of '../root_bloc.dart';
 class SearchPageBloc extends Bloc<SearchPageEvent, SearchState> {
   Search search;
   User user;
-  SearchPageBloc(this.search, this.user);
+  String initialSearch;
+  SearchPageBloc(this.search, this.user, {this.initialSearch}) {
+    if (this.initialSearch != null) {
+      this.add(SearchSubmitted(this.initialSearch));
+    }
+  }
 
   @override
   get initialState => InitialSearchState(user);

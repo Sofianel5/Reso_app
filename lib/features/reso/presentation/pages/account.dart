@@ -1,6 +1,8 @@
 import 'package:Reso/core/localizations/localizations.dart';
 import 'package:Reso/core/network/urls.dart';
+import 'package:Reso/features/reso/domain/entities/venue.dart';
 import 'package:Reso/features/reso/presentation/bloc/root_bloc.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +13,26 @@ class AccountScreen extends StatefulWidget {
 }
 
 class AccountScreenState extends State<AccountScreen> {
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          if (deepLink.queryParameters.containsKey('user')) {
+            BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(deepLink.queryParameters["user"])));
+          } else if (deepLink.queryParameters.containsKey('venue')) {
+            BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(deepLink.queryParameters["venue"]))));
+          }
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
   void _showLogoutDialog(RootBloc bloc) {
     showDialog(
       context: context,

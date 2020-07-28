@@ -1,8 +1,10 @@
-import 'package:Reso/core/localizations/localizations.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/localizations/localizations.dart';
 import '../../domain/entities/timeslot.dart';
+import '../../domain/entities/venue.dart';
 import '../bloc/root_bloc.dart';
 import '../widgets/reservation_card.dart';
 
@@ -12,6 +14,27 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class HistoryScreenState extends State<HistoryScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          if (deepLink.queryParameters.containsKey('user')) {
+            BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(deepLink.queryParameters["user"])));
+          } else if (deepLink.queryParameters.containsKey('venue')) {
+            BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(deepLink.queryParameters["venue"]))));
+          }
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
 
   Widget _buildList(BuildContext context, List<TimeSlot> list) {
     return Container(

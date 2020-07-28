@@ -9,3 +9,8 @@ class PageChangeEvent extends HomeEvent {
   final int index;
   PageChangeEvent({@required this.index}) : assert(index != null);
 }
+
+class DeepLinkedSearchEvent extends HomeEvent {
+  final String query;
+  DeepLinkedSearchEvent(this.query);
+}

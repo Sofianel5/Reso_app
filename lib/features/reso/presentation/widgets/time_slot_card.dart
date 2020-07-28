@@ -57,7 +57,7 @@ class TimeSlotCard extends StatelessWidget {
                   textAlign: TextAlign.start,
                 ),
                 Text(
-                  Localizer.of(context).get("booked").replaceAll("{{ number }}", NumberFormat("###").format(100*(timeslot.numAttendees / timeslot.maxAttendees))),
+                  Localizer.of(context).get("available").replaceAll("{{ number }}", NumberFormat("###").format(100-100*(timeslot.numAttendees / timeslot.maxAttendees))),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,

@@ -51,6 +51,7 @@ class _ResoState extends State<Reso> {
           Locale("nl"),
           Locale("it"),
           Locale("pl"),
+          Locale("zh"),
         ],
         localizationsDelegates: [
           Localizer.delegate,

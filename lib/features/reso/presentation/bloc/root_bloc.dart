@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:Reso/features/reso/domain/usecases/can_register.dart';
+import 'package:Reso/features/reso/domain/usecases/get_listings.dart';
 import 'package:Reso/features/reso/domain/usecases/register.dart';
+import 'package:Reso/features/reso/services/dynamic_links_service.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -48,6 +50,9 @@ part 'qr_page/qr_page_state.dart';
 part 'registrations_page/registrations_page_bloc.dart';
 part 'registrations_page/registrations_page_event.dart';
 part 'registrations_page/registrations_page_state.dart';
+part 'listings_page/listings_page_bloc.dart';
+part 'listings_page/listings_page_event.dart';
+part 'listings_page/listings_page_state.dart';
 part 'root_event.dart';
 part 'root_state.dart';
 part 'search_page/search_page_bloc.dart';
@@ -90,6 +95,10 @@ class RootBloc extends Bloc<RootEvent, RootState> {
   final ConfirmScan confirmScan;
   final CanRegister canRegister;
   final Register register;
+  final DynamicLinksService dynamicLinksService;
+  final GetListings getListings;
+  HomePageBloc homeBloc;
+  Map<String, dynamic> launchData;
   User user;
   RootBloc({
     @required this.getExistingUser,
@@ -107,6 +116,9 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     @required this.getTimeSlots,
     @required this.canRegister,
     @required this.register,
+    @required this.dynamicLinksService,
+    @required this.getListings,
+    this.launchData,
   })  : this.loginBloc = LoginBlocRouter(login),
         this.signupRouter = SignupBlocRouter(signup) {
     this.add(GetExistingUserEvent());
@@ -120,43 +132,77 @@ class RootBloc extends Bloc<RootEvent, RootState> {
   ) async* {
     print(event);
     if (event is GetExistingUserEvent) {
+      this.launchData = await dynamicLinksService.getLaunchData();
       final result = await getExistingUser(NoParams());
       yield* result.fold((failure) async* {
         if (failure is AuthenticationFailure) {
           yield UnauthenticatedState();
         } else if (failure is ConnectionFailure) {
           final getCachedUserOrFailure = await getCachedUser(NoParams());
-          yield* getCachedUserOrFailure.fold((failure) async* {
-            yield ErrorState(message: Messages.NO_INTERNET);
-          }, (_user) async* {
-            user = _user;
-            final venuesOrFailure = await getVenues(NoParams());
-            yield* venuesOrFailure.fold((failure) async* {
-              yield LoadingFailedState(user, message: Messages.NO_INTERNET);
-            }, (venues) async* {
-              yield LoadedBrowseState(user, loadedVenues: venues);
-            });
-          });
+          yield* getCachedUserOrFailure.fold(
+            (failure) async* {
+              yield ErrorState(message: Messages.NO_INTERNET);
+            },
+            (_user) async* {
+              user = _user;
+              final venuesOrFailure = await getVenues(NoParams());
+              yield* venuesOrFailure.fold(
+                (failure) async* {
+                  yield LoadingFailedState(user, message: Messages.NO_INTERNET);
+                },
+                (venues) async* {
+                  yield LoadedBrowseState(user, loadedVenues: venues);
+                },
+              );
+            },
+          );
         } else {
           yield ErrorState(message: failure.message);
         }
       }, (_user) async* {
         user = _user;
+        homeBloc = HomePageBloc(user: user);
         yield AuthenticatedState(user);
+        if (launchData != null) {
+          if (launchData.containsKey("venue")) {
+            ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
+                arguments: VenueScreenArguments(
+                    venue: Venue.getLoadingPlaceholder(launchData["venue"])));
+          } else if (launchData.containsKey("user")) {
+            ExtendedNavigator.rootNavigator.pushNamed(Routes.listingsScreen,
+                arguments:
+                    ListingsScreenArguments(id: int.parse(launchData["user"])));
+          }
+        }
       });
     } else if (event is LoginEvent) {
       yield* loginBloc.route(event);
       user = loginBloc.user;
+      homeBloc = HomePageBloc(user: user);
+      if (launchData != null) {
+        if (launchData.containsKey("venue")) {
+          ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
+              arguments: VenueScreenArguments(
+                  venue: Venue.getLoadingPlaceholder(launchData["venue"])));
+        } else if (launchData.containsKey("user")) {
+          ExtendedNavigator.rootNavigator.pushNamed(Routes.listingsScreen,
+              arguments:
+                  ListingsScreenArguments(id: int.parse(launchData["user"])));
+        }
+      }
     } else if (event is LogoutEvent) {
       await logout(NoParams());
       yield UnauthenticatedState();
     } else if (event is PasswordPageSubmitted) {
       yield SignupLoading();
-      final result = await signup(SignupParams(
+      final result = await signup(
+        SignupParams(
           email: signupRouter.email,
           firstName: signupRouter.firstName,
           lastName: signupRouter.lastName,
-          password: event.password));
+          password: event.password,
+        ),
+      );
       print(result);
       yield* result.fold(
         (failure) async* {
@@ -164,8 +210,20 @@ class RootBloc extends Bloc<RootEvent, RootState> {
         },
         (success) async* {
           user = success;
+          homeBloc = HomePageBloc(user: user);
           yield AuthenticatedState(user);
           ExtendedNavigator.rootNavigator.popUntil((route) => route.isFirst);
+          if (launchData != null) {
+            if (launchData.containsKey("venue")) {
+              ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
+                  arguments: VenueScreenArguments(
+                      venue: Venue.getLoadingPlaceholder(launchData["venue"])));
+            } else if (launchData.containsKey("user")) {
+              ExtendedNavigator.rootNavigator.pushNamed(Routes.listingsScreen,
+                  arguments: ListingsScreenArguments(
+                      id: int.parse(launchData["user"])));
+            }
+          }
         },
       );
     } else if (event is SignupEvent) {
@@ -175,15 +233,24 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     } else if (event is PushVenue) {
       if (event.authenticated) {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
-          arguments: VenueScreenArguments(venue: event.venue));
+            arguments: VenueScreenArguments(venue: event.venue));
       } else {
         ExtendedNavigator.rootNavigator.pushNamed(Routes.unauthenticatedVenue,
-          arguments: UnauthenticatedVenueScreenArguments(venue: event.venue));
+            arguments: UnauthenticatedVenueScreenArguments(venue: event.venue));
       }
     } else if (event is PushRegister) {
       ExtendedNavigator.rootNavigator.pushNamed(Routes.register,
           arguments: RegisterScreenArguments(
               timeSlot: event.timeslot, venue: event.venue));
+    } else if (event is PushListings) {
+      ExtendedNavigator.rootNavigator.pushNamed(Routes.listingsScreen,
+          arguments: ListingsScreenArguments(id: event.id));
+    } else if (event is ChangeLaunchDataEvent) {
+      if (event.data != null) {
+        this.launchData = event.data;
+      }
+    } else if (event is FullPopEvent) {
+      ExtendedNavigator.rootNavigator.popUntil((route) => route.isFirst);
     }
   }
 }

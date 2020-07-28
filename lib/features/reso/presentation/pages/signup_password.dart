@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +12,25 @@ class SignUpPasswordScreen extends StatefulWidget {
 }
 
 class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          BlocProvider.of<RootBloc>(context).add(ChangeLaunchDataEvent(deepLink.queryParameters));
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+
+  
   TextEditingController _password = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();

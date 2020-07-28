@@ -28,6 +28,7 @@ abstract class RemoteDataSource {
   Future<bool> canRegister(int timeSlotId, int venueId, Map<String, dynamic> headers);
   Future<Map<String, List<TimeSlotDetail>>> getRegistrations(Map<String, dynamic> headers);
   Future<List<TimeSlot>> getTimeSlots(int venueId);
+  Future<List<VenueDetail>> getListings(Map<String, String> headers, int id);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -324,6 +325,29 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     } else if (response.statusCode ~/ 100 == 4) {
       throw AuthenticationException();
     } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<List<VenueDetail>> getListings(Map<String, String> headers, int id) async {
+    var response =
+          await http.get(Urls.GET_LISTINGS + "?id=" + id.toString(), headers: headers);
+    var responseJson;
+    //print(response.body);
+    if (response.statusCode == 200) {
+      responseJson = json.decode(response.body);
+      //print(responseJson);
+      List<VenueDetailModel> venues = [];
+      for (var venue in responseJson) {
+        //print(VenueModel.fromJson(venue));
+        venues.add(VenueDetailModel.fromJson(venue));
+      }
+      return venues;
+    } else if (response.statusCode ~/ 100 == 4) {
+      throw AuthenticationException();
+    } else {
+      print(response.body);
       throw ServerException();
     }
   }

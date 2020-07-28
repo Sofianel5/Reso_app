@@ -1,4 +1,6 @@
 import 'package:Reso/core/localizations/localizations.dart';
+import 'package:Reso/features/reso/domain/entities/venue.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,21 +13,31 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen> {
-  //! Localize
-  final categories = [
-    "Retail",
-    "Restaurant",
-    "Grocery",
-    "Coffee",
-    "Gym",
-    "Gas",
-    "Mail",
-    "Laundry",
-    "Repair",
-    "Beauty",
-    "Education",
-  ];
 
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          if (deepLink.queryParameters.containsKey('user')) {
+            BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(deepLink.queryParameters["user"])));
+          } else if (deepLink.queryParameters.containsKey('venue')) {
+            BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(deepLink.queryParameters["venue"]))));
+          }
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+  
+  //! Localize
+  final categories = Venue.types;
+  
   TextEditingController q = TextEditingController();
   FocusNode searchFocus;
 
@@ -49,7 +61,7 @@ class SearchScreenState extends State<SearchScreen> {
         children: [
           Expanded(
             child: RaisedButton(
-              child: Text(category),
+              child: Text(Localizer.of(context).get(category)),
               onPressed: () {
                 BlocProvider.of<SearchPageBloc>(context)
                     .add(SearchSubmitted(category));

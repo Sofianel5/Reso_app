@@ -21,4 +21,5 @@ abstract class RootRepository {
   Future<Either<Failure, bool>> canRegister(TimeSlot timeSlot, Venue venue);
   Future<Either<Failure, Map<String, List<TimeSlotDetail>>>> getRegistrations();
   Future<Either<Failure, List<TimeSlot>>> getTimeSlots(Venue venue);
+  Future<Either<Failure, List<Venue>>> getListings(int id);
 }

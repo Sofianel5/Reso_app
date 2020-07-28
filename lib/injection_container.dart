@@ -12,6 +12,7 @@ import 'features/reso/domain/repositories/root_repository.dart';
 import 'features/reso/domain/usecases/can_register.dart';
 import 'features/reso/domain/usecases/confirm_scan.dart';
 import 'features/reso/domain/usecases/get_cached_user.dart';
+import 'features/reso/domain/usecases/get_listings.dart';
 import 'features/reso/domain/usecases/get_registrations.dart';
 import 'features/reso/domain/usecases/get_scan.dart';
 import 'features/reso/domain/usecases/get_timeslots.dart';
@@ -25,11 +26,13 @@ import 'features/reso/domain/usecases/search.dart';
 import 'features/reso/domain/usecases/signup.dart';
 import 'features/reso/domain/usecases/toggle_lock_state.dart';
 import 'features/reso/presentation/bloc/root_bloc.dart';
+import 'features/reso/services/dynamic_links_service.dart';
 final sl = GetIt.instance;
 Future<void> init() async {
   //! Features
-  sl.registerFactory(() => RootBloc(register: sl(), canRegister: sl(), getTimeSlots: sl(), toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
+  sl.registerFactory(() => RootBloc(getListings: sl(), dynamicLinksService: sl(), register: sl(), canRegister: sl(), getTimeSlots: sl(), toggle: sl(), confirmScan: sl(), getRegistrations: sl(), getScan: sl(), search: sl(), getExistingUser: sl(), login: sl(), signup: sl(), logout: sl(), getVenues: sl(), getVenueDetail: sl(), getCachedUser: sl()));
   // Register use cases 
+  sl.registerLazySingleton<GetListings>(() => GetListings(sl()));
   sl.registerLazySingleton<GetExistingUser>(() => GetExistingUser(sl()));
   sl.registerLazySingleton<ConfirmScan>(()=>ConfirmScan(sl()));
   sl.registerLazySingleton<GetRegistrations>(()=>GetRegistrations(sl()));
@@ -50,6 +53,9 @@ Future<void> init() async {
   // Register data sources 
   sl.registerLazySingleton<LocalDataSource>(() => LocalDataSourceImpl(sl()));
   sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(client: sl()));
+
+  // Register services 
+  sl.registerLazySingleton<DynamicLinksService>(() => DynamicLinksService());
 
   //! Core
   sl.registerLazySingleton<InputConverter>(() => InputConverter());

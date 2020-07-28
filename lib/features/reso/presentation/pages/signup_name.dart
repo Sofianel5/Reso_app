@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +13,25 @@ class SignUpNameScreen extends StatefulWidget {
 }
 
 class _SignUpNameScreenState extends State<SignUpNameScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          BlocProvider.of<RootBloc>(context).add(ChangeLaunchDataEvent(deepLink.queryParameters));
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+
+  
   TextEditingController _firstName = TextEditingController();
   TextEditingController _lastName = TextEditingController();
   final _formKey = GlobalKey<FormState>();

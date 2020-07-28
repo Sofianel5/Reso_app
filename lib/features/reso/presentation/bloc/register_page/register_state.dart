@@ -11,7 +11,7 @@ class CannotRegisterState extends RegisterState {}
 
 class CanRegisterState extends RegisterState {}
 
-class RegisterFailedState extends RegisterState {
+class RegisterFailedState extends CanRegisterState {
   final String message;
   RegisterFailedState(this.message);
 }

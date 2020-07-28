@@ -8,7 +8,7 @@ import 'home.dart';
 import 'splash.dart';
 import 'unauthenticated_home.dart';
 
-class RootPage extends StatefulWidget {
+class RootPage extends StatefulWidget with WidgetsBindingObserver {
   RootPage({Key key}) : super(key: key);
   @override
   _RootPageState createState() => _RootPageState();
@@ -30,7 +30,7 @@ class _RootPageState extends State<RootPage> {
             );
           } else if (state is AuthenticatedState) {
             return BlocProvider(
-              create: (context) => HomePageBloc(user: state.user),
+              create: (context) => BlocProvider.of<RootBloc>(context).homeBloc,
               child: HomePage(),
             );
           } else if (state is ErrorState) {

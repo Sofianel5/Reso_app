@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Reso/features/reso/presentation/widgets/unauthenticated_venue_card.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,6 +17,25 @@ class UnauthenticatedBrowseScreen extends StatefulWidget {
 }
 
 class UnauthenticatedBrowseScreenState extends State<UnauthenticatedBrowseScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          BlocProvider.of<RootBloc>(context).add(ChangeLaunchDataEvent(deepLink.queryParameters));
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+
+  
   Completer<void> _refreshCompleter;
   List<Venue> showingVenues;
   List<Venue> venues;
@@ -39,11 +59,6 @@ class UnauthenticatedBrowseScreenState extends State<UnauthenticatedBrowseScreen
   initState() {
     super.initState();
     _refreshCompleter = Completer<void>();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   Widget _buildIcon(int index, UnauthenticatedBrowsePageBloc bloc) {
@@ -91,7 +106,7 @@ class UnauthenticatedBrowseScreenState extends State<UnauthenticatedBrowseScreen
               ),
             ),
             Text(
-              _iconCaptions[index],
+              Localizer.of(context).get(_iconCaptions[index]),
               style: TextStyle(
                 color: _selectedIndex == index
                     ? Theme.of(context).scaffoldBackgroundColor

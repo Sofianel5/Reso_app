@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +18,28 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          if (deepLink.queryParameters.containsKey('user')) {
+            BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(deepLink.queryParameters["user"])));
+          } else if (deepLink.queryParameters.containsKey('venue')) {
+            BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(deepLink.queryParameters["venue"]))));
+          }
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+  
   @override
   Widget build(BuildContext context) {
     final rootBloc = BlocProvider.of<RootBloc>(context);
@@ -50,6 +73,16 @@ class _RegisterBlocState extends State<RegisterBloc> {
   bool alreadyPopped = false;
   Map<String, bool> data = <String, bool>{"mask": false, "form": false};
 
+  String _allowedText() {
+    String str = (Localizer.of(context).get("pass-for") +
+            Localizer.of(context).get(widget.timeSlot.type)) +
+        (widget.timeSlot.type == "All"
+            ? (" " + Localizer.of(context).get("customers"))
+            : "");
+    print(str);
+    return str;
+  }
+
   @override
   Widget build(BuildContext context) {
     final rootBloc = BlocProvider.of<RootBloc>(context);
@@ -77,9 +110,9 @@ class _RegisterBlocState extends State<RegisterBloc> {
                     children: <Widget>[
                       Text(
                         Localizer.of(context).get(
-                          state is RegisteredSuccessfullyState
-                              ? "successfully-registered"
-                              : "try-again",
+                          state is RegisterFailedState
+                              ? Localizer.of(context).get(state.message)
+                              : Localizer.of(context).get("Success"),
                         ),
                       ),
                     ],
@@ -136,7 +169,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                         ),
                       ),
                       Text(widget.venue.title),
-                      Container(),
+                      Container(width: 30),
                     ],
                   ),
                 ),
@@ -156,9 +189,7 @@ class _RegisterBlocState extends State<RegisterBloc> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    Localizer.of(context).get("pass-for") +
-                                        Localizer.of(context)
-                                            .get(widget.timeSlot.type),
+                                    _allowedText(),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20),
@@ -192,22 +223,33 @@ class _RegisterBlocState extends State<RegisterBloc> {
                             ],
                           ),
                         ),
-                        CheckboxListTile(
-                          title: Text(
-                            Localizer.of(context).get("agree-mask"),
-                            style: TextStyle(fontSize: 17)
+                        Spacer(),
+                        if (widget.venue.maskRequired)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: CheckboxListTile(
+                              title: Text(
+                                  Localizer.of(context).get("agree-mask"),
+                                  style: TextStyle(fontSize: 17)),
+                              value: data["mask"],
+                              onChanged: (b) => setState(() {
+                                data["mask"] = b;
+                              }),
+                            ),
                           ),
-                          value: data["mask"],
-                          onChanged: (b) => data["mask"] = b,
-                        ),
-                        CheckboxListTile(
-                          title: Text(
-                            Localizer.of(context).get("agree-form"),
-                            style: TextStyle(fontSize: 17)
+                        if (widget.venue.requiresForm)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: CheckboxListTile(
+                              title: Text(
+                                  Localizer.of(context).get("agree-form"),
+                                  style: TextStyle(fontSize: 17)),
+                              value: data["form"],
+                              onChanged: (b) => setState(() {
+                                data["form"] = b;
+                              }),
+                            ),
                           ),
-                          value: data["form"],
-                          onChanged: (b) => data["form"] = b,
-                        ),
                         Container(
                           width: double.infinity,
                           child: RaisedButton(

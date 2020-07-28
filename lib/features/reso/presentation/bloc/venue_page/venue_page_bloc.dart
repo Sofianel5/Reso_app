@@ -56,7 +56,7 @@ class VenuePageBloc extends Bloc<VenuePageEvent, VenuePageState> {
 
   @override
   VenuePageState get initialState => VenueLoadingState(this.user, this.venue);
-
+  /*
   Stream<RootState> route(VenuePageEvent event, User user) async* {
     print(event);
     if (event is SelectVenueEvent) {
@@ -96,4 +96,5 @@ class VenuePageBloc extends Bloc<VenuePageEvent, VenuePageState> {
       });
     }
   }
+  */
 }

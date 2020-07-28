@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:Reso/core/localizations/localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +21,28 @@ class VenueScreen extends StatefulWidget {
 }
 
 class _VenueScreenState extends State<VenueScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          if (deepLink.queryParameters.containsKey('user')) {
+            BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(deepLink.queryParameters["user"])));
+          } else if (deepLink.queryParameters.containsKey('venue')) {
+            BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(deepLink.queryParameters["venue"]))));
+          }
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final rootBloc = BlocProvider.of<RootBloc>(context);
@@ -35,9 +58,9 @@ class _VenueScreenState extends State<VenueScreen> {
 }
 
 class VenueBloc extends StatefulWidget {
-  const VenueBloc({Key key, this.venue}) : super(key: key);
+  VenueBloc({Key key, this.venue}) : super(key: key);
 
-  final Venue venue;
+  Venue venue;
 
   @override
   _VenueBlocState createState() => _VenueBlocState();
@@ -229,7 +252,7 @@ class _VenueBlocState extends State<VenueBloc> {
               GestureDetector(
                 onTap: () => print("hi"),
                 child: Text(
-                  widget.venue.title,
+                  widget.venue.title ?? "",
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
@@ -264,7 +287,7 @@ class _VenueBlocState extends State<VenueBloc> {
                       width: 5.0,
                     ),
                     Text(
-                      widget.venue.address.city,
+                      widget.venue?.address?.city ?? "",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: MediaQuery.of(context).size.width / 22,
@@ -295,6 +318,9 @@ class _VenueBlocState extends State<VenueBloc> {
           _refreshCompleter?.complete();
           _refreshCompleter = Completer();
         }
+        setState((){
+          widget.venue = state.venue;
+        });
       },
       child: BlocBuilder(
         condition: (previous, current) {

@@ -4,4 +4,7 @@ class HomeState extends AuthenticatedState {
   HomeState(User user, {this.pageIndex=0}) : super(user);
 }
 
-
+class DeepLinkedSearchState extends HomeState {
+  final String query;
+  DeepLinkedSearchState(User user, this.query) : super(user, pageIndex: 1);
+}

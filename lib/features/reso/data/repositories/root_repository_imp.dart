@@ -406,4 +406,39 @@ class RootRepositoryImpl implements RootRepository {
       return Left(ConnectionFailure(message: Messages.NO_INTERNET));
     }
   }
+
+  @override
+  Future<Either<Failure, List<VenueDetail>>> getListings(int id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final Coordinates coordinates = await localDataSource.getCoordinates();
+        Map<String, String> header = Map<String, String>.from(<String, String>{
+          "LAT": coordinates == null ? "" : coordinates.lat.toString(),
+          "LNG": coordinates == null ? "" : coordinates.lng.toString()
+        });
+        List<VenueDetailModel> venues =
+            await remoteDataSource.getListings(header, id);
+        return Right(venues);
+      } on AuthenticationException {
+        // Some error like 403
+        return Left(AuthenticationFailure(message: Messages.INVALID_PASSWORD));
+      } on ServerException {
+        // Some server error 500
+        return Left(ServerFailure(message: Messages.SERVER_FAILURE));
+      } on CacheException {
+        // No stored auth token
+        return Left(AuthenticationFailure(message: Messages.NO_USER));
+      } catch (e) {
+        return Left(UnknownFailure());
+      }
+    } else {
+      try {
+        return Right(await localDataSource.getCachedVenues());
+      } on CacheException {
+        return Left(AuthenticationFailure(message: Messages.NO_USER));
+      } catch (e) {
+        return Left(UnknownFailure());
+      }
+    }
+  }
 }

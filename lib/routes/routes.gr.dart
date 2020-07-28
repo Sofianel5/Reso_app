@@ -16,6 +16,7 @@ import 'package:Reso/features/reso/presentation/pages/signup_password.dart';
 import 'package:Reso/features/reso/presentation/pages/register.dart';
 import 'package:Reso/features/reso/domain/entities/timeslot.dart';
 import 'package:Reso/features/reso/presentation/pages/unauthenticated_venue.dart';
+import 'package:Reso/features/reso/presentation/pages/user_listings.dart';
 
 abstract class Routes {
   static const rootPage = '/';
@@ -25,6 +26,7 @@ abstract class Routes {
   static const signUpPasswordScreen = '/sign-up-password-screen';
   static const register = '/register';
   static const unauthenticatedVenue = '/unauthenticated-venue';
+  static const listingsScreen = '/listings-screen';
   static const all = {
     rootPage,
     venue,
@@ -33,6 +35,7 @@ abstract class Routes {
     signUpPasswordScreen,
     register,
     unauthenticatedVenue,
+    listingsScreen,
   };
 }
 
@@ -102,6 +105,15 @@ class Router extends RouterBase {
               UnauthenticatedVenueScreen(venue: typedArgs.venue),
           settings: settings,
         );
+      case Routes.listingsScreen:
+        if (hasInvalidArgs<ListingsScreenArguments>(args, isRequired: true)) {
+          return misTypedArgsRoute<ListingsScreenArguments>(args);
+        }
+        final typedArgs = args as ListingsScreenArguments;
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ListingsScreen(typedArgs.id),
+          settings: settings,
+        );
       default:
         return unknownRoutePage(settings.name);
     }
@@ -135,4 +147,10 @@ class RegisterScreenArguments {
 class UnauthenticatedVenueScreenArguments {
   final Venue venue;
   UnauthenticatedVenueScreenArguments({@required this.venue});
+}
+
+//ListingsScreen arguments holder class
+class ListingsScreenArguments {
+  final int id;
+  ListingsScreenArguments({@required this.id});
 }

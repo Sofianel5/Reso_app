@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -40,8 +41,24 @@ class BrowseScreenState extends State<BrowseScreen> {
     _refreshCompleter = Completer<void>();
   }
 
-  @override
+  @override 
   void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          if (deepLink.queryParameters.containsKey('user')) {
+            BlocProvider.of<RootBloc>(context).add(PushListings(int.parse(deepLink.queryParameters["user"])));
+          } else if (deepLink.queryParameters.containsKey('venue')) {
+            BlocProvider.of<RootBloc>(context).add(PushVenue(Venue.getLoadingPlaceholder(int.parse(deepLink.queryParameters["venue"]))));
+          }
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
     super.didChangeDependencies();
   }
 
@@ -90,7 +107,7 @@ class BrowseScreenState extends State<BrowseScreen> {
               ),
             ),
             Text(
-              _iconCaptions[index],
+              Localizer.of(context).get(_iconCaptions[index]),
               style: TextStyle(
                 color: _selectedIndex == index
                     ? Theme.of(context).scaffoldBackgroundColor
@@ -117,6 +134,8 @@ class BrowseScreenState extends State<BrowseScreen> {
           venues = state.loadedVenues;
           showingVenues = state.loadedVenues;
         }
+        Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text(rootBloc.launchData.toString())));
       },
       child: BlocBuilder(
         bloc: BlocProvider.of<BrowsePageBloc>(context),
@@ -226,6 +245,7 @@ class BrowseScreenState extends State<BrowseScreen> {
     try {
       text = Localizer.of(context).get("Near ") + state.user.address.address_1;
     } catch(e) {
+      print(e);
       text = Localizer.of(context).get("near-you");
     }
     return Padding(

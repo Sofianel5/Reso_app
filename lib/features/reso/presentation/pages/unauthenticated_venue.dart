@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:Reso/core/localizations/localizations.dart';
 import 'package:Reso/features/reso/presentation/widgets/unauthenticated_time_slot_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +21,25 @@ class UnauthenticatedVenueScreen extends StatefulWidget {
 }
 
 class _UnauthenticatedVenueScreenState extends State<UnauthenticatedVenueScreen> {
+
+  @override 
+  void didChangeDependencies() {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          BlocProvider.of<RootBloc>(context).add(ChangeLaunchDataEvent(deepLink.queryParameters));
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+    );
+    super.didChangeDependencies();
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     final rootBloc = BlocProvider.of<RootBloc>(context);

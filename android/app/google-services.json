@@ -1,101 +1,92 @@
 {
-  "project_info": {
-    "project_number": "527939597715",
-    "firebase_url": "https://tracery-scheduling.firebaseio.com",
-    "project_id": "tracery-scheduling",
-    "storage_bucket": "tracery-scheduling.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:527939597715:android:453a0b7383a0d931c62466",
-        "android_client_info": {
-          "package_name": "com.example.Reso"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "527939597715-fllcc1uptgdc6ckk7du9b2cgrjabmgi4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.Reso",
-            "certificate_hash": "e55dcb9f1ce3289c8c63222456c8ba8afa231e74"
-          }
-        },
-        {
-          "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCLQFQIsFQ5jITyCyCWXQ7ITTQMF945PmY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "527939597715-ip68mr08pn32pru6c07gm4n8f91m0d7n.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tracery.Reso",
-                "app_store_id": "1514559353"
-              }
-            }
-          ]
-        }
-      }
+    "project_info": {
+        "project_number": "527939597715",
+        "firebase_url": "https://tracery-scheduling.firebaseio.com",
+        "project_id": "tracery-scheduling",
+        "storage_bucket": "tracery-scheduling.appspot.com"
     },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:527939597715:android:67227834f4367fd0c62466",
-        "android_client_info": {
-          "package_name": "com.tracery.Reso"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "527939597715-7qjbctptf29kqae62b0prflr8qgkft0e.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tracery.Reso",
-            "certificate_hash": "e55dcb9f1ce3289c8c63222456c8ba8afa231e74"
-          }
+    "client": [{
+            "client_info": {
+                "mobilesdk_app_id": "1:527939597715:android:453a0b7383a0d931c62466",
+                "android_client_info": {
+                    "package_name": "com.example.Reso"
+                }
+            },
+            "oauth_client": [{
+                    "client_id": "527939597715-fllcc1uptgdc6ckk7du9b2cgrjabmgi4.apps.googleusercontent.com",
+                    "client_type": 1,
+                    "android_info": {
+                        "package_name": "com.example.Reso",
+                        "certificate_hash": "e55dcb9f1ce3289c8c63222456c8ba8afa231e74"
+                    }
+                },
+                {
+                    "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [{
+                "current_key": "AIzaSyCLQFQIsFQ5jITyCyCWXQ7ITTQMF945PmY"
+            }],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [{
+                            "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
+                            "client_type": 3
+                        },
+                        {
+                            "client_id": "527939597715-57qblcu0mvho8c719ol1e311qqpg6m7j.apps.googleusercontent.com",
+                            "client_type": 2,
+                            "ios_info": {
+                                "bundle_id": "app.tracery.RetailReso",
+                                "app_store_id": "1518156503"
+                            }
+                        }
+                    ]
+                }
+            }
         },
         {
-          "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCLQFQIsFQ5jITyCyCWXQ7ITTQMF945PmY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
-              "client_type": 3
+            "client_info": {
+                "mobilesdk_app_id": "1:527939597715:android:e91df1755b602898c62466",
+                "android_client_info": {
+                    "package_name": "com.tracery.Reso"
+                }
             },
-            {
-              "client_id": "527939597715-ip68mr08pn32pru6c07gm4n8f91m0d7n.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tracery.Reso",
-                "app_store_id": "1514559353"
-              }
+            "oauth_client": [{
+                    "client_id": "527939597715-7qjbctptf29kqae62b0prflr8qgkft0e.apps.googleusercontent.com",
+                    "client_type": 1,
+                    "android_info": {
+                        "package_name": "com.tracery.Reso",
+                        "certificate_hash": "e55dcb9f1ce3289c8c63222456c8ba8afa231e74"
+                    }
+                },
+                {
+                    "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [{
+                "current_key": "AIzaSyCLQFQIsFQ5jITyCyCWXQ7ITTQMF945PmY"
+            }],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [{
+                            "client_id": "527939597715-0v82lf6v10msvf8ic463bk0cvncijsev.apps.googleusercontent.com",
+                            "client_type": 3
+                        },
+                        {
+                            "client_id": "527939597715-57qblcu0mvho8c719ol1e311qqpg6m7j.apps.googleusercontent.com",
+                            "client_type": 2,
+                            "ios_info": {
+                                "bundle_id": "app.tracery.RetailReso",
+                                "app_store_id": "1518156503"
+                            }
+                        }
+                    ]
+                }
             }
-          ]
         }
-      }
-    }
-  ],
-  "configuration_version": "1"
+    ],
+    "configuration_version": "1"
 }

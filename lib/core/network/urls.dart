@@ -30,4 +30,5 @@ class Urls {
   static String SCAN_PERSON = getBaseURL() + "api/venue-scan-person/";
   static String VENUE_CONFIRM_ENTRY = getBaseURL() + "api/venue-confirm-entry/";
   static String CHECK_FOR_PERSON_SCAN = getBaseURL() + "api/check-for-person-scan/";
+  static String GET_LISTINGS = getBaseURL() + "api/venues/ofuser/";
 }

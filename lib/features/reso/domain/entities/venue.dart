@@ -27,7 +27,7 @@ class Venue extends Equatable {
     @required this.description,
     @required this.title,
     this.timezone,
-    this.image,
+    @required this.image,
     this.phone,
     this.email,
     this.website,
@@ -54,6 +54,9 @@ class Venue extends Equatable {
     "Beauty",
     "Education"
   ];
+  static getLoadingPlaceholder(int id) {
+    return Venue(id: id, type: "All", description: "Loading", title: "Loading", image: "https://tracery-schedules-static.s3.amazonaws.com/media/venues/default.jpg");
+  }
 }
 
 class VenueDetail extends Venue {

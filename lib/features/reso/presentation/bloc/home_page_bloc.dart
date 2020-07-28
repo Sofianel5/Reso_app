@@ -12,6 +12,8 @@ class HomePageBloc extends Bloc<HomeEvent, HomeState> {
     print(event);
     if (event is PageChangeEvent) {
       yield HomeState(this.user, pageIndex: event.index);
+    } else if (event is DeepLinkedSearchEvent) {
+      yield DeepLinkedSearchState(this.user, event.query);
     }
   }
 }
