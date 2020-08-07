@@ -15,6 +15,7 @@ class Venue extends Equatable {
   String image;
   String phone;
   String email;
+  String shareLink;
   String website;
   bool requiresForm;
   String formUrl;
@@ -35,7 +36,8 @@ class Venue extends Equatable {
     this.address,
     this.requiresForm,
     this.formUrl,
-    this.maskRequired
+    this.maskRequired,
+    this.shareLink
   });
 
   @override
@@ -71,6 +73,7 @@ class VenueDetail extends Venue {
     String image,
     String phone,
     String email,
+    String shareLink,
     String website,
     Coordinates coordinates,
     bool requiresForm,
@@ -87,6 +90,7 @@ class VenueDetail extends Venue {
           timezone: timezone,
           image: image,
           phone: phone,
+          shareLink: shareLink,
           email: email,
           website: website,
           coordinates: coordinates,

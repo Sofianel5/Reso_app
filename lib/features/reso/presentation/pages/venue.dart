@@ -6,6 +6,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
@@ -143,7 +144,8 @@ class _VenueBlocState extends State<VenueBloc> {
   Widget _buildDropdown() {
     return (widget.venue.phone == null &&
             widget.venue.website == null &&
-            widget.venue.email == null)
+            widget.venue.email == null &&
+            widget.venue.shareLink == null)
         ? Container()
         : Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
@@ -159,7 +161,8 @@ class _VenueBlocState extends State<VenueBloc> {
                 items: [
                   if (widget.venue.phone != null) "phone",
                   if (widget.venue.email != null) "email",
-                  if (widget.venue.website != null) "website"
+                  if (widget.venue.website != null) "website",
+                  if (widget.venue.shareLink != null) "Share",
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -177,6 +180,9 @@ class _VenueBlocState extends State<VenueBloc> {
                     } else {
                       launch("http://" + widget.venue.website);
                     }
+                  } else if (value == "Share") {
+                    String title = widget.venue.title;
+                    Share.share('View $title on The Reso App ' + widget.venue.shareLink);
                   }
                 },
               ),

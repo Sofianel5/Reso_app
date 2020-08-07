@@ -133,6 +133,8 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     print(event);
     if (event is GetExistingUserEvent) {
       this.launchData = await dynamicLinksService.getLaunchData();
+      print("launchData: ");
+      print(launchData);
       final result = await getExistingUser(NoParams());
       yield* result.fold((failure) async* {
         if (failure is AuthenticationFailure) {

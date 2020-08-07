@@ -134,8 +134,7 @@ class BrowseScreenState extends State<BrowseScreen> {
           venues = state.loadedVenues;
           showingVenues = state.loadedVenues;
         }
-        Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(rootBloc.launchData.toString())));
+        //Scaffold.of(context).showSnackBar(SnackBar(content: Text(Localizer.of(context).get(rootBloc.launchData.toString()))));
       },
       child: BlocBuilder(
         bloc: BlocProvider.of<BrowsePageBloc>(context),
