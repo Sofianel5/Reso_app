@@ -163,7 +163,9 @@ class RootBloc extends Bloc<RootEvent, RootState> {
         }
       }, (_user) async* {
         user = _user;
-        homeBloc = HomePageBloc(user: user);
+        if (user != null) {
+          homeBloc = HomePageBloc(user: user);
+        }
         yield AuthenticatedState(user);
         if (launchData != null) {
           if (launchData.containsKey("venue")) {
@@ -180,7 +182,9 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     } else if (event is LoginEvent) {
       yield* loginBloc.route(event);
       user = loginBloc.user;
-      homeBloc = HomePageBloc(user: user);
+      if (user != null) {
+        homeBloc = HomePageBloc(user: user);
+      }
       if (launchData != null) {
         if (launchData.containsKey("venue")) {
           ExtendedNavigator.rootNavigator.pushNamed(Routes.venue,
@@ -212,7 +216,9 @@ class RootBloc extends Bloc<RootEvent, RootState> {
         },
         (success) async* {
           user = success;
-          homeBloc = HomePageBloc(user: user);
+          if (user != null) {
+            homeBloc = HomePageBloc(user: user);
+          }
           yield AuthenticatedState(user);
           ExtendedNavigator.rootNavigator.popUntil((route) => route.isFirst);
           if (launchData != null) {

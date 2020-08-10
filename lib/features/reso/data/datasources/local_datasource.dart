@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -111,36 +110,21 @@ class LocalDataSourceImpl implements LocalDataSource {
 
   Future<Coordinates> getCoordinates() async {
     try {
-      Location location = new Location();
-
-      bool _serviceEnabled;
-      PermissionStatus _permissionGranted;
-
-      _serviceEnabled = await location.serviceEnabled();
-      if (!_serviceEnabled) {
-        _serviceEnabled = await location.requestService();
-        if (!_serviceEnabled) {
-          return null;
-        }
+      final level = geo.GeolocationPermission.locationWhenInUse;
+      geo.Geolocator locator = geo.Geolocator()..forceAndroidLocationManager = true;
+      geo.Position position = await locator.getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.medium, locationPermissionLevel: level);
+      if (position == null) {
+        position = await locator.getLastKnownPosition(desiredAccuracy: geo.LocationAccuracy.medium, locationPermissionLevel: level);
       }
-
-      _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.denied) {
-        _permissionGranted = await location.requestPermission();
-        if (_permissionGranted != PermissionStatus.granted) {
-          return null;
-        }
-      }
-
-     geo.Position position = await geo.Geolocator().getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.low);
-      print("location");
       Map<String, double> coordinates = {
         "lat": position.latitude,
         "lng": position.longitude
       };
+      print(coordinates);
       final coords = CoordinatesModel.fromJson(coordinates);
       return coords;
     } catch (e) {
+      print(e);
       return null;
     }
   }

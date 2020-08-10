@@ -27,7 +27,6 @@ dependencies:
   flutter_circular_chart: 0.1.0
   uuid: 2.0.4
   datetime_picker_formfield: ^1.0.0
-  location: ^3.0.2
   font_awesome_flutter: '>= 4.7.0'
   equatable: ^1.1.1
   dartz: ^0.9.1
